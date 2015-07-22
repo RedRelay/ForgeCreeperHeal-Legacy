@@ -4,6 +4,8 @@ An open source mod for Minecraft Forge to auto-heal world after an explosion ins
 
 ## Overview
 
+[![Overview video](http://img.youtube.com/vi/KBzI7iXmbx0/0.jpg)](http://www.youtube.com/watch?v=KBzI7iXmbx0)
+
 Clients don't need Forge Creeper Heal installed to join your server BUT they need have Forge.
 
 ## Customizable Settings
@@ -23,16 +25,16 @@ removeException | minecraft:tnt | Blocks which don't be removed by the explosion
 healException | minecraft:tnt | Blocks which don't be healed
 fromEntityException | [] | Entity classes ignored by the mod
 
-About « removeException » :
+About Â«Â removeExceptionÂ Â»Â :
 While explosion, Forge Creeper Heal removes all affected blocks not contained in this list. Removed blocks don't take explosion effect, so no items droped for basic blocks and for TNT its doesn't activate. So if you remove TNT from this list you will not have chain reaction anymore. 
 
-About « fromEntityException » :
+About Â«Â fromEntityExceptionÂ Â»Â :
 Arguments is Java cannonical class name, so for Creeper this is net.minecraft.entity.monster.EntityCreeper.
 
 ## Planned improvement
 
 * Config
-  * « fromEntityException » : Choose entities by name not class.
+  * Â«Â fromEntityExceptionÂ Â»Â : Choose entities by name not class.
   * Reload config without relaunch Minecraft	
   * Change config by command
   * Change config by GUI
