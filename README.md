@@ -32,21 +32,21 @@ Arguments is Java cannonical class name, so for Creeper this is net.minecraft.en
 ## Planned improvement
 
 * Config
-** « fromEntityException » : Choose entities by name not class.
-** Reload config without relaunch Minecraft	
-** Change config by command
-** Change config by GUI
-** Get a per world configuration
+  * « fromEntityException » : Choose entities by name not class.
+  * Reload config without relaunch Minecraft	
+  * Change config by command
+  * Change config by GUI
+  * Get a per world configuration
 
 * Heal
-** Replace grass by dirt (*)
-** Replace stone by cobblestone (*)
-** Replace bricks by used bricks (*)
-** New heal algorithm (*)
+  * Replace grass by dirt (*)
+  * Replace stone by cobblestone (*)
+  * Replace bricks by used bricks (*)
+  * New heal algorithm (*)
 
 * Performances
-** Add a profiler to know mod consumption
-** Reduce memory consumption
+  * Add a profiler to know mod consumption
+  * Reduce memory consumption
 
 (*) = Customizable
 Feel you free to suggest some improvements.
