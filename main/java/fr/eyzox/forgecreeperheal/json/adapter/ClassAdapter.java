@@ -27,7 +27,7 @@ public class ClassAdapter extends AbstractAdapter<Class<?>> {
 			clazz = Class.forName(className);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			ForgeCreeperHeal.getLogger().warning("Unable to find class "+className);
+			ForgeCreeperHeal.getLogger().warn("Unable to find class "+className);
 		}
 		return clazz;
 	}

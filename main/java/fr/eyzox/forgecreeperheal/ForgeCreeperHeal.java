@@ -1,11 +1,13 @@
 package fr.eyzox.forgecreeperheal;
 
-import java.util.logging.Logger;
 
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
+
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -13,7 +15,10 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommand;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
+import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
+import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
+import fr.eyzox.forgecreeperheal.commands.profiler.ProfilerCommand;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldTickEventHandler;
@@ -34,13 +39,15 @@ public class ForgeCreeperHeal
     @Instance(ForgeCreeperHeal.MODID)
 	public static ForgeCreeperHeal instance;
     
-    private static Logger logger = Logger.getLogger(MODID);
+    private Logger logger;
     
     private Config config;
     private WorldEventHandler worldEventHandler;
     
+    
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
+    	this.logger = event.getModLog();
     	this.config = Config.loadConfig(event.getSuggestedConfigurationFile());
     }
     
@@ -61,7 +68,18 @@ public class ForgeCreeperHeal
     
     private void registerCommand() {
     	ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
-		m.registerCommand(new ForgeCreeperHealCommand());
+    	
+    	ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
+    	
+    	//Register Config Commands
+    	ConfigCommands configCmds = new ConfigCommands();
+    	configCmds.register(new ReloadConfigCommand());
+    	forgeCreeperHealCmds.register(configCmds);
+    	
+    	//Register Profiler Commands
+    	forgeCreeperHealCmds.register(new ProfilerCommand());
+    	
+		m.registerCommand(forgeCreeperHealCmds);
 	}
 
 	public static ForgeCreeperHeal getInstance() {
@@ -69,7 +87,7 @@ public class ForgeCreeperHeal
     }
     
     public static Logger getLogger() {
-    	return logger;
+    	return instance.logger;
     }
     
     public static WorldHealer getWorldHealer(WorldServer w) {

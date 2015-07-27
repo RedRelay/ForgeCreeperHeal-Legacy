@@ -1,18 +1,10 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBeacon;
-import net.minecraft.block.BlockClay;
-import net.minecraft.block.BlockIce;
-import net.minecraft.block.BlockStone;
-import net.minecraft.block.BlockWood;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,59 +14,95 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.Profiler;
+import fr.eyzox.ticklinkedlist.TickContainer;
 
 public class WorldHealer extends WorldSavedData{
 
-	private Random rdn = new Random();
 	private World world;
-	private LinkedList<TickContainer> toHeal;
+	private HealTask toHeal;
+
+	private Profiler profiler;
 
 	public WorldHealer() {
 		this(getDataStorageKey());
 	}
-	
+
 	public WorldHealer(String key) {
 		super(key);
-		toHeal = new LinkedList<TickContainer>();
-	}
-
-	public void add(BlockData blockData, int ticks) {
-		if(toHeal.isEmpty()) {
-			toHeal.add(new TickContainer(ticks, blockData));
-		}else {
-			for(ListIterator<TickContainer> it = toHeal.listIterator(); it.hasNext();){
-				TickContainer current = it.next();
-				if(current.getTicksLeft() < ticks) {
-					ticks = ticks - current.getTicksLeft();
-				}else if(current.getTicksLeft() == ticks) {
-					current.getBlockDataList().add(blockData);
-					return;
-				}else {
-					it.set(new TickContainer(ticks, blockData));
-					current.setTicksLeft(current.getTicksLeft()-ticks);
-					it.add(current);
-					return;
-				}
-			}
-
-			toHeal.add(new TickContainer(ticks, blockData));
-		}
+		toHeal = new HealTask();
 	}
 
 	public void onTick() {
-		if(!toHeal.isEmpty()) {
-			TickContainer tc = toHeal.getFirst();
+		if(profiler != null) {
+			profiler.begin();
+			profiler.tickStart();
+		}
 
-			if(tc.getTicksLeft() <= 1) {
-				toHeal.removeFirst();
-				for(BlockData blockData : tc.getBlockDataList()) {
-					heal(blockData);
-				}
-			}else {
-				tc.setTicksLeft(tc.getTicksLeft() - 1);
+		Collection<BlockData> blocksToHeal = toHeal.tick();
+		if(blocksToHeal != null) {
+			for(BlockData blockData : blocksToHeal) {
+				heal(blockData);
 			}
+		}
+
+		if(profiler != null) {
+			profiler.tickStop();
+			profiler.handleMemoryUse(toHeal.getLinkedList());
+			profiler.report();
+		}
+	}
+
+	public void onDetonate(ExplosionEvent.Detonate event) {
+		if(profiler != null) {
+			profiler.explosionStart();
+		}
+		int maxTicksBeforeHeal = 0;
+		//Process primary blocks
+		for(ChunkPosition c : event.getAffectedBlocks()) {
+			Block block = event.world.getBlock(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
+			if(block.isNormalCube()) {
+
+				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal()+world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
+				if(ticksBeforeHeal > maxTicksBeforeHeal) {
+					maxTicksBeforeHeal = ticksBeforeHeal;
+				}
+
+				onBlockHealed(c, block, ticksBeforeHeal);
+			}
+		}
+		maxTicksBeforeHeal++;
+
+		//Process secondary blocks
+		for(ChunkPosition c : event.getAffectedBlocks()) {
+			Block block = event.world.getBlock(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
+			if(!block.isNormalCube() && !block.isAir(event.world, c.chunkPosX, c.chunkPosY, c.chunkPosZ)) {
+				onBlockHealed(c, block, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
+			}
+		}
+		if(profiler != null) {
+			profiler.explosionStop();
+		}
+	}
+
+	private void onBlockHealed(ChunkPosition c, Block block, int ticks) {
+		if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer() && !ForgeCreeperHeal.getConfig().getRemoveException().contains(block)) {
+			TileEntity te = world.getTileEntity(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
+			if(te instanceof IInventory) {
+				WorldHealerUtils.dropInventory(world, c, (IInventory) te);
+			}
+		}
+
+		if(!ForgeCreeperHeal.getConfig().getHealException().contains(block)) {
+			toHeal.add(ticks, new BlockData(world,c));
+		}
+
+		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(block)) {
+			world.removeTileEntity(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
+			world.setBlock(c.chunkPosX, c.chunkPosY, c.chunkPosZ, Blocks.air, 0, 7);
 		}
 	}
 
@@ -83,14 +111,14 @@ public class WorldHealer extends WorldSavedData{
 
 		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(this.world.getBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ)) != null)) {
 			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
-				world.spawnEntityInWorld(buildEntityItem(blockData.getChunkPosition(), new ItemStack(world.getBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ)), rdn.nextFloat() * 0.8F + 0.1F, rdn.nextFloat() * 0.8F + 0.1F, rdn.nextFloat() * 0.8F + 0.1F, 0.05F));
+				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getChunkPosition(), new ItemStack(world.getBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ)), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
 
 				TileEntity te = world.getTileEntity(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ);
 				if(te instanceof IInventory) {
-					dropInventory((IInventory) te, blockData.getChunkPosition());
+					WorldHealerUtils.dropInventory(world, blockData.getChunkPosition(), (IInventory) te);
 				}
 			}
-			
+
 			world.setBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ, blockData.getBlock(), blockData.getMetadata(), 7);
 			world.setBlockMetadataWithNotify(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ, blockData.getMetadata(), 7);
 			if(blockData.getTileEntityTag() != null) {
@@ -102,72 +130,23 @@ public class WorldHealer extends WorldSavedData{
 			}
 
 		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
-			world.spawnEntityInWorld(buildEntityItem(blockData.getChunkPosition(), new ItemStack(blockData.getBlock()),rdn.nextFloat() * 0.8F + 0.1F, rdn.nextFloat() * 0.8F + 0.1F, rdn.nextFloat() * 0.8F + 0.1F, 0.05F));
+			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getChunkPosition(), new ItemStack(blockData.getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
 			if(blockData.getTileEntityTag() != null) {
 				TileEntity te = blockData.getBlock().createTileEntity(world, blockData.getMetadata());
 				if(te instanceof IInventory) {
 					te.readFromNBT(blockData.getTileEntityTag());
-					dropInventory((IInventory) te, blockData.getChunkPosition());
+					WorldHealerUtils.dropInventory(world, blockData.getChunkPosition(), (IInventory) te);
 				}
 			}
 
 		}
 	}
 
-
-	private EntityItem buildEntityItem(ChunkPosition cp, ItemStack itemStack, float deltaX, float deltaY, float deltaZ, float motion) {
-		EntityItem entityitem = new EntityItem(world, (double)((float)cp.chunkPosX + deltaX), (double)((float)cp.chunkPosY + deltaY), (double)((float)cp.chunkPosZ + deltaZ), itemStack);
-		entityitem.motionX = (double)((float)rdn.nextGaussian() * motion);
-		entityitem.motionY = (double)((float)rdn.nextGaussian() * motion + 0.2F);
-		entityitem.motionZ = (double)((float)rdn.nextGaussian() * motion);
-		return entityitem;
-	}
-
-	public void dropInventory(IInventory inventory, ChunkPosition cp) {
-		for (int inventoryIndex = 0; inventoryIndex < inventory.getSizeInventory(); ++inventoryIndex)
-		{
-			ItemStack itemstack = inventory.getStackInSlot(inventoryIndex);
-
-			if (itemstack != null)
-			{
-
-				float f = rdn.nextFloat() * 0.8F + 0.1F;
-				float f1 = rdn.nextFloat() * 0.8F + 0.1F;
-
-				for (float f2 = rdn.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; )
-				{
-					int j1 = rdn.nextInt(21) + 10;
-
-					if (j1 > itemstack.stackSize)
-					{
-						j1 = itemstack.stackSize;
-					}
-
-					itemstack.stackSize -= j1;
-
-					float f3 = 0.05F;
-					EntityItem entityitem = buildEntityItem(cp, new ItemStack(itemstack.getItem(), j1, itemstack.getItemDamage()), f, f1, f2, f3);
-					
-
-
-					if (itemstack.hasTagCompound())
-					{
-						entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
-					}
-					
-					world.spawnEntityInWorld(entityitem);
-				}
-
-				/*ADDED TO REMOVE ITEMSTACK FROM INVENTORY*/
-				inventory.setInventorySlotContents(inventoryIndex, null);
-			}
-		}
-	}
 
 	public World getWorld() {
 		return world;
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		NBTTagList tagList = (NBTTagList) tag.getTag("toHeal");
@@ -182,7 +161,7 @@ public class WorldHealer extends WorldSavedData{
 				blockData.readFromNBT(blockDataTag);
 				blockDataList.add(blockData);
 			}
-			toHeal.add(new TickContainer(ticksLeft, blockDataList));
+			toHeal.getLinkedList().addLast(new TickContainer<Collection<BlockData>>(ticksLeft, blockDataList));
 		}
 
 	}
@@ -190,11 +169,11 @@ public class WorldHealer extends WorldSavedData{
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		NBTTagList tagList = new NBTTagList();
-		for(TickContainer tc : this.toHeal) {
+		for(TickContainer<Collection<BlockData>> tc : this.toHeal.getLinkedList()) {
 			NBTTagCompound tickContainerTag = new NBTTagCompound();
-			tickContainerTag.setInteger("ticks", tc.getTicksLeft());
+			tickContainerTag.setInteger("ticks", tc.getTick());
 			NBTTagList blockDataListTag = new NBTTagList();
-			for(BlockData blockData : tc.getBlockDataList()) {
+			for(BlockData blockData : tc.getData()) {
 				NBTTagCompound blockDataTag = new NBTTagCompound();
 				blockData.writeToNBT(blockDataTag);
 				blockDataListTag.appendTag(blockDataTag);
@@ -204,7 +183,7 @@ public class WorldHealer extends WorldSavedData{
 		}
 		tag.setTag("toHeal", tagList);
 	}
-	
+
 	public static WorldHealer loadWorldHealer(World w) {
 		MapStorage storage = w.perWorldStorage;
 		final String KEY = getDataStorageKey();
@@ -214,12 +193,12 @@ public class WorldHealer extends WorldSavedData{
 			storage.setData(KEY, result);
 			ForgeCreeperHeal.getLogger().info("Unable to find data for world "+w.getWorldInfo().getWorldName()+"["+w.provider.dimensionId+"], new data created");
 		}
-		
+
 		result.world = w;
-		
+
 		return result;
 	}
-	
+
 	public static String getDataStorageKey() {
 		return ForgeCreeperHeal.MODID+":"+WorldHealer.class.getSimpleName();
 	}
@@ -228,7 +207,22 @@ public class WorldHealer extends WorldSavedData{
 	public boolean isDirty() {
 		return true;
 	}
-	
-	
+
+	public void enableProfiler() {
+		this.profiler = new Profiler(this);
+	}
+
+	public void enableProfiler(int ticks) {
+		this.profiler = new Profiler(this, ticks);
+	}
+
+	public void disableProfiler() {
+		this.profiler = null;
+	}
+
+	public boolean isProfilerEnabled() {
+		return this.profiler != null;
+	}
+
 
 }

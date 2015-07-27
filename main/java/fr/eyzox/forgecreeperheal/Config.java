@@ -100,7 +100,7 @@ public class Config {
 			pw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-			ForgeCreeperHeal.getLogger().warning("Unable to save configuration file at "+configFile.getAbsolutePath());
+			ForgeCreeperHeal.getLogger().warn("Unable to save configuration file at "+configFile.getAbsolutePath());
 		}
 	}
 	
@@ -115,7 +115,7 @@ public class Config {
 				c.setConfigFile(configFile);
 			} catch (JsonParseException e) {
 				e.printStackTrace();
-				ForgeCreeperHeal.getLogger().warning("Unable to load configuration from "+configFile.getAbsolutePath()+" loading default configuration");
+				ForgeCreeperHeal.getLogger().warn("Unable to load configuration from "+configFile.getAbsolutePath()+" loading default configuration");
 				c = new Config();
 				c.loadDefaultConfig();
 			} catch (FileNotFoundException e) {
