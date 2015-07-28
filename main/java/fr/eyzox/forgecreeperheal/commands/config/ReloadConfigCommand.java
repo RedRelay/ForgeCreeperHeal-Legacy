@@ -1,10 +1,10 @@
 package fr.eyzox.forgecreeperheal.commands.config;
 
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 
 public class ReloadConfigCommand extends CommandBase {
 

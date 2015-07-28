@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -208,14 +210,31 @@ public class WorldHealer extends WorldSavedData{
 		return true;
 	}
 
-	public void enableProfiler() {
-		this.profiler = new Profiler(this);
+	public void enableProfiler(ICommandSender sender) {
+		if(profiler == null) this.profiler = new Profiler(this);
+		
+		if(sender instanceof EntityPlayerMP) {
+			profiler.addListener((EntityPlayerMP) sender);
+		}else {
+			profiler.setServerWatch(true);
+		}
+		
 	}
 
-	public void enableProfiler(int ticks) {
-		this.profiler = new Profiler(this, ticks);
+	public void disableProfiler(ICommandSender sender) {
+		if(profiler != null){
+			if(sender instanceof EntityPlayerMP) {
+				profiler.removeListener((EntityPlayerMP) sender);
+			}else {
+				profiler.setServerWatch(false);
+			}
+			
+			if(profiler.getListeners().isEmpty() && !profiler.isServerWatch()) {
+				disableProfiler();
+			}
+		}
 	}
-
+	
 	public void disableProfiler() {
 		this.profiler = null;
 	}
@@ -224,5 +243,8 @@ public class WorldHealer extends WorldSavedData{
 		return this.profiler != null;
 	}
 
+	public Profiler getProfiler() {
+		return profiler;
+	}
 
 }

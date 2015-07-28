@@ -1,12 +1,11 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
-import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.registry.GameData;
 
 public class BlockData {
 	private Block block;

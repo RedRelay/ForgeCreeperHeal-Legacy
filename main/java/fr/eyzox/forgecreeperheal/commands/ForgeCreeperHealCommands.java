@@ -1,11 +1,8 @@
 package fr.eyzox.forgecreeperheal.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -14,8 +11,6 @@ import net.minecraft.util.IChatComponent;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 
 public class ForgeCreeperHealCommands extends CommandsContainer {
-	
-	
 
 	@Override
 	public String getCommandName() {
@@ -43,6 +38,13 @@ public class ForgeCreeperHealCommands extends CommandsContainer {
 		}
 	}
 	
+	
+	
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_) {
+		return true;
+	}
+
 	public static boolean isOp(ICommandSender sender) {
 		return !(sender instanceof EntityPlayer) || MinecraftServer.getServer().getConfigurationManager().func_152596_g(((EntityPlayer)sender).getGameProfile());
 	}

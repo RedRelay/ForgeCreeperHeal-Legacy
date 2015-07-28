@@ -4,9 +4,7 @@ import java.io.IOException;
 
 import net.minecraft.block.Block;
 
-import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import cpw.mods.fml.common.registry.GameData;

@@ -3,12 +3,19 @@ package fr.eyzox.forgecreeperheal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import fr.eyzox.forgecreeperheal.network.profiler.ProfilerInfoMessage;
 import fr.eyzox.forgecreeperheal.worldhealer.BlockData;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 import fr.eyzox.ticklinkedlist.TickContainer;
 
 public class Profiler {
+	
+	private List<EntityPlayerMP> listeners = new LinkedList<EntityPlayerMP>();
+	private boolean serverWatch;
 	
 	private WorldHealer worldHealer;
 	
@@ -81,8 +88,36 @@ public class Profiler {
 		}
 	}
 	
+	public void addListener(EntityPlayerMP player) {
+		listeners.add(player);
+	}
+	
+	public void removeListener(EntityPlayerMP player) {
+		listeners.remove(player);
+	}
+	
+	public List<EntityPlayerMP> getListeners() {
+		return listeners;
+	}
+	
+	public boolean isServerWatch() {
+		return serverWatch;
+	}
+
+	public void setServerWatch(boolean serverWatch) {
+		this.serverWatch = serverWatch;
+	}
+
 	public void report() {
 		if(currentTick < totalTicks) return;
-		ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.dimensionId, this.avgTick+this.avgExplosion, this.blocksUsed));
+		double totalTicks = this.avgTick+this.avgExplosion;
+		if(serverWatch) ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.dimensionId, totalTicks, this.blocksUsed));
+		for(EntityPlayerMP player : listeners) {
+			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
+				ForgeCreeperHeal.getChannel().sendTo(new ProfilerInfoMessage(worldHealer.getWorld(), totalTicks, blocksUsed), player);
+			}else {
+				worldHealer.disableProfiler(player);
+			}
+		}
 	}
 }

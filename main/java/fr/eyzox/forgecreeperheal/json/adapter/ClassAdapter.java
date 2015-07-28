@@ -2,13 +2,9 @@ package fr.eyzox.forgecreeperheal.json.adapter;
 
 import java.io.IOException;
 
-import net.minecraft.entity.Entity;
-
-import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import cpw.mods.fml.common.registry.EntityRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 
 public class ClassAdapter extends AbstractAdapter<Class<?>> {

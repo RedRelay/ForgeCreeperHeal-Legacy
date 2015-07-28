@@ -1,6 +1,5 @@
 package fr.eyzox.ticklinkedlist;
 
-import sun.misc.Compare;
 
 public class Tick implements Comparable<Tick> {
 
