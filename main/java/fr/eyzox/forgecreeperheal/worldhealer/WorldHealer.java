@@ -212,26 +212,12 @@ public class WorldHealer extends WorldSavedData{
 
 	public void enableProfiler(ICommandSender sender) {
 		if(profiler == null) this.profiler = new Profiler(this);
-		
-		if(sender instanceof EntityPlayerMP) {
-			profiler.addListener((EntityPlayerMP) sender);
-		}else {
-			profiler.setServerWatch(true);
-		}
-		
+		profiler.addListener(sender);
 	}
 
 	public void disableProfiler(ICommandSender sender) {
 		if(profiler != null){
-			if(sender instanceof EntityPlayerMP) {
-				profiler.removeListener((EntityPlayerMP) sender);
-			}else {
-				profiler.setServerWatch(false);
-			}
-			
-			if(profiler.getListeners().isEmpty() && !profiler.isServerWatch()) {
-				disableProfiler();
-			}
+			profiler.removeListener(sender);
 		}
 	}
 	

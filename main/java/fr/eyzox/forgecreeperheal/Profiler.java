@@ -1,20 +1,25 @@
 package fr.eyzox.forgecreeperheal;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import fr.eyzox.forgecreeperheal.network.profiler.ProfilerInfoMessage;
+import net.minecraft.util.ChatComponentText;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
+import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
 import fr.eyzox.forgecreeperheal.worldhealer.BlockData;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 import fr.eyzox.ticklinkedlist.TickContainer;
 
 public class Profiler {
 	
-	private List<EntityPlayerMP> listeners = new LinkedList<EntityPlayerMP>();
+	private Set<EntityPlayerMP> clientSideModListeners = new HashSet<EntityPlayerMP>();
+	private Set<EntityPlayerMP> noClientSideModListeners = new HashSet<EntityPlayerMP>();
 	private boolean serverWatch;
 	
 	private WorldHealer worldHealer;
@@ -88,33 +93,53 @@ public class Profiler {
 		}
 	}
 	
-	public void addListener(EntityPlayerMP player) {
-		listeners.add(player);
+	public void addListener(ICommandSender sender) {
+		if(sender instanceof EntityPlayerMP) {
+			EntityPlayerMP player = (EntityPlayerMP) sender;
+			PlayerModData playerModData = PlayerModData.get(player);
+			if(playerModData != null && playerModData.MOD_VERSION.compareToIgnoreCase("1.1.0") >= 0) {
+				clientSideModListeners.add(player);
+			}else {
+				noClientSideModListeners.add(player);
+			}
+		}else {
+			serverWatch = true;
+		}
+		
 	}
 	
-	public void removeListener(EntityPlayerMP player) {
-		listeners.remove(player);
+	public void removeListener(ICommandSender sender) {
+		if(sender instanceof EntityPlayerMP) {
+			clientSideModListeners.remove(sender);
+			noClientSideModListeners.remove(sender);
+		}else {
+			serverWatch = false;
+		}
+		
+		if(getNbListeners() <= 0) {
+			worldHealer.disableProfiler();
+		}
 	}
 	
-	public List<EntityPlayerMP> getListeners() {
-		return listeners;
-	}
-	
-	public boolean isServerWatch() {
-		return serverWatch;
-	}
-
-	public void setServerWatch(boolean serverWatch) {
-		this.serverWatch = serverWatch;
+	public int getNbListeners() {
+		return (serverWatch?1:0)+clientSideModListeners.size()+noClientSideModListeners.size();
 	}
 
 	public void report() {
 		if(currentTick < totalTicks) return;
 		double totalTicks = this.avgTick+this.avgExplosion;
 		if(serverWatch) ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.dimensionId, totalTicks, this.blocksUsed));
-		for(EntityPlayerMP player : listeners) {
+		for(EntityPlayerMP player : clientSideModListeners) {
 			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
 				ForgeCreeperHeal.getChannel().sendTo(new ProfilerInfoMessage(worldHealer.getWorld(), totalTicks, blocksUsed), player);
+			}else {
+				worldHealer.disableProfiler(player);
+			}
+		}
+		
+		for(EntityPlayerMP player : noClientSideModListeners) {
+			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
+				ForgeCreeperHealCommands.addChatMessage(player, new ChatComponentText(String.format("[%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.dimensionId, totalTicks, this.blocksUsed)));
 			}else {
 				worldHealer.disableProfiler(player);
 			}

@@ -1,0 +1,18 @@
+package fr.eyzox.forgecreeperheal.handler;
+
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.network.ModDataMessage;
+
+public class PlayerModDataHandler {
+
+	@SubscribeEvent
+
+	public void onLogged(EntityJoinWorldEvent event) {
+		if(event.entity == Minecraft.getMinecraft().thePlayer) {
+			ForgeCreeperHeal.getChannel().sendToServer(new ModDataMessage().fill());
+		}
+	}
+}

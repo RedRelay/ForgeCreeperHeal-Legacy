@@ -23,7 +23,8 @@ import fr.eyzox.forgecreeperheal.commands.profiler.ProfilerCommand;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldTickEventHandler;
-import fr.eyzox.forgecreeperheal.network.profiler.ProfilerInfoMessage;
+import fr.eyzox.forgecreeperheal.network.ModDataMessage;
+import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
 
 public class CommonProxy {
 
@@ -47,7 +48,8 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ExplosionEventHandler());
         
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
-        channel.registerMessage(ProfilerInfoMessage.Handler.class, ProfilerInfoMessage.class, 0, Side.CLIENT);
+        channel.registerMessage(ModDataMessage.Handler.class, ModDataMessage.class, 0, Side.SERVER);
+        channel.registerMessage(ProfilerInfoMessage.Handler.class, ProfilerInfoMessage.class, 1, Side.CLIENT);
     }
     
     @EventHandler
