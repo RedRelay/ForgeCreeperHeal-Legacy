@@ -35,7 +35,7 @@ Arguments is Java cannonical class name, so for Creeper this is net.minecraft.en
 
 * Config
   * « fromEntityException » : Choose entities by name not class.
-  * Reload config without relaunch Minecraft	
+  * ~~Reload config without relaunch Minecraft	~~ Done in 1.1.0
   * Change config by command
   * Change config by GUI
   * Get a per world configuration
@@ -47,8 +47,7 @@ Arguments is Java cannonical class name, so for Creeper this is net.minecraft.en
   * New heal algorithm (*)
 
 * Performances
-  * Add a profiler to know mod consumption
-  * Reduce memory consumption
+  * ~~Add a profiler to know mod consumption~~ Done in 1.1.0
 
 (*) = Customizable
 Feel you free to suggest some improvements.
