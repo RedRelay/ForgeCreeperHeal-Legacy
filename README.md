@@ -35,7 +35,7 @@ Arguments is Java cannonical class name, so for Creeper this is net.minecraft.en
 
 * Config
   * « fromEntityException » : Choose entities by name not class.
-  * ~~Reload config without relaunch Minecraft	~~ Done in 1.1.0
+  * ~~Reload config without relaunch Minecraft~~ Done in 1.1.0
   * Change config by command
   * Change config by GUI
   * Get a per world configuration
