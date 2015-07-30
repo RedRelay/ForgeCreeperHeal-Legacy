@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.1 - Currently in dev
+## 1.1.1
 
 ### bug fixes
 
