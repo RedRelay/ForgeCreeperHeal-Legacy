@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1 - Currently in dev
+
+### bug fixes
+
+* Concurrent exception from ProfilerRenderEventHandler.onRenderOverlay() fixed
+* Adds replacements for illegal arguments from config file
+
 ## 1.1.0
 
 ### new feature :
