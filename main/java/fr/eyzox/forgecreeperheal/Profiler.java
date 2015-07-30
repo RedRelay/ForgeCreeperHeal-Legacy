@@ -128,7 +128,7 @@ public class Profiler {
 	public void report() {
 		if(currentTick < totalTicks) return;
 		double totalTicks = this.avgTick+this.avgExplosion;
-		if(serverWatch) ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.dimensionId, totalTicks, this.blocksUsed));
+		if(serverWatch) ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.getDimensionId(), totalTicks, this.blocksUsed));
 		for(EntityPlayerMP player : clientSideModListeners) {
 			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
 				ForgeCreeperHeal.getChannel().sendTo(new ProfilerInfoMessage(worldHealer.getWorld(), totalTicks, blocksUsed), player);
@@ -139,7 +139,7 @@ public class Profiler {
 		
 		for(EntityPlayerMP player : noClientSideModListeners) {
 			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
-				ForgeCreeperHealCommands.addChatMessage(player, new ChatComponentText(String.format("[%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.dimensionId, totalTicks, this.blocksUsed)));
+				ForgeCreeperHealCommands.addChatMessage(player, new ChatComponentText(String.format("[%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.getDimensionId(), totalTicks, this.blocksUsed)));
 			}else {
 				worldHealer.disableProfiler(player);
 			}

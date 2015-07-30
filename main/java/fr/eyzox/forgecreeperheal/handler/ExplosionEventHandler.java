@@ -1,21 +1,49 @@
 package fr.eyzox.forgecreeperheal.handler;
 
+import java.lang.reflect.Field;
+
+import net.minecraft.crash.CrashReport;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.ExplosionEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.reflection.Reflect;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class ExplosionEventHandler {
 
+	private Field exploder;
+
+	public ExplosionEventHandler() {
+		exploder = Reflect.getFieldForClass(Explosion.class, "exploder", "field_77283_e");
+	}
+
 	@SubscribeEvent
 	public void onDetonate(ExplosionEvent.Detonate event) {
-		if(!event.world.isRemote && event.explosion.exploder != null && !ForgeCreeperHeal.getConfig().getFromEntityException().contains(event.explosion.exploder.getClass())) {
-			WorldHealer worldHealer = ForgeCreeperHeal.getWorldHealer((WorldServer) event.world);
-			if(worldHealer != null) {
-				worldHealer.onDetonate(event);
+		//TODO FromPlayer exception config
+		if(!event.world.isRemote) {
+			Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.explosion);
+			if(exploder != null && !ForgeCreeperHeal.getConfig().getFromEntityException().contains(exploder.getClass())) {
+				WorldHealer worldHealer = ForgeCreeperHeal.getWorldHealer((WorldServer) event.world);
+				if(worldHealer != null) {
+					worldHealer.onDetonate(event);
+				}
 			}
 		}
+	}
+
+	private Entity getExploderFromExplosion(Explosion explosion) {
+		Entity entity = null;
+		try {
+			entity = (Entity)exploder.get(explosion);
+		} catch (ReflectiveOperationException e) {
+			CrashReport crash = new CrashReport(e.getLocalizedMessage(), e);
+			FMLCommonHandler.instance().enhanceCrashReport(crash, crash.makeCategory(ForgeCreeperHeal.MODNAME));
+		}
+		return entity;
 	}
 
 }

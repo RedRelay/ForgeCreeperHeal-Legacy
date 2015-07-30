@@ -1,45 +1,36 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class BlockData {
-	private Block block;
-	private int metadata;
+	private IBlockState blockState;
 	private NBTTagCompound tileEntityTag;
-	private ChunkPosition chunkPosition;
+	private BlockPos blockPos;
 	
-	public BlockData(World world, ChunkPosition chunkPosition) {
-		this(world.getBlock(chunkPosition.chunkPosX, chunkPosition.chunkPosY, chunkPosition.chunkPosZ));
-		this.chunkPosition = chunkPosition;
-		this.metadata = world.getBlockMetadata(chunkPosition.chunkPosX, chunkPosition.chunkPosY, chunkPosition.chunkPosZ);
-		TileEntity te = world.getTileEntity(chunkPosition.chunkPosX, chunkPosition.chunkPosY, chunkPosition.chunkPosZ);
+	public BlockData(World world, BlockPos chunkPosition, IBlockState blockState) {
+		this.blockState = blockState;
+		this.blockPos = chunkPosition;
+		TileEntity te = world.getTileEntity(chunkPosition);
 		if(te != null) {
 			this.tileEntityTag = new NBTTagCompound();
 			te.writeToNBT(tileEntityTag);
 		}
 	}
 	
-	protected BlockData(Block block) {
-		this.block = block;
-	}
-	
-	protected BlockData() {}
+	public BlockData() {}
 
-	public Block getBlock() {
-		return block;
+	public IBlockState getBlockState() {
+		return blockState;
 	}
 
-	public int getMetadata() {
-		return metadata;
-	}
-
-	public ChunkPosition getChunkPosition() {
-		return chunkPosition;
+	public BlockPos getBlockPos() {
+		return blockPos;
 	}
 
 	public NBTTagCompound getTileEntityTag() {
@@ -47,23 +38,38 @@ public class BlockData {
 	}
 	
 	public void readFromNBT(NBTTagCompound tag) {
-		this.block = Block.getBlockFromName(tag.getString("block"));
-		this.metadata = tag.getInteger("metadata");
-		int[] coords = tag.getIntArray("chunkposition");
-		this.chunkPosition = new ChunkPosition(coords[0], coords[1], coords[2]);
-		this.tileEntityTag = tag.getCompoundTag("tileentity");
-		if(this.tileEntityTag.hasNoTags()) this.tileEntityTag = null;
+		Block block = Block.getBlockFromName(tag.getString("block"));
+		if(block != null) {
+			this.blockState = block.getStateFromMeta(tag.getInteger("metadata"));
+			this.blockPos = BlockPos.fromLong(tag.getLong("coords"));
+			this.tileEntityTag = tag.getCompoundTag("tileentity");
+			if(this.tileEntityTag.hasNoTags()) this.tileEntityTag = null;
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
-		tag.setString("block", GameData.getBlockRegistry().getNameForObject(this.block));
+		tag.setString("block", GameData.getBlockRegistry().getNameForObject(this.blockState.getBlock()).toString());
+		int metadata = blockState.getBlock().getMetaFromState(blockState);
 		if(metadata != 0) {
-			tag.setInteger("metadata", this.metadata);
+			tag.setInteger("metadata", metadata);
 		}
-		tag.setIntArray("chunkposition", new int[]{this.chunkPosition.chunkPosX,this.chunkPosition.chunkPosY,this.chunkPosition.chunkPosZ});
+		tag.setLong("coords", blockPos.toLong());
 		if(this.tileEntityTag != null) {
 			tag.setTag("tileentity", this.tileEntityTag);
 		}
 	}
+
+	public void setBlockState(IBlockState blockState) {
+		this.blockState = blockState;
+	}
+
+	public void setTileEntityTag(NBTTagCompound tileEntityTag) {
+		this.tileEntityTag = tileEntityTag;
+	}
+
+	public void setBlockPos(BlockPos blockPos) {
+		this.blockPos = blockPos;
+	}
+	
 	
 }

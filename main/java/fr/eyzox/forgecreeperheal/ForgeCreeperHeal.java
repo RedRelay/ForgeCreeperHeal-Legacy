@@ -2,17 +2,17 @@ package fr.eyzox.forgecreeperheal;
 
 
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import org.apache.logging.log4j.Logger;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
@@ -73,6 +73,7 @@ public class ForgeCreeperHeal
     public static CommonProxy getProxy() {
     	return proxy;
     }
+    
     public static void reloadConfig() {
     	proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
     }

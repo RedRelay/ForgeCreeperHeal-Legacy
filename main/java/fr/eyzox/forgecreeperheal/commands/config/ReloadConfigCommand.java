@@ -9,7 +9,7 @@ import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 public class ReloadConfigCommand extends CommandBase {
 
 	@Override
-	public String getCommandName() {
+	public String getName() {
 		return "reload";
 	}
 
@@ -19,7 +19,7 @@ public class ReloadConfigCommand extends CommandBase {
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] p_71515_2_) {
+	public void execute(ICommandSender sender, String[] p_71515_2_) {
 		ForgeCreeperHeal.reloadConfig();
 		ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Config reloaded"));
 	}

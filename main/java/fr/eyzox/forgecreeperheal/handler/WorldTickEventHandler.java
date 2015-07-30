@@ -1,8 +1,8 @@
 package fr.eyzox.forgecreeperheal.handler;
 
 import net.minecraft.world.WorldServer;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 

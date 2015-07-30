@@ -1,7 +1,7 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import fr.eyzox.forgecreeperheal.handler.PlayerModDataHandler;
 import fr.eyzox.forgecreeperheal.handler.ProfilerRenderEventHandler;
 

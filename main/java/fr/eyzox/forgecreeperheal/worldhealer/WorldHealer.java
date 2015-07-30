@@ -3,7 +3,7 @@ package fr.eyzox.forgecreeperheal.worldhealer;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
@@ -24,7 +24,7 @@ import fr.eyzox.ticklinkedlist.TickContainer;
 public class WorldHealer extends WorldSavedData{
 
 	private World world;
-	private HealTask toHeal;
+	private HealTask healTask;
 
 	private Profiler profiler;
 
@@ -34,7 +34,7 @@ public class WorldHealer extends WorldSavedData{
 
 	public WorldHealer(String key) {
 		super(key);
-		toHeal = new HealTask();
+		healTask = new HealTask();
 	}
 
 	public void onTick() {
@@ -43,7 +43,7 @@ public class WorldHealer extends WorldSavedData{
 			profiler.tickStart();
 		}
 
-		Collection<BlockData> blocksToHeal = toHeal.tick();
+		Collection<BlockData> blocksToHeal = healTask.tick();
 		if(blocksToHeal != null) {
 			for(BlockData blockData : blocksToHeal) {
 				heal(blockData);
@@ -52,7 +52,7 @@ public class WorldHealer extends WorldSavedData{
 
 		if(profiler != null) {
 			profiler.tickStop();
-			profiler.handleMemoryUse(toHeal.getLinkedList());
+			profiler.handleMemoryUse(healTask.getLinkedList());
 			profiler.report();
 		}
 	}
@@ -63,25 +63,25 @@ public class WorldHealer extends WorldSavedData{
 		}
 		int maxTicksBeforeHeal = 0;
 		//Process primary blocks
-		for(ChunkPosition c : event.getAffectedBlocks()) {
-			Block block = event.world.getBlock(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
-			if(block.isNormalCube()) {
+		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
+			IBlockState blockStateExplosion = event.world.getBlockState(blockPosExplosion);
+			if(blockStateExplosion.getBlock().isNormalCube()) {
 
 				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal()+world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
 				if(ticksBeforeHeal > maxTicksBeforeHeal) {
 					maxTicksBeforeHeal = ticksBeforeHeal;
 				}
 
-				onBlockHealed(c, block, ticksBeforeHeal);
+				onBlockHealed(blockPosExplosion, blockStateExplosion, ticksBeforeHeal);
 			}
 		}
 		maxTicksBeforeHeal++;
 
 		//Process secondary blocks
-		for(ChunkPosition c : event.getAffectedBlocks()) {
-			Block block = event.world.getBlock(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
-			if(!block.isNormalCube() && !block.isAir(event.world, c.chunkPosX, c.chunkPosY, c.chunkPosZ)) {
-				onBlockHealed(c, block, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
+		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
+			IBlockState blockStateExplosion = event.world.getBlockState(blockPosExplosion);
+			if(!blockStateExplosion.getBlock().isNormalCube() && !blockStateExplosion.getBlock().isAir(event.world, blockPosExplosion)) {
+				onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
 			}
 		}
 		if(profiler != null) {
@@ -89,54 +89,54 @@ public class WorldHealer extends WorldSavedData{
 		}
 	}
 
-	private void onBlockHealed(ChunkPosition c, Block block, int ticks) {
-		if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer() && !ForgeCreeperHeal.getConfig().getRemoveException().contains(block)) {
-			TileEntity te = world.getTileEntity(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
+	private void onBlockHealed(BlockPos blockPosExplosion, IBlockState blockStateExplosion, int ticks) {
+		if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer() && !ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
+			TileEntity te = world.getTileEntity(blockPosExplosion);
 			if(te instanceof IInventory) {
-				WorldHealerUtils.dropInventory(world, c, (IInventory) te);
+				WorldHealerUtils.dropInventory(world, blockPosExplosion, (IInventory) te);
 			}
 		}
 
-		if(!ForgeCreeperHeal.getConfig().getHealException().contains(block)) {
-			toHeal.add(ticks, new BlockData(world,c));
+		if(!ForgeCreeperHeal.getConfig().getHealException().contains(blockStateExplosion.getBlock())) {
+			healTask.add(ticks, new BlockData(world,blockPosExplosion, blockStateExplosion));
 		}
 
-		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(block)) {
-			world.removeTileEntity(c.chunkPosX, c.chunkPosY, c.chunkPosZ);
-			world.setBlock(c.chunkPosX, c.chunkPosY, c.chunkPosZ, Blocks.air, 0, 7);
+		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
+			world.removeTileEntity(blockPosExplosion);
+			world.setBlockState(blockPosExplosion, Blocks.air.getDefaultState(), 7);
 		}
 	}
 
 	private void heal(BlockData blockData) {
-		boolean isAir = this.world.isAirBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ);
+		boolean isAir = this.world.isAirBlock(blockData.getBlockPos());
 
-		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(this.world.getBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ)) != null)) {
+		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(this.world.getBlockState(blockData.getBlockPos()).getBlock()) != null)) {
 			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
-				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getChunkPosition(), new ItemStack(world.getBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ)), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
+				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(world.getBlockState(blockData.getBlockPos()).getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
 
-				TileEntity te = world.getTileEntity(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ);
+				TileEntity te = world.getTileEntity(blockData.getBlockPos());
 				if(te instanceof IInventory) {
-					WorldHealerUtils.dropInventory(world, blockData.getChunkPosition(), (IInventory) te);
+					WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
 				}
 			}
 
-			world.setBlock(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ, blockData.getBlock(), blockData.getMetadata(), 7);
-			world.setBlockMetadataWithNotify(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ, blockData.getMetadata(), 7);
+			world.setBlockState(blockData.getBlockPos(), blockData.getBlockState(), 7);
+
 			if(blockData.getTileEntityTag() != null) {
-				TileEntity te = world.getTileEntity(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ);
+				TileEntity te = world.getTileEntity(blockData.getBlockPos());
 				if(te != null) {
 					te.readFromNBT(blockData.getTileEntityTag());
-					world.setTileEntity(blockData.getChunkPosition().chunkPosX, blockData.getChunkPosition().chunkPosY, blockData.getChunkPosition().chunkPosZ, te);
+					world.setTileEntity(blockData.getBlockPos(), te);
 				}
 			}
 
 		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
-			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getChunkPosition(), new ItemStack(blockData.getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
+			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(blockData.getBlockState().getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
 			if(blockData.getTileEntityTag() != null) {
-				TileEntity te = blockData.getBlock().createTileEntity(world, blockData.getMetadata());
+				TileEntity te = blockData.getBlockState().getBlock().createTileEntity(world, blockData.getBlockState());
 				if(te instanceof IInventory) {
 					te.readFromNBT(blockData.getTileEntityTag());
-					WorldHealerUtils.dropInventory(world, blockData.getChunkPosition(), (IInventory) te);
+					WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
 				}
 			}
 
@@ -150,7 +150,7 @@ public class WorldHealer extends WorldSavedData{
 
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
-		NBTTagList tagList = (NBTTagList) tag.getTag("toHeal");
+		NBTTagList tagList = (NBTTagList) tag.getTag("healtasklist");
 		for(int i=0; i<tagList.tagCount(); i++) {
 			NBTTagCompound tickContainerTag = tagList.getCompoundTagAt(i);
 			int ticksLeft = tickContainerTag.getInteger("ticks");
@@ -162,7 +162,7 @@ public class WorldHealer extends WorldSavedData{
 				blockData.readFromNBT(blockDataTag);
 				blockDataList.add(blockData);
 			}
-			toHeal.getLinkedList().addLast(new TickContainer<Collection<BlockData>>(ticksLeft, blockDataList));
+			healTask.getLinkedList().addLast(new TickContainer<Collection<BlockData>>(ticksLeft, blockDataList));
 		}
 
 	}
@@ -170,7 +170,7 @@ public class WorldHealer extends WorldSavedData{
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		NBTTagList tagList = new NBTTagList();
-		for(TickContainer<Collection<BlockData>> tc : this.toHeal.getLinkedList()) {
+		for(TickContainer<Collection<BlockData>> tc : this.healTask.getLinkedList()) {
 			NBTTagCompound tickContainerTag = new NBTTagCompound();
 			tickContainerTag.setInteger("ticks", tc.getTick());
 			NBTTagList blockDataListTag = new NBTTagList();
@@ -182,17 +182,17 @@ public class WorldHealer extends WorldSavedData{
 			tickContainerTag.setTag("blockdatalist", blockDataListTag);
 			tagList.appendTag(tickContainerTag);
 		}
-		tag.setTag("toHeal", tagList);
+		tag.setTag("healtasklist", tagList);
 	}
 
 	public static WorldHealer loadWorldHealer(World w) {
-		MapStorage storage = w.perWorldStorage;
+		MapStorage storage = w.getPerWorldStorage();
 		final String KEY = getDataStorageKey();
 		WorldHealer result = (WorldHealer)storage.loadData(WorldHealer.class, KEY);
 		if (result == null) {
 			result = new WorldHealer(KEY);
 			storage.setData(KEY, result);
-			ForgeCreeperHeal.getLogger().info("Unable to find data for world "+w.getWorldInfo().getWorldName()+"["+w.provider.dimensionId+"], new data created");
+			ForgeCreeperHeal.getLogger().info("Unable to find data for world "+w.getWorldInfo().getWorldName()+"["+w.provider.getDimensionId()+"], new data created");
 		}
 
 		result.world = w;
