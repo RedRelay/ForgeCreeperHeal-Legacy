@@ -5,31 +5,13 @@ An open source mod for Minecraft Forge to auto-heal world after an explosion ins
 ## Overview
 
 [![Overview video](http://img.youtube.com/vi/KBzI7iXmbx0/0.jpg)](http://www.youtube.com/watch?v=KBzI7iXmbx0)
+[![1.1.0 video](http://img.youtube.com/vi/3M5EytpMjP4/0.jpg)](http://www.youtube.com/watch?v=3M5EytpMjP4)
 
 Clients don't need Forge Creeper Heal installed to join your server BUT they need have Forge.
 
 ## Customizable Settings
 
-Config file is in your game directory as forgecreeperheal.cfg .
-This is JSON so you have to know how write JSON correctly to cusomize settings. See https://wikipedia.org/wiki/JSON .
-
-Setting | Default value | Description
-------- | ------------- | -----------
-minimumTicksBeforeHeal | 6000 | Minimum ticks before begin healing terrain
-randomTickVar | 12000 | For each block a random number beetween 0 and this value is added to the minimum ticks setting to fix time before heal
-override | false | If true and a block was placed at the location before healing, the broken block override it
-overrideFluid | true | See override but for fluids (included flowing fluids)
-dropItemsFromContainer | true | If true, items in a broken block are droped else nothing is droped but block will be heal with its content
-dropIfAlreadyBlock | false | If true, a block wich cannot be healed or an overrided block, and their contents are droped
-removeException | minecraft:tnt | Blocks which don't be removed by the explosion
-healException | minecraft:tnt | Blocks which don't be healed
-fromEntityException | [] | Entity classes ignored by the mod
-
-About « removeException » :
-While explosion, Forge Creeper Heal removes all affected blocks not contained in this list. Removed blocks don't take explosion effect, so no items droped for basic blocks and for TNT its doesn't activate. So if you remove TNT from this list you will not have chain reaction anymore. 
-
-About « fromEntityException » :
-Arguments is Java cannonical class name, so for Creeper this is net.minecraft.entity.monster.EntityCreeper.
+See : https://github.com/EyZox/ForgeCreeperHeal/wiki/Customizable-Settings
 
 ## Planned improvement
 
@@ -51,4 +33,9 @@ Arguments is Java cannonical class name, so for Creeper this is net.minecraft.en
 
 (*) = Customizable
 Feel you free to suggest some improvements.
+
+## Known bugs :
+
+* Doors
+* Somes blocks like crops or redstone
 
