@@ -27,7 +27,7 @@ public class Config {
 	private boolean dropItemsFromContainer;
 	private boolean dropIfAlreadyBlock;
 	
-	
+
 	private Set<Block> removeException = new HashSet<Block>();
 	private Set<Block> healException = new HashSet<Block>();
 	private Set<Class<? extends Entity>> fromEntityException = new HashSet<Class<? extends Entity>>();
@@ -126,8 +126,14 @@ public class Config {
 			c = createNewConfig(configFile);
 		}
 		
+		c.correctIllegalValues();
 		
 		return c;
+	}
+	
+	private void correctIllegalValues() {
+		if(minimumTicksBeforeHeal <= 0) minimumTicksBeforeHeal = 1;
+		if(randomTickVar <= 0) randomTickVar = 1;
 	}
 	
 	private static Config createNewConfig(File configFile) {
