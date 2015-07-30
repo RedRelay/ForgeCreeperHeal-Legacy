@@ -1,8 +1,5 @@
 package fr.eyzox.forgecreeperheal;
 
-import java.util.Map;
-
-import fr.eyzox.forgecreeperheal.network.ModDataMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +12,6 @@ public class PlayerModData implements IExtendedEntityProperties {
 	
 	public PlayerModData(String modVersion) {
 		this.MOD_VERSION = modVersion;
-		System.out.println("OKOKOKOKOK");
 	}
 	
 	@Override

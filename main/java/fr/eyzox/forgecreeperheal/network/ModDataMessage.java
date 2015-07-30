@@ -1,14 +1,11 @@
 package fr.eyzox.forgecreeperheal.network;
 
-import net.minecraft.entity.player.EntityPlayer;
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.PlayerModData;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.PlayerModData;
 
 public class ModDataMessage implements IMessage {
 
