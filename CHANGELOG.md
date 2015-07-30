@@ -1,6 +1,12 @@
 # Changelog
 
-## 1.1.1 - Currently in dev
+## 1.2.0
+
+### news :
+
+* Add heal command to instant regenerate terrain
+
+## 1.1.1
 
 ### bug fixes
 
@@ -9,7 +15,7 @@
 
 ## 1.1.0
 
-### new feature :
+### news :
 
 * Allows to reload config in game
 * Adds [profiler](https://github.com/EyZox/ForgeCreeperHeal/wiki/Profiler)

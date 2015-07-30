@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import fr.eyzox.forgecreeperheal.Config;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
+import fr.eyzox.forgecreeperheal.commands.HealCommand;
 import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
 import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
 import fr.eyzox.forgecreeperheal.commands.profiler.ProfilerCommand;
@@ -69,6 +70,9 @@ public class CommonProxy {
     	
     	//Register Profiler Commands
     	forgeCreeperHealCmds.register(new ProfilerCommand());
+    	
+    	//Register Heal Commands
+    	forgeCreeperHealCmds.register(new HealCommand());
     	
 		m.registerCommand(forgeCreeperHealCmds);
 	}

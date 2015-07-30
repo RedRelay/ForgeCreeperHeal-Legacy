@@ -142,6 +142,15 @@ public class WorldHealer extends WorldSavedData{
 
 		}
 	}
+	
+	public void healAll() {
+		for(TickContainer<Collection<BlockData>> tc : healTask.getLinkedList()) {
+			for(BlockData b : tc.getData()) {
+				this.heal(b);
+			}
+		}
+		healTask.getLinkedList().clear();
+	}
 
 
 	public World getWorld() {
