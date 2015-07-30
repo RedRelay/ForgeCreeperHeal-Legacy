@@ -34,5 +34,5 @@ The user has the right to decompile the source code, look at either the decompil
 The user has the rights to derive code from this mod, that is to say to write code that extends or instanciate the mod classes or interfaces, refer to its objects, or calls its functions. This code is known as "derived" code, and can be licensed under a license different from this mod.
 
 6. Distribution of original or modified copy rights
-The download link must redirect to the link given in Forge Creeper Heal official threads
+The download link must redirect to the link given in Forge Creeper Heal official threads except for China, see : http://www.mcbbs.net/thread-474470-1-1.html.
 You are not allowed to add any monetizing link to the mod download
