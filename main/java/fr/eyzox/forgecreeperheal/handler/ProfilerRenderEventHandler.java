@@ -1,9 +1,9 @@
 package fr.eyzox.forgecreeperheal.handler;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -15,7 +15,7 @@ import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
 @SideOnly(Side.CLIENT)
 public class ProfilerRenderEventHandler {
 
-	private Map<String, ProfilerInfoMessage> map = new HashMap<String, ProfilerInfoMessage>();
+	private Map<String, ProfilerInfoMessage> map = new ConcurrentHashMap<String, ProfilerInfoMessage>();
 
 	@SubscribeEvent
 	public void onRenderOverlay(RenderGameOverlayEvent.Text event) {
