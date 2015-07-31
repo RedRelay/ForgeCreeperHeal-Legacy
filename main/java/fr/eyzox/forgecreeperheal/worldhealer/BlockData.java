@@ -12,7 +12,8 @@ public class BlockData {
 	private IBlockState blockState;
 	private NBTTagCompound tileEntityTag;
 	private BlockPos blockPos;
-	
+	private BlockData next;
+
 	public BlockData(World world, BlockPos chunkPosition, IBlockState blockState) {
 		this.blockState = blockState;
 		this.blockPos = chunkPosition;
@@ -22,7 +23,7 @@ public class BlockData {
 			te.writeToNBT(tileEntityTag);
 		}
 	}
-	
+
 	public BlockData() {}
 
 	public IBlockState getBlockState() {
@@ -36,27 +37,54 @@ public class BlockData {
 	public NBTTagCompound getTileEntityTag() {
 		return tileEntityTag;
 	}
-	
+
 	public void readFromNBT(NBTTagCompound tag) {
-		Block block = Block.getBlockFromName(tag.getString("block"));
-		if(block != null) {
-			this.blockState = block.getStateFromMeta(tag.getInteger("metadata"));
-			this.blockPos = BlockPos.fromLong(tag.getLong("coords"));
-			this.tileEntityTag = tag.getCompoundTag("tileentity");
-			if(this.tileEntityTag.hasNoTags()) this.tileEntityTag = null;
+		
+		BlockData prevBlockData = null;
+		BlockData currentBlockData = this;
+		NBTTagCompound cursorTag = tag;
+		
+		while(!(cursorTag = cursorTag.getCompoundTag("BlockData")).hasNoTags()) {
+			Block block = Block.getBlockFromName(cursorTag.getString("block"));
+			if(block != null) {
+				currentBlockData.blockState = block.getStateFromMeta(cursorTag.getInteger("metadata"));
+				currentBlockData.blockPos = BlockPos.fromLong(cursorTag.getLong("coords"));
+				currentBlockData.tileEntityTag = cursorTag.getCompoundTag("tileentity");
+				if(currentBlockData.tileEntityTag.hasNoTags()) currentBlockData.tileEntityTag = null;
+			}
+			
+			if(prevBlockData != null) {
+				prevBlockData.next = currentBlockData;
+			}
+			
+			prevBlockData = currentBlockData;
 		}
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
-		tag.setString("block", GameData.getBlockRegistry().getNameForObject(this.blockState.getBlock()).toString());
-		int metadata = blockState.getBlock().getMetaFromState(blockState);
-		if(metadata != 0) {
-			tag.setInteger("metadata", metadata);
-		}
-		tag.setLong("coords", blockPos.toLong());
-		if(this.tileEntityTag != null) {
-			tag.setTag("tileentity", this.tileEntityTag);
-		}
+
+		BlockData cursorBlockData = this;
+		NBTTagCompound cursorTag = tag;
+
+		do {
+
+			NBTTagCompound blockDataTag = new NBTTagCompound();
+			cursorTag.setTag("BlockData", blockDataTag);
+
+			blockDataTag.setString("block", GameData.getBlockRegistry().getNameForObject(cursorBlockData.blockState.getBlock()).toString());
+			int metadata = cursorBlockData.blockState.getBlock().getMetaFromState(cursorBlockData.blockState);
+			if(metadata != 0) {
+				blockDataTag.setInteger("metadata", metadata);
+			}
+			blockDataTag.setLong("coords", cursorBlockData.blockPos.toLong());
+			if(cursorBlockData.tileEntityTag != null) {
+				blockDataTag.setTag("tileentity", cursorBlockData.tileEntityTag);
+			}
+
+			
+			cursorTag = blockDataTag;
+
+		}while((cursorBlockData = cursorBlockData.getNext()) != null);
 	}
 
 	public void setBlockState(IBlockState blockState) {
@@ -70,6 +98,13 @@ public class BlockData {
 	public void setBlockPos(BlockPos blockPos) {
 		this.blockPos = blockPos;
 	}
-	
-	
+
+	public BlockData getNext() {
+		return next;
+	}
+
+	public void setNext(BlockData next) {
+		this.next = next;
+	}
+
 }

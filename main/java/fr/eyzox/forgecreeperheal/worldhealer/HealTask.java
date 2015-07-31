@@ -1,28 +1,37 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.ticklinkedlist.AbstractTickContainerLinkedList;
 import fr.eyzox.ticklinkedlist.TickContainer;
 
-public class HealTask extends AbstractTickContainerLinkedList<Collection<BlockData>> {
+public class HealTask extends AbstractTickContainerLinkedList<BlockData> {
 
 	@Override
-	protected Collection<BlockData> merge(Collection<BlockData> o1, Collection<BlockData> o2) {
-		o2.addAll(o1);
-		return o2;
+	protected BlockData merge(final BlockData o1, final BlockData o2) {
+		BlockData cursor = o1;
+		while(cursor.getNext() != null) {
+			cursor = cursor.getNext();
+		}
+		cursor.setNext(o2);
+		return o1;
 	}
 	
-	protected LinkedList<TickContainer<Collection<BlockData>>> getLinkedList() {
+	protected LinkedList<TickContainer<BlockData>> getLinkedList() {
 		return list;
 	}
-
-	public void add(int tick, BlockData data) {
-		Collection<BlockData> c = new ArrayList<BlockData>(1);
-		c.add(data);
-		add(tick, c);
+	
+	public void add(List<BlockData> blockDataList) {
+		Collections.shuffle(blockDataList);
+		int minTick = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal();
+		for(BlockData blockData : blockDataList) {
+			int tick = minTick + ForgeCreeperHeal.getConfig().getRandomTickVar();
+			this.add(tick, blockData);
+			minTick = tick;
+		}
 	}
 
 
