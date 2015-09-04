@@ -5,14 +5,27 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.minecraft.block.BlockBanner.BlockBannerHanging;
+import net.minecraft.block.BlockBanner.BlockBannerStanding;
+import net.minecraft.block.BlockBasePressurePlate;
 import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockCactus;
+import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLadder;
+import net.minecraft.block.BlockRailBase;
+import net.minecraft.block.BlockRedstoneDiode;
+import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.BlockReed;
+import net.minecraft.block.BlockSnow;
+import net.minecraft.block.BlockStandingSign;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.BlockTrapDoor;
+import net.minecraft.block.BlockTripWire;
+import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.BlockWallSign;
 import fr.eyzox.forgecreeperheal.healgraph.matcherfactories.FacingMatcherFactory;
-import fr.eyzox.forgecreeperheal.healgraph.matcherfactories.FallingBlockMatcherFactory;
 import fr.eyzox.forgecreeperheal.healgraph.matcherfactories.IBlockDataMatcherFactory;
+import fr.eyzox.forgecreeperheal.healgraph.matcherfactories.SupportByBottomMatcherFactory;
 import fr.eyzox.forgecreeperheal.healgraph.matchers.IBlockDataMatcher;
 
 public class BlockDataGraph extends BlockDataNode{
@@ -55,7 +68,21 @@ public class BlockDataGraph extends BlockDataNode{
 			blockDataVisitorFactories.add(new FacingMatcherFactory(BlockTrapDoor.class, BlockTrapDoor.FACING));
 			blockDataVisitorFactories.add(new FacingMatcherFactory(BlockButton.class, BlockButton.FACING));
 			blockDataVisitorFactories.add(new FacingMatcherFactory(BlockBannerHanging.class, BlockBannerHanging.FACING));
-			blockDataVisitorFactories.add(new FallingBlockMatcherFactory());
+			blockDataVisitorFactories.add(new FacingMatcherFactory(BlockTripWireHook.class, BlockTripWireHook.FACING));
+			//blockDataVisitorFactories.add(new FacingMatcherFactory(BlockPistonExtension.class, BlockPistonExtension.FACING));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockFalling.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockBasePressurePlate.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockBannerStanding.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockRedstoneDiode.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockRedstoneWire.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockStandingSign.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockCrops.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockCactus.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockRailBase.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockReed.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockSnow.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockTripWire.class));
+			
 		}
 		return blockDataVisitorFactories;
 	}
