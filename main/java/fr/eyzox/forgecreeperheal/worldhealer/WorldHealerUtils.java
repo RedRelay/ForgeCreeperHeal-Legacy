@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public class WorldHealerUtils {
 	
-	protected static void dropInventory(World world, BlockPos cp, IInventory inventory) {
+	public static void dropInventory(World world, BlockPos cp, IInventory inventory) {
 		for (int inventoryIndex = 0; inventoryIndex < inventory.getSizeInventory(); ++inventoryIndex)
 		{
 			ItemStack itemstack = inventory.getStackInSlot(inventoryIndex);
@@ -50,7 +50,7 @@ public class WorldHealerUtils {
 		}
 	}
 	
-	protected static EntityItem getEntityItem(World world, BlockPos cp, ItemStack itemStack, float deltaX, float deltaY, float deltaZ, float motion) {
+	public static EntityItem getEntityItem(World world, BlockPos cp, ItemStack itemStack, float deltaX, float deltaY, float deltaZ, float motion) {
 		EntityItem entityitem = new EntityItem(world, (double)((float)cp.getX() + deltaX), (double)((float)cp.getY() + deltaY), (double)((float)cp.getZ() + deltaZ), itemStack);
 		entityitem.motionX = (double)((float)world.rand.nextGaussian() * motion);
 		entityitem.motionY = (double)((float)world.rand.nextGaussian() * motion + 0.2F);

@@ -1,18 +1,15 @@
-package fr.eyzox.forgecreeperheal.worldhealer;
+package fr.eyzox.forgecreeperheal.healgraph;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameData;
 
-public class BlockData {
+public class BlockData extends BlockDataNode{
 	private IBlockState blockState;
 	private NBTTagCompound tileEntityTag;
 	private BlockPos blockPos;
-	private BlockData next;
 
 	public BlockData(World world, BlockPos chunkPosition, IBlockState blockState) {
 		this.blockState = blockState;
@@ -39,7 +36,7 @@ public class BlockData {
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
-		
+		/*
 		BlockData prevBlockData = null;
 		BlockData currentBlockData = this;
 		NBTTagCompound cursorTag = tag;
@@ -59,10 +56,11 @@ public class BlockData {
 			
 			prevBlockData = currentBlockData;
 		}
+		*/
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
-
+/*
 		BlockData cursorBlockData = this;
 		NBTTagCompound cursorTag = tag;
 
@@ -84,7 +82,7 @@ public class BlockData {
 			
 			cursorTag = blockDataTag;
 
-		}while((cursorBlockData = cursorBlockData.getNext()) != null);
+		}while((cursorBlockData = cursorBlockData.getNext()) != null);*/
 	}
 
 	public void setBlockState(IBlockState blockState) {
@@ -97,14 +95,6 @@ public class BlockData {
 
 	public void setBlockPos(BlockPos blockPos) {
 		this.blockPos = blockPos;
-	}
-
-	public BlockData getNext() {
-		return next;
-	}
-
-	public void setNext(BlockData next) {
-		this.next = next;
 	}
 
 }
