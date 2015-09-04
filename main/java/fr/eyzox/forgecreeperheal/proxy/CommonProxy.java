@@ -38,6 +38,7 @@ public class CommonProxy {
 	public void onPreInit(FMLPreInitializationEvent event) {
     	this.logger = event.getModLog();
     	this.config = Config.loadConfig(event.getSuggestedConfigurationFile());
+    	//this.healGraphBuilder;
     }
 	
 	public void onInit(FMLInitializationEvent event)

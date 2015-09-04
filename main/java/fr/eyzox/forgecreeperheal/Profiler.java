@@ -1,9 +1,6 @@
 package fr.eyzox.forgecreeperheal;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
 
 import net.minecraft.command.ICommandSender;
@@ -12,9 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
-import fr.eyzox.forgecreeperheal.worldhealer.BlockData;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
-import fr.eyzox.ticklinkedlist.TickContainer;
 
 public class Profiler {
 	
@@ -81,6 +76,7 @@ public class Profiler {
 		
 	}
 	
+	/*
 	public void handleMemoryUse(LinkedList<TickContainer<Collection<BlockData>>> data) {
 		if(currentTick < totalTicks) return;
 		this.blocksUsed = 0;
@@ -92,6 +88,7 @@ public class Profiler {
 			this.blocksUsed += cursor.getData().size();
 		}
 	}
+	*/
 	
 	public void addListener(ICommandSender sender) {
 		if(sender instanceof EntityPlayerMP) {
