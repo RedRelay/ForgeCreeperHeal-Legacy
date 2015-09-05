@@ -1,15 +1,17 @@
-package fr.eyzox.forgecreeperheal.healgraph;
+package fr.eyzox.forgecreeperheal.healtimeline;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import fr.eyzox.forgecreeperheal.healtimeline.requirementcheck.IRequirementChecker;
 
-public class BlockData extends BlockDataNode{
+public class BlockData {
 	private IBlockState blockState;
 	private NBTTagCompound tileEntityTag;
 	private BlockPos blockPos;
+	private IRequirementChecker requierement;
 
 	public BlockData(World world, BlockPos chunkPosition, IBlockState blockState) {
 		this.blockState = blockState;
@@ -95,6 +97,14 @@ public class BlockData extends BlockDataNode{
 
 	public void setBlockPos(BlockPos blockPos) {
 		this.blockPos = blockPos;
+	}
+
+	public IRequirementChecker getRequierement() {
+		return requierement;
+	}
+
+	public void setRequierement(IRequirementChecker requierement) {
+		this.requierement = requierement;
 	}
 
 }

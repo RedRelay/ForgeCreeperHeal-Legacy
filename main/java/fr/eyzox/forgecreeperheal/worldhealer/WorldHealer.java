@@ -19,15 +19,13 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.Profiler;
-import fr.eyzox.forgecreeperheal.healgraph.BlockData;
-import fr.eyzox.forgecreeperheal.healgraph.HealGraph;
-import fr.eyzox.sdd.graph.INode;
-import fr.eyzox.sdd.graph.iterators.ReverseIterator;
+import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
+import fr.eyzox.forgecreeperheal.healtimeline.HealTimeline;
 
 public class WorldHealer extends WorldSavedData{
 
 	private World world;
-	private List<HealGraph> healGraphs = new LinkedList<HealGraph>();
+	private List<HealTimeline> healTimelines = new LinkedList<HealTimeline>();
 
 
 	private Profiler profiler;
@@ -47,16 +45,14 @@ public class WorldHealer extends WorldSavedData{
 			profiler.tickStart();
 		}
 		
-		Iterator<HealGraph> healGraphIterator = healGraphs.iterator();
+		Iterator<HealTimeline> healGraphIterator = healTimelines.iterator();
 		while(healGraphIterator.hasNext()) {
-			HealGraph healGraph = healGraphIterator.next();
-			healGraph.onTick(this);
-			if(healGraph.getNextNodes().isEmpty()) {
+			HealTimeline healTimeline = healGraphIterator.next();
+			healTimeline.onTick(this);
+			if(healTimeline.isEmpty()) {
 				healGraphIterator.remove();
 			}
 		}
-		
-		//healGraph.onTick(this);
 		
 
 		if(profiler != null) {
@@ -76,21 +72,12 @@ public class WorldHealer extends WorldSavedData{
 
 		Collection<BlockData> affectedBlockData = getAffectedBlockData(event.world, event.getAffectedBlocks());
 		
-		HealGraph graph = new HealGraph(affectedBlockData);
+		healTimelines.add(new HealTimeline(affectedBlockData));
 		
-		Iterator<INode> it = new ReverseIterator(graph);
-		while(it.hasNext()) {
-			INode node = it.next();
-			if(node instanceof BlockData) {
-				BlockData data = (BlockData) node;
-				if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(data.getBlockState().getBlock())) {
-					removeFromWorld(event.world, data);
-				}
-			}
+		for(BlockData data : affectedBlockData) {
+			event.world.setBlockState(data.getBlockPos(), Blocks.air.getDefaultState(), 2);
 		}
 		
-		healGraphs.add(graph);
-
 		if(profiler != null) {
 			profiler.explosionStop();
 		}
@@ -123,6 +110,10 @@ public class WorldHealer extends WorldSavedData{
 	}
 	
 	public void heal(BlockData blockData) {
+		heal(blockData, 7);
+	}
+	
+	public void heal(BlockData blockData, int flag) {
 
 		boolean isAir = this.world.isAirBlock(blockData.getBlockPos());
 
@@ -136,7 +127,7 @@ public class WorldHealer extends WorldSavedData{
 				}
 			}
 
-			world.setBlockState(blockData.getBlockPos(), blockData.getBlockState(), 7);
+			world.setBlockState(blockData.getBlockPos(), blockData.getBlockState(), flag);
 
 			if(blockData.getTileEntityTag() != null) {
 				TileEntity te = world.getTileEntity(blockData.getBlockPos());
@@ -161,15 +152,11 @@ public class WorldHealer extends WorldSavedData{
 
 	public void healAll() {
 		
-		for(HealGraph healGraph : healGraphs) {
-			for(INode n : healGraph) {
-				if(n instanceof BlockData) {
-					heal((BlockData)n);
-				}
-			}
+		for(HealTimeline healTimeline : healTimelines) {
+			
 		}
 		
-		healGraphs.clear();
+		healTimelines.clear();
 	}
 
 
