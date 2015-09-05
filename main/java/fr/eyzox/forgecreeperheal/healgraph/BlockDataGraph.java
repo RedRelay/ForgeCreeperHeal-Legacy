@@ -9,8 +9,12 @@ import net.minecraft.block.BlockBanner.BlockBannerStanding;
 import net.minecraft.block.BlockBasePressurePlate;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockCactus;
+import net.minecraft.block.BlockCake;
+import net.minecraft.block.BlockCarpet;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.block.BlockFalling;
+import net.minecraft.block.BlockFlowerPot;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRedstoneDiode;
@@ -82,7 +86,10 @@ public class BlockDataGraph extends BlockDataNode{
 			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockReed.class));
 			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockSnow.class));
 			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockTripWire.class));
-			
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockCake.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockCarpet.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockDragonEgg.class));
+			blockDataVisitorFactories.add(new SupportByBottomMatcherFactory(BlockFlowerPot.class));
 		}
 		return blockDataVisitorFactories;
 	}
