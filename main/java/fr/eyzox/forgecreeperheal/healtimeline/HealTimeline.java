@@ -42,7 +42,7 @@ import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class HealTimeline extends AbstractCollection<BlockData>{
 	
-	private static LinkedList<IRequirementFactory> blockDataVisitorFactories = loadFactories();
+	private static LinkedList<IRequirementFactory> RequirementFactories = loadFactories();
 	
 	private static IRequirementChecker OnlyOneDependence = new IRequirementChecker() {
 		@Override
@@ -63,7 +63,7 @@ public class HealTimeline extends AbstractCollection<BlockData>{
 	
 	@Override
 	public boolean add(BlockData data) {
-		for(IRequirementFactory factory : blockDataVisitorFactories) {
+		for(IRequirementFactory factory : RequirementFactories) {
 			if(factory.accept(data)) {
 				IRequirementChecker req = factory.getRequirementBase(data);
 				if(req == null) {
@@ -115,7 +115,7 @@ public class HealTimeline extends AbstractCollection<BlockData>{
 	}
 	
 	public static LinkedList<IRequirementFactory> getIBlockDataVisitorFactories() {
-		return blockDataVisitorFactories;
+		return RequirementFactories;
 	}
 	
 	public static IRequirementChecker getOnlyOneDependenceRequierement() {
@@ -123,33 +123,32 @@ public class HealTimeline extends AbstractCollection<BlockData>{
 	}
 	
 	private static LinkedList<IRequirementFactory> loadFactories() {
-		//TODO CHANGE NAME
-		blockDataVisitorFactories = new LinkedList<IRequirementFactory>();
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockTorch.class, BlockTorch.FACING));
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockLadder.class, BlockLadder.FACING));
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockWallSign.class, BlockWallSign.FACING));
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockTrapDoor.class, BlockTrapDoor.FACING));
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockButton.class, BlockButton.FACING));
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockBannerHanging.class, BlockBannerHanging.FACING));
-		blockDataVisitorFactories.add(new FacingRequirementFactory(BlockTripWireHook.class, BlockTripWireHook.FACING));
+		RequirementFactories = new LinkedList<IRequirementFactory>();
+		RequirementFactories.add(new FacingRequirementFactory(BlockTorch.class, BlockTorch.FACING));
+		RequirementFactories.add(new FacingRequirementFactory(BlockLadder.class, BlockLadder.FACING));
+		RequirementFactories.add(new FacingRequirementFactory(BlockWallSign.class, BlockWallSign.FACING));
+		RequirementFactories.add(new FacingRequirementFactory(BlockTrapDoor.class, BlockTrapDoor.FACING));
+		RequirementFactories.add(new FacingRequirementFactory(BlockButton.class, BlockButton.FACING));
+		RequirementFactories.add(new FacingRequirementFactory(BlockBannerHanging.class, BlockBannerHanging.FACING));
+		RequirementFactories.add(new FacingRequirementFactory(BlockTripWireHook.class, BlockTripWireHook.FACING));
 		//blockDataVisitorFactories.add(new FacingMatcherFactory(BlockPistonExtension.class, BlockPistonExtension.FACING));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockFalling.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockBasePressurePlate.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockBannerStanding.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockRedstoneDiode.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockRedstoneWire.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockStandingSign.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockCrops.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockCactus.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockRailBase.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockReed.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockSnow.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockTripWire.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockCake.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockCarpet.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockDragonEgg.class));
-		blockDataVisitorFactories.add(new SupportByBottomRequirementFactory(BlockFlowerPot.class));
-		return blockDataVisitorFactories;
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockFalling.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockBasePressurePlate.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockBannerStanding.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockRedstoneDiode.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockRedstoneWire.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockStandingSign.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockCrops.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockCactus.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockRailBase.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockReed.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockSnow.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockTripWire.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockCake.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockCarpet.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockDragonEgg.class));
+		RequirementFactories.add(new SupportByBottomRequirementFactory(BlockFlowerPot.class));
+		return RequirementFactories;
 	}
 	
 	private class HealTimelineIterator implements Iterator<BlockData>{
