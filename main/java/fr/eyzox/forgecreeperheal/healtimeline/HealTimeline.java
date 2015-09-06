@@ -36,7 +36,7 @@ import fr.eyzox.forgecreeperheal.healtimeline.factories.IRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.SupportByBottomRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.requirementcheck.IRequirementChecker;
 
-public class HealTimeline {
+public class HealTimeline implements Iterable<BlockData>{
 	
 	private static LinkedList<IRequirementFactory> blockDataVisitorFactories = loadFactories();
 	
@@ -165,5 +165,10 @@ public class HealTimeline {
 			itCursor.remove();
 		}
 		
+	}
+
+	@Override
+	public Iterator<BlockData> iterator() {
+		return new HealTimelineIterator();
 	}
 }
