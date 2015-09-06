@@ -3,34 +3,27 @@ package fr.eyzox.forgecreeperheal.healtimeline;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
-import fr.eyzox.forgecreeperheal.healtimeline.requirementcheck.IRequirementChecker;
 
 public class BlockData {
 	private IBlockState blockState;
 	private NBTTagCompound tileEntityTag;
-	private BlockPos blockPos;
-	private IRequirementChecker requierement;
 
-	public BlockData(World world, BlockPos chunkPosition, IBlockState blockState) {
+	public BlockData(IBlockState blockState, TileEntity te) {
 		this.blockState = blockState;
-		this.blockPos = chunkPosition;
-		TileEntity te = world.getTileEntity(chunkPosition);
 		if(te != null) {
 			this.tileEntityTag = new NBTTagCompound();
 			te.writeToNBT(tileEntityTag);
 		}
+	}
+	
+	public BlockData(IBlockState blockState) {
+		this(blockState, null);
 	}
 
 	public BlockData() {}
 
 	public IBlockState getBlockState() {
 		return blockState;
-	}
-
-	public BlockPos getBlockPos() {
-		return blockPos;
 	}
 
 	public NBTTagCompound getTileEntityTag() {
@@ -93,18 +86,6 @@ public class BlockData {
 
 	public void setTileEntityTag(NBTTagCompound tileEntityTag) {
 		this.tileEntityTag = tileEntityTag;
-	}
-
-	public void setBlockPos(BlockPos blockPos) {
-		this.blockPos = blockPos;
-	}
-
-	public IRequirementChecker getRequierement() {
-		return requierement;
-	}
-
-	public void setRequierement(IRequirementChecker requierement) {
-		this.requierement = requierement;
 	}
 
 }

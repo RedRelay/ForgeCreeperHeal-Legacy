@@ -4,8 +4,9 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.util.BlockPos;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
+import fr.eyzox.timeline.Key;
 
-public abstract class PropertyRequirementFactory extends ClassRequirementFactory {
+public abstract class PropertyRequirementFactory extends BlockClassRequirementFactory {
 
 	private IProperty property;
 	
@@ -27,8 +28,8 @@ public abstract class PropertyRequirementFactory extends ClassRequirementFactory
 	}
 	
 	@Override
-	public BlockPos[] getRequiredBlockPos(BlockData blockData) {
-		Enum e = (Enum)blockData.getBlockState().getValue(getProperty());
+	public BlockPos[] getKeyDependencies(Key<BlockPos,BlockData> blockData) {
+		Enum e = (Enum)blockData.getValue().getBlockState().getValue(getProperty());
 		BlockPos[] requiredBlockPos = getRequiredBlockPos(blockData, e);
 		if(requiredBlockPos == null) {
 			ForgeCreeperHeal.getLogger().warn("Unhandled Enum ["+e+"] in "+this.getClass().getCanonicalName());
@@ -36,6 +37,6 @@ public abstract class PropertyRequirementFactory extends ClassRequirementFactory
 		return requiredBlockPos;
 	}
 
-	public abstract BlockPos[] getRequiredBlockPos(BlockData blockData, Enum e);
+	public abstract BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, Enum e);
 
 }

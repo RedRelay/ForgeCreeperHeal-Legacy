@@ -4,6 +4,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
+import fr.eyzox.timeline.Key;
 
 public class FacingRequirementFactory extends PropertyRequirementFactory {
 	
@@ -16,12 +17,12 @@ public class FacingRequirementFactory extends PropertyRequirementFactory {
 	}
 
 	@Override
-	public BlockPos[] getRequiredBlockPos(BlockData blockData, Enum e) {
-		return getRequiredBlockPos(blockData, (EnumFacing)e);
+	public BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, Enum e) {
+		return getRequiredBlockPos(blockData, ((EnumFacing)e).getOpposite());
 	}
 	
-	public static BlockPos[] getRequiredBlockPos(BlockData blockData, EnumFacing e) {
-		return new BlockPos[]{blockData.getBlockPos().offset(e)};
+	public static BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, EnumFacing e) {
+		return new BlockPos[]{blockData.getKey().offset(e)};
 	}
 
 
