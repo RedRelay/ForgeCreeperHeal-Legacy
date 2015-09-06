@@ -188,7 +188,7 @@ public class HealTimeline extends AbstractCollection<BlockData>{
 
 	@Override
 	public int size() {
-		if(isEmpty()) return 0;
+		if(canBePlaced.isEmpty()) return 0;
 		int size = canBePlaced.size();
 		for(Collection<BlockData> dependences : waiting.values()) {
 			size += dependences.size();
