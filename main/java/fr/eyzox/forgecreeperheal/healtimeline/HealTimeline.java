@@ -144,25 +144,25 @@ public class HealTimeline {
 	
 	private class HealTimelineIterator implements Iterator<BlockData>{
 
-		Iterator<BlockData> canBePlacedIt = HealTimeline.this.canBePlaced.iterator();
-		Iterator<LinkedList<BlockData>> waitingIt = HealTimeline.this.waiting.values().iterator();
-		Iterator<BlockData> dependencesListIt;
+		private Iterator<BlockData> itCursor = HealTimeline.this.canBePlaced.iterator();
+		private Iterator<LinkedList<BlockData>> waitingIt = HealTimeline.this.waiting.values().iterator();
 		
 		@Override
 		public boolean hasNext() {
-			return false;
+			return itCursor.hasNext() || waitingIt.hasNext();
 		}
 
 		@Override
 		public BlockData next() {
-			// TODO Auto-generated method stub
-			return null;
+			if(!itCursor.hasNext()) {
+				itCursor = waitingIt.next().iterator();
+			}
+			return itCursor.next();
 		}
 
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub
-			
+			itCursor.remove();
 		}
 		
 	}
