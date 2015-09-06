@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -90,7 +91,8 @@ public class WorldHealer extends WorldSavedData{
 		HashSet<Key<BlockPos,BlockData>> affectedBlockData = new HashSet<Key<BlockPos,BlockData>>();
 		for(BlockPos blockPosExplosion : affectedBlocks) {
 			if(!world.isAirBlock(blockPosExplosion)) {
-				BlockData blockData = new BlockData(world.getBlockState(blockPosExplosion), world.getTileEntity(blockPosExplosion));
+				IBlockState blockstate = world.getBlockState(blockPosExplosion);
+				BlockData blockData = new BlockData(blockstate, getTileEntityToStore(world, blockPosExplosion, blockstate));
 				if(!ForgeCreeperHeal.getConfig().getHealException().contains(blockData.getBlockState().getBlock())) {
 					affectedBlockData.add(new Key<BlockPos,BlockData>(blockPosExplosion, blockData));
 				}
@@ -99,16 +101,18 @@ public class WorldHealer extends WorldSavedData{
 		return affectedBlockData;
 	}
 	
-	private void removeFromWorld(World world, Key<BlockPos,BlockData> data) {
-		if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer()) {
-			TileEntity te = world.getTileEntity(data.getKey());
-			if(te instanceof IInventory) {
-				WorldHealerUtils.dropInventory(world, data.getKey(), (IInventory) te);
+	private TileEntity getTileEntityToStore(World world, BlockPos blockPos, IBlockState blockstate) {
+		TileEntity tileEntity = world.getTileEntity(blockPos);
+		if(tileEntity instanceof IInventory) {
+			if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer()) {
+				NBTTagCompound buf = new NBTTagCompound();
+				tileEntity.writeToNBT(buf);
+				tileEntity = blockstate.getBlock().createTileEntity(world, blockstate);
+				tileEntity.readFromNBT(buf);
 			}
+			((IInventory)tileEntity).clear();
 		}
-
-		world.removeTileEntity(data.getKey());
-		world.setBlockState(data.getKey(), Blocks.air.getDefaultState(), 7);
+		return tileEntity;
 	}
 	
 	public void heal(Key<BlockPos,BlockData> data) {
