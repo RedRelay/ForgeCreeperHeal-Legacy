@@ -25,9 +25,9 @@ public abstract class PropertyRequirementFactory extends ClassRequirementFactory
 	public void setProperty(IProperty property) {
 		this.property = property;
 	}
-
+	
 	@Override
-	protected BlockPos[] getRequiredBlockPosForThisClass(BlockData blockData) {
+	public BlockPos[] getRequiredBlockPos(BlockData blockData) {
 		Enum e = (Enum)blockData.getBlockState().getValue(getProperty());
 		BlockPos[] requiredBlockPos = getRequiredBlockPos(blockData, e);
 		if(requiredBlockPos == null) {
@@ -35,7 +35,7 @@ public abstract class PropertyRequirementFactory extends ClassRequirementFactory
 		}
 		return requiredBlockPos;
 	}
-	
-	protected abstract BlockPos[] getRequiredBlockPos(BlockData blockData, Enum e);
+
+	public abstract BlockPos[] getRequiredBlockPos(BlockData blockData, Enum e);
 
 }

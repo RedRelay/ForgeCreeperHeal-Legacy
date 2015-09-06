@@ -1,5 +1,6 @@
 package fr.eyzox.forgecreeperheal.healtimeline;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ import fr.eyzox.forgecreeperheal.healtimeline.factories.IRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.SupportByBottomRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.requirementcheck.IRequirementChecker;
 
-public class HealTimeline implements Iterable<BlockData>{
+public class HealTimeline extends AbstractCollection<BlockData>{
 	
 	private static LinkedList<IRequirementFactory> blockDataVisitorFactories = loadFactories();
 	
@@ -51,23 +52,25 @@ public class HealTimeline implements Iterable<BlockData>{
 	private HashMap<BlockPos, LinkedList<BlockData>> waiting = new HashMap<BlockPos, LinkedList<BlockData>>();
 	
 	public HealTimeline(Collection<BlockData> blockdata) {
-		for(BlockData data : blockdata) {
-			for(IRequirementFactory factory : blockDataVisitorFactories) {
+		this.addAll(blockdata);
+	}
+	
+	@Override
+	public boolean add(BlockData data) {
+		for(IRequirementFactory factory : blockDataVisitorFactories) {
+			if(factory.accept(data)) {
 				IRequirementChecker req = factory.getRequirementBase(data);
 				if(req == null) {
 					req = OnlyOneDependence;
 				}
 				data.setRequierement(req);
-				this.add(data, factory.getRequiredBlockPos(data));
+				return this.add(data, factory.getRequiredBlockPos(data));
 			}
 		}
+		return add(data, null);
 	}
 	
-	public void add(BlockData data) {
-		add(data, null);
-	}
-	
-	public void add(BlockData data, BlockPos[] requiredBlockPosTab) {
+	public boolean add(BlockData data, BlockPos[] requiredBlockPosTab) {
 		if(requiredBlockPosTab == null || requiredBlockPosTab.length == 0) {
 			canBePlaced.add(data);
 		}else {
@@ -80,6 +83,7 @@ public class HealTimeline implements Iterable<BlockData>{
 				dependences.add(data);
 			}	
 		}
+		return true;
 	}
 	
 	private BlockData advance(int i) {
@@ -146,6 +150,7 @@ public class HealTimeline implements Iterable<BlockData>{
 
 		private Iterator<BlockData> itCursor = HealTimeline.this.canBePlaced.iterator();
 		private Iterator<LinkedList<BlockData>> waitingIt = HealTimeline.this.waiting.values().iterator();
+		private Collection<BlockData> dependencesCursor;
 		
 		@Override
 		public boolean hasNext() {
@@ -155,7 +160,8 @@ public class HealTimeline implements Iterable<BlockData>{
 		@Override
 		public BlockData next() {
 			if(!itCursor.hasNext()) {
-				itCursor = waitingIt.next().iterator();
+				dependencesCursor = waitingIt.next();
+				itCursor = dependencesCursor.iterator();
 			}
 			return itCursor.next();
 		}
@@ -163,6 +169,9 @@ public class HealTimeline implements Iterable<BlockData>{
 		@Override
 		public void remove() {
 			itCursor.remove();
+			if(dependencesCursor != null && dependencesCursor.isEmpty()) {
+				waitingIt.remove();
+			}
 		}
 		
 	}
@@ -171,4 +180,15 @@ public class HealTimeline implements Iterable<BlockData>{
 	public Iterator<BlockData> iterator() {
 		return new HealTimelineIterator();
 	}
+
+	@Override
+	public int size() {
+		if(isEmpty()) return 0;
+		int size = canBePlaced.size();
+		for(Collection<BlockData> dependences : waiting.values()) {
+			size += dependences.size();
+		}
+		return size;
+	}
+	
 }

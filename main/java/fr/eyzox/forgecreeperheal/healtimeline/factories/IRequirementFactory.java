@@ -5,6 +5,7 @@ import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
 import fr.eyzox.forgecreeperheal.healtimeline.requirementcheck.IRequirementChecker;
 
 public interface IRequirementFactory {
+	public boolean accept(BlockData data);
 	public BlockPos[] getRequiredBlockPos(BlockData blockData);
 	public IRequirementChecker getRequirementBase(BlockData blockData);
 }
