@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.BlockBanner.BlockBannerHanging;
 import net.minecraft.block.BlockBanner.BlockBannerStanding;
@@ -32,10 +33,12 @@ import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.BlockWallSign;
 import net.minecraft.util.BlockPos;
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.FacingRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.IRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.SupportByBottomRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.requirementcheck.IRequirementChecker;
+import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class HealTimeline extends AbstractCollection<BlockData>{
 	
@@ -50,9 +53,12 @@ public class HealTimeline extends AbstractCollection<BlockData>{
 	
 	private List<BlockData> canBePlaced = new ArrayList<BlockData>();
 	private HashMap<BlockPos, LinkedList<BlockData>> waiting = new HashMap<BlockPos, LinkedList<BlockData>>();
+	private Random rdn = new Random();
+	private int tickLeftBeforeNextHeal;
 	
 	public HealTimeline(Collection<BlockData> blockdata) {
 		this.addAll(blockdata);
+		this.tickLeftBeforeNextHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal() + ForgeCreeperHeal.getConfig().getRandomTickVar();
 	}
 	
 	@Override
@@ -189,6 +195,14 @@ public class HealTimeline extends AbstractCollection<BlockData>{
 			size += dependences.size();
 		}
 		return size;
+	}
+	
+	public void onTick(WorldHealer healer) {
+		tickLeftBeforeNextHeal--;
+		if(tickLeftBeforeNextHeal < 0) {
+			healer.heal(this.advance(rdn.nextInt(canBePlaced.size())));
+			this.tickLeftBeforeNextHeal = ForgeCreeperHeal.getConfig().getRandomTickVar();
+		}
 	}
 	
 }
