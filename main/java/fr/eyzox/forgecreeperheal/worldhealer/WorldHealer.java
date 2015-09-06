@@ -153,7 +153,9 @@ public class WorldHealer extends WorldSavedData{
 	public void healAll() {
 		
 		for(HealTimeline healTimeline : healTimelines) {
-			
+			for(BlockData data : healTimeline) {
+				this.heal(data, 2);
+			}
 		}
 		
 		healTimelines.clear();
