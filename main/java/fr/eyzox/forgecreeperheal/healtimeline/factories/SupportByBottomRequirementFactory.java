@@ -13,7 +13,7 @@ public class SupportByBottomRequirementFactory extends BlockClassRequirementFact
 
 	@Override
 	public BlockPos[] getKeyDependencies(Key<BlockPos,BlockData> blockData) {
-		return FacingRequirementFactory.getRequiredBlockPos(blockData, EnumFacing.DOWN);
+		return new BlockPos[]{FacingRequirementFactory.getRequiredBlockPos(blockData, EnumFacing.DOWN)};
 	}
 
 }

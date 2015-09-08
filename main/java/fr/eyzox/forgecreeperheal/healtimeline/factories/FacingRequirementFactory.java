@@ -18,11 +18,11 @@ public class FacingRequirementFactory extends PropertyRequirementFactory {
 
 	@Override
 	public BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, Enum e) {
-		return getRequiredBlockPos(blockData, ((EnumFacing)e).getOpposite());
+		return new BlockPos[]{getRequiredBlockPos(blockData, ((EnumFacing)e).getOpposite())};
 	}
 	
-	public static BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, EnumFacing e) {
-		return new BlockPos[]{blockData.getKey().offset(e)};
+	public static BlockPos getRequiredBlockPos(Key<BlockPos,BlockData> blockData, EnumFacing e) {
+		return blockData.getKey().offset(e);
 	}
 
 

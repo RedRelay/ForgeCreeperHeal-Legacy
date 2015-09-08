@@ -32,6 +32,7 @@ import net.minecraft.util.BlockPos;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.FacingRequirementFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factories.SupportByBottomRequirementFactory;
+import fr.eyzox.forgecreeperheal.healtimeline.factories.VineRequirementFactory;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 import fr.eyzox.timeline.ITimelineSelector;
 import fr.eyzox.timeline.Key;
@@ -77,6 +78,7 @@ public class HealTimeline extends Timeline<BlockPos, BlockData> {
 		requirementFactories.add(new FacingRequirementFactory(BlockButton.class, BlockButton.FACING));
 		requirementFactories.add(new FacingRequirementFactory(BlockBannerHanging.class, BlockBannerHanging.FACING));
 		requirementFactories.add(new FacingRequirementFactory(BlockTripWireHook.class, BlockTripWireHook.FACING));
+		requirementFactories.add(new VineRequirementFactory());
 		//blockDataVisitorFactories.add(new FacingMatcherFactory(BlockPistonExtension.class, BlockPistonExtension.FACING));
 		requirementFactories.add(new SupportByBottomRequirementFactory(BlockFalling.class));
 		requirementFactories.add(new SupportByBottomRequirementFactory(BlockBasePressurePlate.class));

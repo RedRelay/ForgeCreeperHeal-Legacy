@@ -14,7 +14,7 @@ public class LeverRequirementFactory extends PropertyRequirementFactory {
 
 	@Override
 	public BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, Enum e) {
-		return FacingRequirementFactory.getRequiredBlockPos(blockData, ((EnumOrientation)e).getFacing());
+		return new BlockPos[]{FacingRequirementFactory.getRequiredBlockPos(blockData, ((EnumOrientation)e).getFacing())};
 	}
 
 
