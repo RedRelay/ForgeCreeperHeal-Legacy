@@ -22,14 +22,18 @@ import net.minecraftforge.fluids.FluidRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.Profiler;
 import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
+import fr.eyzox.forgecreeperheal.healtimeline.DefaultBlockDataFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.HealTimeline;
+import fr.eyzox.forgecreeperheal.healtimeline.IBlockDataFactory;
 import fr.eyzox.timeline.Key;
 
 public class WorldHealer extends WorldSavedData{
 
 	private World world;
 	private List<HealTimeline> healTimelines = new LinkedList<HealTimeline>();
-
+	
+	private static List<IBlockDataFactory> blockDataFactories = new LinkedList<IBlockDataFactory>();
+	private static final IBlockDataFactory DEFAULT_BLOCKDATA_FACTORY = new DefaultBlockDataFactory();
 
 	private Profiler profiler;
 
@@ -89,30 +93,27 @@ public class WorldHealer extends WorldSavedData{
 
 	private Collection<Key<BlockPos,BlockData>> getAffectedBlock(World world, Collection<BlockPos> affectedBlocks) {
 		HashSet<Key<BlockPos,BlockData>> affectedBlockData = new HashSet<Key<BlockPos,BlockData>>();
-		for(BlockPos blockPosExplosion : affectedBlocks) {
-			if(!world.isAirBlock(blockPosExplosion)) {
-				IBlockState blockstate = world.getBlockState(blockPosExplosion);
-				BlockData blockData = new BlockData(blockstate, getTileEntityToStore(world, blockPosExplosion, blockstate));
-				if(!ForgeCreeperHeal.getConfig().getHealException().contains(blockData.getBlockState().getBlock())) {
-					affectedBlockData.add(new Key<BlockPos,BlockData>(blockPosExplosion, blockData));
+		for(BlockPos pos : affectedBlocks) {
+			IBlockState blockstate = world.getBlockState(pos);
+			
+			Iterator<IBlockDataFactory> it = blockDataFactories.iterator();
+			BlockData data = null;
+			while(data == null && it.hasNext()) {
+				IBlockDataFactory factory = it.next();
+				if(factory.accept(world, pos, blockstate)) {
+					data = factory.createBlockData(world, pos, blockstate);
 				}
+			}
+			
+			if(data == null && DEFAULT_BLOCKDATA_FACTORY.accept(world, pos, blockstate)) {
+				data = DEFAULT_BLOCKDATA_FACTORY.createBlockData(world, pos, blockstate);
+			}
+			
+			if(data != null) {
+				affectedBlockData.add(new Key<BlockPos,BlockData>(pos, data));
 			}
 		}
 		return affectedBlockData;
-	}
-	
-	private TileEntity getTileEntityToStore(World world, BlockPos blockPos, IBlockState blockstate) {
-		TileEntity tileEntity = world.getTileEntity(blockPos);
-		if(tileEntity instanceof IInventory) {
-			if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer()) {
-				NBTTagCompound buf = new NBTTagCompound();
-				tileEntity.writeToNBT(buf);
-				tileEntity = blockstate.getBlock().createTileEntity(world, blockstate);
-				tileEntity.readFromNBT(buf);
-			}
-			((IInventory)tileEntity).clear();
-		}
-		return tileEntity;
 	}
 	
 	public void heal(Key<BlockPos,BlockData> data) {
