@@ -6,25 +6,22 @@ import net.minecraft.util.EnumFacing;
 import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
 import fr.eyzox.timeline.Key;
 
-public class FacingRequirementFactory extends PropertyRequirementFactory {
-	
-	public FacingRequirementFactory(IProperty property) {
+public class OppositeFacingRequirementFactory extends PropertyRequirementFactory{
+
+	public OppositeFacingRequirementFactory(IProperty property) {
 		super(property);
 	}
 
-	public FacingRequirementFactory(Class<?> clazz, IProperty property) {
+	public OppositeFacingRequirementFactory(Class<?> clazz, IProperty property) {
 		super(clazz, property);
 	}
 
 	@Override
 	public BlockPos[] getRequiredBlockPos(Key<BlockPos,BlockData> blockData, Enum e) {
-		return new BlockPos[]{getRequiredBlockPos(blockData, ((EnumFacing)e).getOpposite())};
+		return new BlockPos[]{getRequiredBlockPos(blockData, (EnumFacing)e)};
 	}
-	
 	
 	public static BlockPos getRequiredBlockPos(Key<BlockPos,BlockData> blockData, EnumFacing e) {
 		return blockData.getKey().offset(e);
 	}
-
-
 }
