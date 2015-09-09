@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.healtimeline.factories;
+package fr.eyzox.forgecreeperheal.healtimeline.requirement.factory;
 
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;

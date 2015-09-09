@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.healtimeline.factories;
+package fr.eyzox.forgecreeperheal.healtimeline.requirement.factory;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
