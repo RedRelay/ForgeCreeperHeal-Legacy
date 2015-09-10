@@ -22,18 +22,14 @@ import net.minecraftforge.fluids.FluidRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.Profiler;
 import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
-import fr.eyzox.forgecreeperheal.healtimeline.DefaultBlockDataFactory;
+import fr.eyzox.forgecreeperheal.healtimeline.BlockDataFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.HealTimeline;
-import fr.eyzox.forgecreeperheal.healtimeline.IBlockDataFactory;
 import fr.eyzox.timeline.Key;
 
 public class WorldHealer extends WorldSavedData{
-
+	
 	private World world;
 	private List<HealTimeline> healTimelines = new LinkedList<HealTimeline>();
-	
-	private static List<IBlockDataFactory> blockDataFactories = new LinkedList<IBlockDataFactory>();
-	private static final IBlockDataFactory DEFAULT_BLOCKDATA_FACTORY = new DefaultBlockDataFactory();
 
 	private Profiler profiler;
 
@@ -96,17 +92,9 @@ public class WorldHealer extends WorldSavedData{
 		for(BlockPos pos : affectedBlocks) {
 			IBlockState blockstate = world.getBlockState(pos);
 			
-			Iterator<IBlockDataFactory> it = blockDataFactories.iterator();
 			BlockData data = null;
-			while(data == null && it.hasNext()) {
-				IBlockDataFactory factory = it.next();
-				if(factory.accept(world, pos, blockstate)) {
-					data = factory.createBlockData(world, pos, blockstate);
-				}
-			}
-			
-			if(data == null && DEFAULT_BLOCKDATA_FACTORY.accept(world, pos, blockstate)) {
-				data = DEFAULT_BLOCKDATA_FACTORY.createBlockData(world, pos, blockstate);
+			if(BlockDataFactory.getInstance().accept(world, pos, blockstate)) {
+				data = BlockDataFactory.getInstance().createBlockData(world, pos, blockstate);
 			}
 			
 			if(data != null) {
