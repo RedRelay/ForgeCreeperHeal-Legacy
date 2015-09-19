@@ -5,26 +5,22 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.fluids.FluidRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.Profiler;
-import fr.eyzox.forgecreeperheal.healtimeline.BlockData;
-import fr.eyzox.forgecreeperheal.healtimeline.BlockDataFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.HealTimeline;
-import fr.eyzox.timeline.Key;
+import fr.eyzox.forgecreeperheal.healtimeline.factory.HealableFactories;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.timeline.ITimelineElement;
 
 public class WorldHealer extends WorldSavedData{
 	
@@ -48,12 +44,12 @@ public class WorldHealer extends WorldSavedData{
 			profiler.tickStart();
 		}
 		
-		Iterator<HealTimeline> healGraphIterator = healTimelines.iterator();
-		while(healGraphIterator.hasNext()) {
-			HealTimeline healTimeline = healGraphIterator.next();
+		Iterator<HealTimeline> it = healTimelines.iterator();
+		while(it.hasNext()) {
+			HealTimeline healTimeline = it.next();
 			healTimeline.onTick();
-			if(healTimeline.isEmpty()) {
-				healGraphIterator.remove();
+			if(!healTimeline.hasAvailable()) {
+				it.remove();
 			}
 		}
 		
@@ -70,15 +66,15 @@ public class WorldHealer extends WorldSavedData{
 		if(profiler != null) {
 			profiler.explosionStart();
 		}
-
+		
 		if(event.getAffectedBlocks().isEmpty()) return;
 
-		Collection<Key<BlockPos,BlockData>> affectedBlock = getAffectedBlock(event.world, event.getAffectedBlocks());
+		Collection<IHealable> healables = getHealables(event.world, event.getAffectedBlocks());
 		
-		healTimelines.add(new HealTimeline(this,affectedBlock));
+		healTimelines.add(new HealTimeline(this.world,healables));
 		
-		for(Key<BlockPos,BlockData> data : affectedBlock) {
-			event.world.setBlockState(data.getKey(), Blocks.air.getDefaultState(), 2);
+		for(IHealable data : healables) {
+			data.removeFromWorld(event.world);
 		}
 		
 		if(profiler != null) {
@@ -87,69 +83,26 @@ public class WorldHealer extends WorldSavedData{
 
 	}
 
-	private Collection<Key<BlockPos,BlockData>> getAffectedBlock(World world, Collection<BlockPos> affectedBlocks) {
-		HashSet<Key<BlockPos,BlockData>> affectedBlockData = new HashSet<Key<BlockPos,BlockData>>();
+	private Collection<IHealable> getHealables(World world, Collection<BlockPos> affectedBlocks) {
+		Set<IHealable> healables = new HashSet<IHealable>();
 		for(BlockPos pos : affectedBlocks) {
 			IBlockState blockstate = world.getBlockState(pos);
 			
-			BlockData data = null;
-			if(BlockDataFactory.getInstance().accept(world, pos, blockstate)) {
-				data = BlockDataFactory.getInstance().createBlockData(world, pos, blockstate);
-			}
+			IHealable data = HealableFactories.getInstance().create(world, pos, blockstate);
 			
 			if(data != null) {
-				affectedBlockData.add(new Key<BlockPos,BlockData>(pos, data));
+				healables.add(data);
 			}
+			
 		}
-		return affectedBlockData;
-	}
-	
-	public void heal(Key<BlockPos,BlockData> data) {
-		heal(data, 7);
-	}
-	
-	public void heal(Key<BlockPos,BlockData> data, int flag) {
-
-		boolean isAir = this.world.isAirBlock(data.getKey());
-
-		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(this.world.getBlockState(data.getKey()).getBlock()) != null)) {
-			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
-				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, data.getKey(), new ItemStack(world.getBlockState(data.getKey()).getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
-
-				TileEntity te = world.getTileEntity(data.getKey());
-				if(te instanceof IInventory) {
-					WorldHealerUtils.dropInventory(world, data.getKey(), (IInventory) te);
-				}
-			}
-
-			world.setBlockState(data.getKey(), data.getValue().getBlockState(), flag);
-
-			if(data.getValue().getTileEntityTag() != null) {
-				TileEntity te = world.getTileEntity(data.getKey());
-				if(te != null) {
-					te.readFromNBT(data.getValue().getTileEntityTag());
-					world.setTileEntity(data.getKey(), te);
-				}
-			}
-
-		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
-			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, data.getKey(), new ItemStack(data.getValue().getBlockState().getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
-			if(data.getValue().getTileEntityTag() != null) {
-				TileEntity te = data.getValue().getBlockState().getBlock().createTileEntity(world, data.getValue().getBlockState());
-				if(te instanceof IInventory) {
-					te.readFromNBT(data.getValue().getTileEntityTag());
-					WorldHealerUtils.dropInventory(world, data.getKey(), (IInventory) te);
-				}
-			}
-
-		}
+		return healables;
 	}
 
 	public void healAll() {
 		
 		for(HealTimeline healTimeline : healTimelines) {
-			for(Key<BlockPos,BlockData> data : healTimeline) {
-				this.heal(data, 2);
+			for(ITimelineElement data : healTimeline) {
+				((IHealable)data).heal(world, 2);
 			}
 		}
 		
