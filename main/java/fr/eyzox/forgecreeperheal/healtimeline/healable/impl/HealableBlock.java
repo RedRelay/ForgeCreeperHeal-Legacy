@@ -121,42 +121,8 @@ public class HealableBlock implements IHealable{
 	}
 
 	@Override
-	public void heal(World world, int flag) {
-		Block currentBlock = world.getBlockState(pos).getBlock();
-		boolean isAir = currentBlock.isAir(world, pos);
-
-		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlock) != null)) {
-			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
-				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, pos, new ItemStack(currentBlock), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
-
-				TileEntity te = world.getTileEntity(pos);
-				if(te instanceof IInventory) {
-					WorldHealerUtils.dropInventory(world, pos, (IInventory) te);
-				}
-			}
-
-			world.setBlockState(pos, state, flag);
-
-			if(tileEntityTag != null) {
-				TileEntity te = world.getTileEntity(pos);
-				if(te != null) {
-					te.readFromNBT(tileEntityTag);
-					world.setTileEntity(pos, te);
-				}
-			}
-
-		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
-			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, pos, new ItemStack(state.getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
-			if(tileEntityTag != null) {
-				TileEntity te = state.getBlock().createTileEntity(world, state);
-				if(te instanceof IInventory) {
-					te.readFromNBT(tileEntityTag);
-					WorldHealerUtils.dropInventory(world, pos, (IInventory) te);
-				}
-			}
-
-		}
-		
+	public void heal(World world, int flags) {
+		healBlock(world, pos, state, tileEntityTag, flags);
 	}
 	
 	protected TileEntity getTileEntityToStore(World world, BlockPos blockPos, IBlockState blockstate) {
@@ -182,6 +148,43 @@ public class HealableBlock implements IHealable{
 	public String toString() {
 		return "HealableBlock [Block=" + state.getBlock().getLocalizedName() + ", TileEntity="
 				+ (tileEntityTag != null) + ", pos=" + pos + "]";
+	}
+	
+	public static void healBlock(World world, BlockPos pos, IBlockState state, NBTTagCompound tileEntityTag, int flags) {
+		Block currentBlock = world.getBlockState(pos).getBlock();
+		boolean isAir = currentBlock.isAir(world, pos);
+
+		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlock) != null)) {
+			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
+				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, pos, new ItemStack(currentBlock), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
+
+				TileEntity te = world.getTileEntity(pos);
+				if(te instanceof IInventory) {
+					WorldHealerUtils.dropInventory(world, pos, (IInventory) te);
+				}
+			}
+
+			world.setBlockState(pos, state, flags);
+
+			if(tileEntityTag != null) {
+				TileEntity te = world.getTileEntity(pos);
+				if(te != null) {
+					te.readFromNBT(tileEntityTag);
+					world.setTileEntity(pos, te);
+				}
+			}
+
+		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
+			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, pos, new ItemStack(state.getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
+			if(tileEntityTag != null) {
+				TileEntity te = state.getBlock().createTileEntity(world, state);
+				if(te instanceof IInventory) {
+					te.readFromNBT(tileEntityTag);
+					WorldHealerUtils.dropInventory(world, pos, (IInventory) te);
+				}
+			}
+
+		}
 	}
 	
 	
