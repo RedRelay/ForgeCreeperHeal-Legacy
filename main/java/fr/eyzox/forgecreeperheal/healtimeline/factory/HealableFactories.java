@@ -36,11 +36,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableDefaultFactory;
+import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableDoorFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableFacingFactory;
-import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableVineFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableLeverFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableOppositeFacingFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableSupportByBottomFactory;
+import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableVineFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
 
 public class HealableFactories {
@@ -106,6 +107,7 @@ public class HealableFactories {
 	public static HealableFactories loadDefaultConfig() {
 		HealableFactories hf = new HealableFactories();
 		
+		hf.register(new HealableDoorFactory());
 		hf.register(new HealableFacingFactory(BlockTorch.class, BlockTorch.FACING));
 		hf.register(new HealableFacingFactory(BlockLadder.class, BlockLadder.FACING));
 		hf.register(new HealableFacingFactory(BlockWallSign.class, BlockWallSign.FACING));
