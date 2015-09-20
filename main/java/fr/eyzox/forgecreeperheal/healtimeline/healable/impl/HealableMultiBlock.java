@@ -8,7 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class HealableMultiBlock extends HealableBlock {
+public abstract class HealableMultiBlock extends HealableBlock {
 
 	private final Map<BlockPos, IBlockState> linkedHealables = new HashMap<BlockPos, IBlockState>();
 

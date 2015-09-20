@@ -34,13 +34,13 @@ import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableBedFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableDefaultFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableDoorFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableFacingFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableLeverFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableOppositeFacingFactory;
+import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealablePistonFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableSupportByBottomFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableVineFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
@@ -59,7 +59,7 @@ public class HealableFactories {
 		IHealableFactory factory = factories.get(state.getBlock().getClass());
 		if(factory == null) {
 			for(IHealableFactory factoryFromList : factoriesList) {
-				if(factoryFromList.accept().isAssignableFrom(state.getBlock().getClass())) {
+				if(factoryFromList.accept(state.getBlock().getClass())) {
 					factory = factoryFromList;
 					break;
 				}
@@ -82,12 +82,10 @@ public class HealableFactories {
 
 	public void register(IHealableFactory factory) {
 		factoriesList.add(factory);
-		ForgeCreeperHeal.getLogger().info("IHealableFactory registered : "+factory.getClass().getSimpleName()+" : "+factory.accept().getSimpleName());
 	}
 
 	private void putCache(Class<? extends Block> clazz, IHealableFactory factory) {
 		factories.put(clazz, factory);
-		ForgeCreeperHeal.getLogger().info("Put "+factory.getClass().getSimpleName()+" : "+factory.accept().getSimpleName()+" cached for "+clazz.getSimpleName());
 	}
 	
 	public void unregister(IHealableFactory factory) {
@@ -110,6 +108,7 @@ public class HealableFactories {
 		
 		hf.register(new HealableDoorFactory());
 		hf.register(new HealableBedFactory());
+		hf.register(new HealablePistonFactory());
 		hf.register(new HealableFacingFactory(BlockTorch.class, BlockTorch.FACING));
 		hf.register(new HealableFacingFactory(BlockLadder.class, BlockLadder.FACING));
 		hf.register(new HealableFacingFactory(BlockWallSign.class, BlockWallSign.FACING));

@@ -7,6 +7,6 @@ import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
 
 public interface IHealableFactory {
-	Class<? extends Block> accept();
+	boolean accept(Class<? extends Block> clazz);
 	IHealable create(World world, BlockPos pos, IBlockState state);
 }

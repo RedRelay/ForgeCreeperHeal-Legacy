@@ -14,8 +14,8 @@ public abstract class AbstractHealableFactory implements IHealableFactory {
 
 
 	@Override
-	public Class<? extends Block> accept() {
-		return clazz;
+	public boolean accept(Class<? extends Block> clazz) {
+		return this.clazz.isAssignableFrom(clazz);
 	}
 
 }

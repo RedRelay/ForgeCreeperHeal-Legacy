@@ -20,8 +20,8 @@ public class HealableDefaultFactory implements IHealableFactory {
 	}
 
 	@Override
-	public Class<? extends Block> accept() {
-		return Block.class;
+	public boolean accept(Class<? extends Block> clazz) {
+		return true;
 	}
 	
 
