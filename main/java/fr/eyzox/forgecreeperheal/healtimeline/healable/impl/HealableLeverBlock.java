@@ -14,7 +14,7 @@ public class HealableLeverBlock extends HealableBlock {
 
 	@Override
 	public Object[] getDependencies() {
-		return new BlockPos[] {HealableFacingBlock.getRequiredBlockPos(this, ((EnumOrientation)this.getBlockState().getValue(BlockLever.FACING)).getFacing())};
+		return new BlockPos[] {HealableFacingBlock.getRequiredBlockPos(this.getPos(), ((EnumOrientation)this.getBlockState().getValue(BlockLever.FACING)).getFacing())};
 	}
 	
 	

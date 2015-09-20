@@ -13,7 +13,11 @@ public class HealableSupportByBottomBlock extends HealableBlock {
 
 	@Override
 	public Object[] getDependencies() {
-		return new BlockPos[]{HealableFacingBlock.getRequiredBlockPos(this, EnumFacing.DOWN)};
+		return new BlockPos[]{getDependencies(this.getPos())};
+	}
+	
+	public static BlockPos getDependencies(BlockPos blockPos) {
+		return HealableFacingBlock.getRequiredBlockPos(blockPos, EnumFacing.DOWN);
 	}
 
 }

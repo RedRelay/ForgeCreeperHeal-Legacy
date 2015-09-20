@@ -23,11 +23,11 @@ public class HealableFacingBlock extends HealableBlock {
 	
 	@Override
 	public Object[] getDependencies() {
-		return new BlockPos[] {getRequiredBlockPos(this, getEnumFacing().getOpposite())};
+		return new BlockPos[] {getRequiredBlockPos(this.getPos(), getEnumFacing().getOpposite())};
 	}
 
-	public static BlockPos getRequiredBlockPos(HealableBlock block, EnumFacing e) {
-		return block.getPos().offset(e);
+	public static BlockPos getRequiredBlockPos(BlockPos pos, EnumFacing e) {
+		return pos.offset(e);
 	}
 
 	

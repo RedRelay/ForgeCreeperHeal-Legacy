@@ -16,7 +16,7 @@ public class HealableVineBlock extends HealableBlock {
 	public Object[] getDependencies() {
 		for(EnumFacing facing : EnumFacing.HORIZONTALS) {
 			if(((Boolean)this.getBlockState().getValue(BlockVine.getPropertyFor(facing))).booleanValue()) {
-				return new BlockPos[]{HealableFacingBlock.getRequiredBlockPos(this, facing),HealableFacingBlock.getRequiredBlockPos(this,EnumFacing.UP)};
+				return new BlockPos[]{HealableFacingBlock.getRequiredBlockPos(this.getPos(), facing),HealableFacingBlock.getRequiredBlockPos(this.getPos(),EnumFacing.UP)};
 			}
 		}
 		return super.getDependencies();

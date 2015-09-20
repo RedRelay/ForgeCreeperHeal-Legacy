@@ -35,6 +35,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableBedFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableDefaultFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableDoorFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableFacingFactory;
@@ -108,6 +109,7 @@ public class HealableFactories {
 		HealableFactories hf = new HealableFactories();
 		
 		hf.register(new HealableDoorFactory());
+		hf.register(new HealableBedFactory());
 		hf.register(new HealableFacingFactory(BlockTorch.class, BlockTorch.FACING));
 		hf.register(new HealableFacingFactory(BlockLadder.class, BlockLadder.FACING));
 		hf.register(new HealableFacingFactory(BlockWallSign.class, BlockWallSign.FACING));

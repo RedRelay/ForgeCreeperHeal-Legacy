@@ -141,7 +141,7 @@ public class HealableBlock implements IHealable{
 
 	@Override
 	public void removeFromWorld(World world) {
-		world.setBlockState(pos, Blocks.air.getDefaultState(), 2);
+		removeFromWorld(world, pos);
 	}
 
 	@Override
@@ -185,6 +185,10 @@ public class HealableBlock implements IHealable{
 			}
 
 		}
+	}
+	
+	public static void removeFromWorld(World world, BlockPos pos) {
+		world.setBlockState(pos, Blocks.air.getDefaultState(), 2);
 	}
 	
 	

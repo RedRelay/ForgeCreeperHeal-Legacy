@@ -4,22 +4,18 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class HealableDoorBlock extends HealableSupportByBottomBlock {
+public class HealableDoorBlock extends HealableMultiBlock {
 
-	private IBlockState blockstateUp;
 	
 	public HealableDoorBlock(World world, BlockPos pos, IBlockState state) {
 		super(world, pos, state);
-		this.blockstateUp = world.getBlockState(pos.up());
+		final BlockPos posUp = pos.up();
+		this.getLinkedHealables().put(posUp, world.getBlockState(posUp));
 	}
 
 	@Override
-	public void heal(World world, int flag) {
-		super.heal(world, 2);
-		BlockPos posUp = getPos().up();
-		healBlock(world, posUp , blockstateUp, null, 2);
-		world.notifyNeighborsOfStateChange(getPos(), this.getBlockState().getBlock());
-		world.notifyNeighborsOfStateChange(posUp, this.getBlockState().getBlock());
+	public Object[] getDependencies() {
+		return new BlockPos[]{HealableSupportByBottomBlock.getDependencies(this.getPos())};
 	}
 	
 	
