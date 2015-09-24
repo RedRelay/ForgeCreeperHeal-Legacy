@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import fr.eyzox.timeline.ICollector;
 
 public abstract class HealableMultiBlock extends HealableBlock {
 
@@ -43,6 +44,15 @@ public abstract class HealableMultiBlock extends HealableBlock {
 		for(BlockPos pos : linkedHealables.keySet()) {
 			removeFromWorld(world, pos);
 		}
+	}
+	
+	
+	@Override
+	public void collectKeys(ICollector<Object> collector) {
+		for(BlockPos pos : linkedHealables.keySet()) {
+			collector.collect(pos);
+		}
+		super.collectKeys(collector);
 	}
 	
 	

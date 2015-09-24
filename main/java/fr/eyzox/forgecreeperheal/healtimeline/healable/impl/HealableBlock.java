@@ -1,7 +1,5 @@
 package fr.eyzox.forgecreeperheal.healtimeline.healable.impl;
 
-import java.util.Collection;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -15,6 +13,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealerUtils;
+import fr.eyzox.timeline.ICollector;
+import fr.eyzox.timeline.IDependencyChecker;
 
 public class HealableBlock implements IHealable{
 	private IBlockState state;
@@ -106,21 +106,6 @@ public class HealableBlock implements IHealable{
 	}
 
 	@Override
-	public Object getKey() {
-		return pos;
-	}
-	
-	@Override
-	public Object[] getDependencies() {
-		return null;
-	}
-
-	@Override
-	public boolean isAvailable(Collection<Object> dependenciesLeft) {
-		return true;
-	}
-
-	@Override
 	public void heal(World world, int flags) {
 		healBlock(world, pos, state, tileEntityTag, flags);
 	}
@@ -146,8 +131,7 @@ public class HealableBlock implements IHealable{
 
 	@Override
 	public String toString() {
-		return "HealableBlock [Block=" + state.getBlock().getLocalizedName() + ", TileEntity="
-				+ (tileEntityTag != null) + ", pos=" + pos + "]";
+		return state.getBlock().getLocalizedName()+"("+pos.getX()+","+pos.getY()+","+pos.getZ()+")"+(tileEntityTag != null?"*":"");
 	}
 	
 	public static void healBlock(World world, BlockPos pos, IBlockState state, NBTTagCompound tileEntityTag, int flags) {
@@ -189,6 +173,20 @@ public class HealableBlock implements IHealable{
 	
 	public static void removeFromWorld(World world, BlockPos pos) {
 		world.setBlockState(pos, Blocks.air.getDefaultState(), 2);
+	}
+
+	@Override
+	public void collectKeys(ICollector<Object> collector) {
+		collector.collect(pos);
+	}
+
+	@Override
+	public void collectDependenciesKeys(ICollector<Object> collector) {
+	}
+
+	@Override
+	public boolean isAvailable(IDependencyChecker<Object> checker) {
+		return true;
 	}
 	
 	

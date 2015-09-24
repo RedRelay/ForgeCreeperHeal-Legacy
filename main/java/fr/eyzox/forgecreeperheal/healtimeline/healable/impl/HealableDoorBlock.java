@@ -3,6 +3,7 @@ package fr.eyzox.forgecreeperheal.healtimeline.healable.impl;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import fr.eyzox.timeline.ICollector;
 
 public class HealableDoorBlock extends HealableMultiBlock {
 
@@ -12,12 +13,11 @@ public class HealableDoorBlock extends HealableMultiBlock {
 		final BlockPos posUp = pos.up();
 		this.getLinkedHealables().put(posUp, world.getBlockState(posUp));
 	}
-
+	
 	@Override
-	public Object[] getDependencies() {
-		return new BlockPos[]{HealableSupportByBottomBlock.getDependencies(this.getPos())};
+	public void collectDependenciesKeys(ICollector<Object> collector) {
+		collector.collect(HealableSupportByBottomBlock.getDependencies(this.getPos()));
+		super.collectDependenciesKeys(collector);
 	}
-	
-	
 
 }
