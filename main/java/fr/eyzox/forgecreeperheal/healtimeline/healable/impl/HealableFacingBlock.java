@@ -23,7 +23,7 @@ public class HealableFacingBlock extends HealableBlock {
 	}
 
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
+	public void collectDependenciesKeys(ICollector collector) {
 		collector.collect(getRequiredBlockPos(this.getPos(), getEnumFacing().getOpposite()));
 		super.collectDependenciesKeys(collector);
 	}

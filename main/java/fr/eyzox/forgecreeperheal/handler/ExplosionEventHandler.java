@@ -8,6 +8,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.reflection.Reflect;
@@ -21,8 +22,9 @@ public class ExplosionEventHandler {
 		exploder = Reflect.getFieldForClass(Explosion.class, "exploder", "field_77283_e");
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onDetonate(ExplosionEvent.Detonate event) {
+		
 		//TODO FromPlayer exception config
 		if(!event.world.isRemote) {
 			Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.explosion);
@@ -33,6 +35,7 @@ public class ExplosionEventHandler {
 				}
 			}
 		}
+		
 	}
 
 	private Entity getExploderFromExplosion(Explosion explosion) {

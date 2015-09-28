@@ -1,13 +1,21 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
+import java.lang.reflect.Field;
+
+import fr.eyzox.forgecreeperheal.reflection.Reflect;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 public class WorldHealerUtils {
+	
+	private static final Field extendedBlockStorageField = Reflect.getFieldForClass(Chunk.class, "storageArrays", "field_76652_q");
 	
 	public static void dropInventory(World world, BlockPos cp, IInventory inventory) {
 		for (int inventoryIndex = 0; inventoryIndex < inventory.getSizeInventory(); ++inventoryIndex)
@@ -44,7 +52,7 @@ public class WorldHealerUtils {
 					world.spawnEntityInWorld(entityitem);
 				}
 
-				/*ADDED TO REMOVE ITEMSTACK FROM INVENTORY*/
+				//ADDED TO REMOVE ITEMSTACK FROM INVENTORY
 				inventory.setInventorySlotContents(inventoryIndex, null);
 			}
 		}
@@ -56,5 +64,9 @@ public class WorldHealerUtils {
 		entityitem.motionY = (double)((float)world.rand.nextGaussian() * motion + 0.2F);
 		entityitem.motionZ = (double)((float)world.rand.nextGaussian() * motion);
 		return entityitem;
+	}
+	
+	public static ExtendedBlockStorage[] getExtendedBlockStorageArray(Chunk c) {
+		return (ExtendedBlockStorage[]) Reflect.getDataFromField(extendedBlockStorageField, c);
 	}
 }

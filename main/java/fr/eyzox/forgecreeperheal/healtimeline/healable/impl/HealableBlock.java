@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.healtimeline.healable.impl;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -8,15 +9,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import java.util.List;
+
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealerUtils;
 import fr.eyzox.timeline.ICollector;
 import fr.eyzox.timeline.IDependencyChecker;
 
-public class HealableBlock implements IHealable{
+public class HealableBlock implements IHealableBlock{
 	private IBlockState state;
 	private NBTTagCompound tileEntityTag;
 	private BlockPos pos;
@@ -125,11 +133,6 @@ public class HealableBlock implements IHealable{
 	}
 
 	@Override
-	public void removeFromWorld(World world) {
-		removeFromWorld(world, pos);
-	}
-
-	@Override
 	public String toString() {
 		return state.getBlock().getLocalizedName()+"("+pos.getX()+","+pos.getY()+","+pos.getZ()+")"+(tileEntityTag != null?"*":"");
 	}
@@ -171,24 +174,24 @@ public class HealableBlock implements IHealable{
 		}
 	}
 	
-	public static void removeFromWorld(World world, BlockPos pos) {
-		world.setBlockState(pos, Blocks.air.getDefaultState(), 2);
-	}
 
 	@Override
-	public void collectKeys(ICollector<Object> collector) {
+	public void collectKeys(ICollector collector) {
 		collector.collect(pos);
 	}
 
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
+	public void collectDependenciesKeys(ICollector collector) {
 	}
 
 	@Override
-	public boolean isAvailable(IDependencyChecker<Object> checker) {
+	public boolean isAvailable(IDependencyChecker checker) {
 		return true;
 	}
-	
-	
+
+	@Override
+	public void collectBlockPos(ICollector<BlockPos> collector) {
+		this.collectKeys(collector);
+	}
 
 }

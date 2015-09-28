@@ -14,7 +14,7 @@ public class HealableVineBlock extends HealableBlock {
 	}
 	
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
+	public void collectDependenciesKeys(ICollector collector) {
 		for(EnumFacing facing : EnumFacing.HORIZONTALS) {
 			if(((Boolean)this.getBlockState().getValue(BlockVine.getPropertyFor(facing))).booleanValue()) {
 				collector.collect(HealableFacingBlock.getRequiredBlockPos(this.getPos(), facing));

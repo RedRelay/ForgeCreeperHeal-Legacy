@@ -8,28 +8,31 @@ import net.minecraft.world.World;
 import fr.eyzox.timeline.ICollector;
 import fr.eyzox.timeline.IDependencyChecker;
 
-public class HealableBedBlock extends HealableMultiBlock {
+public class HealableBedBlock extends HealableBlock {
 
 	private final BlockPos footPos;
 	
 	public HealableBedBlock(World world, BlockPos pos, IBlockState state) {
 		super(world, pos, state);
 		footPos = pos.offset(((EnumFacing) state.getValue(BlockBed.FACING)).getOpposite());
-		getLinkedHealables().put(footPos, world.getBlockState(footPos));
 	}
 	
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
+	public void collectDependenciesKeys(ICollector collector) {
 		collector.collect(HealableSupportByBottomBlock.getDependencies(this.getPos()));
 		collector.collect(HealableSupportByBottomBlock.getDependencies(this.footPos));
 		super.collectDependenciesKeys(collector);
 	}
 	
 	@Override
-	public boolean isAvailable(IDependencyChecker<Object> checker) {
-		return !(checker.isStillRequired(getPos()) || checker.isStillRequired(footPos));
+	public void collectKeys(ICollector collector) {
+		super.collectKeys(collector);
+		collector.collect(footPos);
 	}
 	
-	
+	@Override
+	public boolean isAvailable(IDependencyChecker checker) {
+		return !(checker.isStillRequired(getPos()) || checker.isStillRequired(footPos));
+	}
 
 }

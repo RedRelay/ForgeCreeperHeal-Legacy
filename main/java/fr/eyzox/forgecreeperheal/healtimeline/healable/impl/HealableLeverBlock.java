@@ -14,7 +14,7 @@ public class HealableLeverBlock extends HealableBlock {
 	}
 	
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
+	public void collectDependenciesKeys(ICollector collector) {
 		collector.collect(HealableFacingBlock.getRequiredBlockPos(this.getPos(), ((EnumOrientation)this.getBlockState().getValue(BlockLever.FACING)).getFacing()));
 		super.collectDependenciesKeys(collector);
 	}

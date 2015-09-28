@@ -44,6 +44,7 @@ import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealablePistonFactory
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableSupportByBottomFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.impl.HealableVineFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
 
 public class HealableFactories {
 
@@ -55,7 +56,7 @@ public class HealableFactories {
 	private HealableFactories() {
 	}
 
-	public IHealable create(World world, BlockPos pos, IBlockState state) {
+	public IHealableBlock create(World world, BlockPos pos, IBlockState state) {
 		IHealableFactory factory = factories.get(state.getBlock().getClass());
 		if(factory == null) {
 			for(IHealableFactory factoryFromList : factoriesList) {

@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.impl.HealableOppositeFacingBlock;
 
 public class HealableOppositeFacingFactory extends HealableFacingFactory {
@@ -15,7 +16,7 @@ public class HealableOppositeFacingFactory extends HealableFacingFactory {
 	}
 
 	@Override
-	public IHealable create(World world, BlockPos pos, IBlockState state) {
+	public IHealableBlock create(World world, BlockPos pos, IBlockState state) {
 		return new HealableOppositeFacingBlock(facingProperty, world, pos, state);
 	}
 	

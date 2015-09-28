@@ -5,19 +5,19 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import fr.eyzox.timeline.ICollector;
 
-public class HealableDoorBlock extends HealableMultiBlock {
+public class HealableDoorBlock extends HealableSupportByBottomBlock {
 
+	private final BlockPos doorUpper;
 	
 	public HealableDoorBlock(World world, BlockPos pos, IBlockState state) {
 		super(world, pos, state);
-		final BlockPos posUp = pos.up();
-		this.getLinkedHealables().put(posUp, world.getBlockState(posUp));
+		doorUpper = pos.up();
 	}
 	
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
-		collector.collect(HealableSupportByBottomBlock.getDependencies(this.getPos()));
-		super.collectDependenciesKeys(collector);
+	public void collectKeys(ICollector collector) {
+		super.collectKeys(collector);
+		collector.collect(doorUpper);
 	}
 
 }

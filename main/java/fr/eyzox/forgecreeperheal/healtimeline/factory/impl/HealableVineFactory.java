@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.impl.HealableVineBlock;
 
 public class HealableVineFactory extends AbstractHealableFactory {
@@ -14,7 +15,7 @@ public class HealableVineFactory extends AbstractHealableFactory {
 	}
 
 	@Override
-	public IHealable create(World world, BlockPos pos, IBlockState state) {
+	public IHealableBlock create(World world, BlockPos pos, IBlockState state) {
 		return new HealableVineBlock(world, pos, state);
 	}
 

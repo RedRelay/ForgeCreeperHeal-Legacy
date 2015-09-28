@@ -9,6 +9,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.IHealableFactory;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.impl.HealableBlock;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.impl.HealableExtendedPistonBlock;
 
@@ -20,7 +21,7 @@ public class HealablePistonFactory implements IHealableFactory {
 	}
 
 	@Override
-	public IHealable create(World world, BlockPos pos, IBlockState state) {
+	public IHealableBlock create(World world, BlockPos pos, IBlockState state) {
 		
 		if(BlockPistonBase.class.isAssignableFrom(state.getBlock().getClass())) {
 			

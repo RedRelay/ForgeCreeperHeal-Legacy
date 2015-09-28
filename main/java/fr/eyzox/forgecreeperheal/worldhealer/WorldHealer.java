@@ -20,12 +20,16 @@ import fr.eyzox.forgecreeperheal.Profiler;
 import fr.eyzox.forgecreeperheal.healtimeline.HealTimeline;
 import fr.eyzox.forgecreeperheal.healtimeline.factory.HealableFactories;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.impl.HealableBlock;
 import fr.eyzox.timeline.ITimelineElement;
 
 public class WorldHealer extends WorldSavedData{
 	
 	private World world;
 	private List<HealTimeline> healTimelines = new LinkedList<HealTimeline>();
+	
+	private WorldRemover worldRemover;
 
 	private Profiler profiler;
 
@@ -69,13 +73,11 @@ public class WorldHealer extends WorldSavedData{
 		
 		if(event.getAffectedBlocks().isEmpty()) return;
 
-		Collection<IHealable> healables = getHealables(event.world, event.getAffectedBlocks());
+		Collection<IHealableBlock> healables = getHealableBlocks(event.world, event.getAffectedBlocks());
 		
 		healTimelines.add(new HealTimeline(this.world,healables));
 		
-		for(IHealable data : healables) {
-			data.removeFromWorld(event.world);
-		}
+		worldRemover.process(healables);
 		
 		if(profiler != null) {
 			profiler.explosionStop();
@@ -83,12 +85,12 @@ public class WorldHealer extends WorldSavedData{
 
 	}
 
-	private Collection<IHealable> getHealables(World world, Collection<BlockPos> affectedBlocks) {
-		Set<IHealable> healables = new HashSet<IHealable>();
+	private Collection<IHealableBlock> getHealableBlocks(World world, Collection<BlockPos> affectedBlocks) {
+		Set<IHealableBlock> healables = new HashSet<IHealableBlock>();
 		for(BlockPos pos : affectedBlocks) {
 			IBlockState blockstate = world.getBlockState(pos);
 			
-			IHealable data = HealableFactories.getInstance().create(world, pos, blockstate);
+			IHealableBlock data = HealableFactories.getInstance().create(world, pos, blockstate);
 			
 			if(data != null) {
 				healables.add(data);
@@ -165,7 +167,7 @@ public class WorldHealer extends WorldSavedData{
 			ForgeCreeperHeal.getLogger().info("Unable to find data for world "+w.getWorldInfo().getWorldName()+"["+w.provider.getDimensionId()+"], new data created");
 		}
 
-		result.world = w;
+		result.setWorld(w);
 
 		return result;
 	}
@@ -200,6 +202,11 @@ public class WorldHealer extends WorldSavedData{
 
 	public Profiler getProfiler() {
 		return profiler;
+	}
+	
+	protected void setWorld(World world) {
+		this.world = world;
+		this.worldRemover = new WorldRemover(this.world);
 	}
 
 }

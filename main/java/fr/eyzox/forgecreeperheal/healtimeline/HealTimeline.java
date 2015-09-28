@@ -5,6 +5,7 @@ import java.util.Collection;
 import net.minecraft.world.World;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealable;
+import fr.eyzox.forgecreeperheal.healtimeline.healable.IHealableBlock;
 import fr.eyzox.timeline.RandomTimeline;
 
 
@@ -13,11 +14,10 @@ public class HealTimeline extends RandomTimeline {
 	private final World world;
 	private int tickLeftBeforeNextHeal;
 	
-	public HealTimeline(World world, Collection<IHealable> c) {
+	public HealTimeline(World world, Collection<IHealableBlock> c) {
 		super(c);
 		this.world = world;
 		this.tickLeftBeforeNextHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal() + ForgeCreeperHeal.getConfig().getRandomTickVar();
-		System.out.println(this);
 	}
 	
 	public void onTick() {

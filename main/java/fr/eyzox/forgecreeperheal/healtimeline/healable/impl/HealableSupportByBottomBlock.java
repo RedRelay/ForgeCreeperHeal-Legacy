@@ -14,7 +14,7 @@ public class HealableSupportByBottomBlock extends HealableBlock {
 	
 	
 	@Override
-	public void collectDependenciesKeys(ICollector<Object> collector) {
+	public void collectDependenciesKeys(ICollector collector) {
 		collector.collect(getDependencies(this.getPos()));
 		super.collectDependenciesKeys(collector);
 	}
