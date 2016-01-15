@@ -14,7 +14,7 @@ import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 public class ForgeCreeperHealCommands extends CommandsContainer {
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return ForgeCreeperHeal.MODID;
 	}
 
@@ -24,16 +24,16 @@ public class ForgeCreeperHealCommands extends CommandsContainer {
 	}
 
 	@Override
-	public List getAliases() {
+	public List<String> getCommandAliases() {
 		List<String> aliases = new ArrayList<String>(1);
 		aliases.add("fch");
 		return aliases;
 	}
 
 	@Override
-	public void execute(ICommandSender sender, String[] args) throws CommandException {
+	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		if(args.length > 0 && args[0] != null) {
-			super.execute(sender, args);
+			super.processCommand(sender, args);
 		}else {
 			addChatMessage(sender, new ChatComponentText("Server version : "+ ForgeCreeperHeal.VERSION));
 		}
@@ -42,7 +42,7 @@ public class ForgeCreeperHealCommands extends CommandsContainer {
 	
 	
 	@Override
-	public boolean canCommandSenderUse(ICommandSender p_71519_1_) {
+	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_) {
 		return true;
 	}
 

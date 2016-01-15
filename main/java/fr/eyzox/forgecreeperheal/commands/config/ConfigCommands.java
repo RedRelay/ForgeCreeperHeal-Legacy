@@ -7,7 +7,7 @@ import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 public class ConfigCommands extends CommandsContainer {
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "config";
 	}
 
@@ -17,7 +17,7 @@ public class ConfigCommands extends CommandsContainer {
 	}
 
 	@Override
-	public boolean canCommandSenderUse(ICommandSender sender) {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		return ForgeCreeperHealCommands.isOp(sender);
 	}
 }

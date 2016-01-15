@@ -12,7 +12,7 @@ import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 public class ProfilerCommand extends CommandBase{
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "profiler";
 	}
 
@@ -22,12 +22,12 @@ public class ProfilerCommand extends CommandBase{
 	}
 
 	@Override
-	public boolean canCommandSenderUse(ICommandSender sender) {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		return ForgeCreeperHealCommands.isOp(sender);
 	}
 
 	@Override
-	public void execute(ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		if(args.length > 0 && args[0] != null) {
 			
 			WorldHealer w = null;
