@@ -8,16 +8,15 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 
 import fr.eyzox.forgecreeperheal.json.adapter.BlockAdapter;
 import fr.eyzox.forgecreeperheal.json.adapter.ClassAdapter;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 
 public class Config {
 	private int minimumTicksBeforeHeal;

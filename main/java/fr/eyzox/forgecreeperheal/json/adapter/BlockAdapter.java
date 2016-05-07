@@ -2,11 +2,11 @@ package fr.eyzox.forgecreeperheal.json.adapter;
 
 import java.io.IOException;
 
-import net.minecraft.block.Block;
-import net.minecraftforge.fml.common.registry.GameData;
-
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
+import net.minecraft.block.Block;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class BlockAdapter extends AbstractAdapter<Block> {
 

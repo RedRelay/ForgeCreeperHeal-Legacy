@@ -1,20 +1,32 @@
 package fr.eyzox.forgecreeperheal;
 
 
-import net.minecraft.world.WorldServer;
+import org.apache.logging.log4j.Logger;
+
+import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
+import fr.eyzox.forgecreeperheal.builder.dependency.IDependencyBuilder;
+import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
+import fr.eyzox.forgecreeperheal.healer.HealerFactory;
+import fr.eyzox.forgecreeperheal.healer.HealerManager;
+import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
+import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-import org.apache.logging.log4j.Logger;
-
-import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
-import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
+//TODO config + test serial
+/*
+ * Planned feature :
+ * - GUI to configure options
+ * 
+ * Known Bugs/Issues :
+ * - Banner don't keep original color, they become black when healed
+ */
 
 @Mod(
 		modid = ForgeCreeperHeal.MODID,
@@ -26,7 +38,7 @@ public class ForgeCreeperHeal
 {
 	
     public static final String MODID = "forgecreeperheal";
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "2.0.0";
     public static final String MODNAME = "Forge Creeper Heal "+VERSION;
     
     @SidedProxy(clientSide = "fr.eyzox.forgecreeperheal.proxy.ClientProxy", serverSide = "fr.eyzox.forgecreeperheal.proxy.CommonProxy")
@@ -46,6 +58,11 @@ public class ForgeCreeperHeal
     }
     
     @EventHandler
+	public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+    	proxy.serverAboutToStart(event);
+    }
+    
+    @EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 		proxy.serverStarting(event);
 	}
@@ -58,17 +75,15 @@ public class ForgeCreeperHeal
     	return proxy.getLogger();
     }
     
-    public static WorldHealer getWorldHealer(WorldServer w) {
-    	return proxy.getWorldEventHandler().getWorldHealers().get(w);
-    }
-    
     public static Config getConfig() {
     	return proxy.getConfig();
     }
     
+    /*
     public static SimpleNetworkWrapper getChannel() {
     	return proxy.getChannel();
     }
+    */
     
     public static CommonProxy getProxy() {
     	return proxy;
@@ -76,5 +91,21 @@ public class ForgeCreeperHeal
     
     public static void reloadConfig() {
     	proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
+    }
+    
+    public static HealerManager getHealerManager() {
+    	return proxy.getHealerManager();
+    }
+    
+    public static HealerFactory getHealerFactory() {
+    	return proxy.getHealerFactory();
+    }
+    
+    public static DefaultFactory<Class<? extends Block>, IBlockDataBuilder> getBlockDataFactory() {
+    	return proxy.getBlockDataFactory();
+    }
+    
+    public static DefaultFactory<Class<? extends Block>, IDependencyBuilder> getDependencyFactory() {
+    	return proxy.getDependencyFactory();
     }
 }

@@ -1,11 +1,9 @@
 package fr.eyzox.forgecreeperheal.reflection;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

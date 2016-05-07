@@ -3,13 +3,13 @@ package fr.eyzox.forgecreeperheal.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 
 public class ForgeCreeperHealCommands extends CommandsContainer {
 

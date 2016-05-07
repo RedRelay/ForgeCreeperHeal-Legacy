@@ -3,12 +3,6 @@ package fr.eyzox.forgecreeperheal.commands;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class HealCommand extends CommandBase {
 
@@ -24,11 +18,12 @@ public class HealCommand extends CommandBase {
 
 	@Override
 	public void execute(ICommandSender sender, String[] args) throws CommandException {
-
+		//TODO HealCommand
+		/*
 		if(args.length > 0) {
 			if("all".equalsIgnoreCase(args[0])) {
 				for(WorldServer world : DimensionManager.getWorlds()) {
-					WorldHealer wh = ForgeCreeperHeal.getWorldHealer(world);
+					HealerManager wh = HealerManager.getChunkHealerManager(world);
 					if(wh != null) wh.healAll();
 				}
 			}else {
@@ -39,7 +34,7 @@ public class HealCommand extends CommandBase {
 					ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Dimension must be an integer"));
 					return;
 				}
-				WorldHealer wh = ForgeCreeperHeal.getWorldHealer((WorldServer) DimensionManager.getWorld(dimensionID));
+				HealerManager wh = HealerManager.getChunkHealerManager((WorldServer) DimensionManager.getWorld(dimensionID));
 				if(wh == null) {
 					ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Invalid dimension"));
 				}else {
@@ -47,7 +42,7 @@ public class HealCommand extends CommandBase {
 				}
 			}
 		}else if(sender instanceof EntityPlayer){
-			WorldHealer wh = ForgeCreeperHeal.getWorldHealer((WorldServer) sender.getEntityWorld());
+			HealerManager wh = HealerManager.getChunkHealerManager((WorldServer) sender.getEntityWorld());
 			if(wh == null) {
 				ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Forge Creeper Heal is not enabled for this dimension"));
 			}else {
@@ -56,6 +51,7 @@ public class HealCommand extends CommandBase {
 		}else {
 			ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("You must specified a dimension id"));
 		}
+		*/
 	}
 
 	@Override
