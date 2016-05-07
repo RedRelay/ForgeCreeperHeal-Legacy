@@ -12,9 +12,15 @@ Clients don't need Forge Creeper Heal installed to join your server BUT they nee
 ## Customizable Settings
 
 See : https://github.com/EyZox/ForgeCreeperHeal/wiki/Customizable-Settings
-**Warn : not implemented yet in 2.0** 
+**Warn : not implemented yet in 2.0**
 
-## Planned improvement
+## Contribute/Compilation Set Up
+
+* Used libs :
+  * [DependencyGraph](https://github.com/EyZox/DependencyGraph)
+  * [TickTimeline](https://github.com/EyZox/TickTimeline)
+
+## Planned improvements
 
 * Config **Warn : not implemented yet in 2.0**
   * « fromEntityException » : Choose entities by name not class.
