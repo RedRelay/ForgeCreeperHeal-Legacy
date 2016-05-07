@@ -1,8 +1,23 @@
 # Changelog
 
+## 2.0.0
+
+### news
+
+* Almost all code was rewrite
+* Better heal system
+* Chunk saved data (better RAM consumption)
+* Profiler removed
+
+### bug fixes
+
+* Door respawns in half
+* Falling block respawns before their support
+* etc ... I'm unable to enumerate all bug fixes, because I have almost rewrite all code ...
+
 ## 1.2.0
 
-### news :
+### news
 
 * Add heal command to instant regenerate terrain
 
@@ -15,7 +30,7 @@
 
 ## 1.1.0
 
-### news :
+### news
 
 * Allows to reload config in game
 * Adds [profiler](https://github.com/EyZox/ForgeCreeperHeal/wiki/Profiler)
