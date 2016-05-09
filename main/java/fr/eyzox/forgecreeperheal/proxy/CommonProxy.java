@@ -1,8 +1,14 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.NoSuchFileException;
+
 import org.apache.logging.log4j.Logger;
 
-import fr.eyzox.forgecreeperheal.Config;
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.BedBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.builder.blockdata.DefaultBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.builder.blockdata.DoorBlockDataBuilder;
@@ -28,6 +34,10 @@ import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import fr.eyzox.forgecreeperheal.commands.HealCommand;
 import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
 import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
+import fr.eyzox.forgecreeperheal.config.Config;
+import fr.eyzox.forgecreeperheal.config.loader.IConfigLoader;
+import fr.eyzox.forgecreeperheal.config.loader.JSONConfigLoader;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.ClassKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
@@ -73,6 +83,7 @@ public class CommonProxy {
 	private Logger logger;
     
     private Config config;
+    private IConfigLoader configLoader;
     //private SimpleNetworkWrapper channel;
     
     private HealerFactory healerFactory;
@@ -91,8 +102,47 @@ public class CommonProxy {
 	
 	public void onPreInit(FMLPreInitializationEvent event) {
     	this.logger = event.getModLog();
-    	this.config = Config.loadConfig(event.getSuggestedConfigurationFile());
-    	//this.healGraphBuilder;
+    	this.config = Config.loadDefaultConfig();
+    	this.configLoader = new JSONConfigLoader(event.getSuggestedConfigurationFile());
+    	try {
+			this.configLoader.load(config);
+		}catch(final NoSuchFileException e) {
+			ForgeCreeperHeal.getLogger().info("Config File doesn't exist at "+e.getFile()+" : creating a new one");
+		}catch (Exception e2) {
+			e2.printStackTrace();
+			ForgeCreeperHeal.getLogger().error("Unable to load config : "+e2.getMessage());
+		}
+    	
+    	if(configLoader.getErrorManager().hasErrors()) {
+    		final File errorFile = new File(ForgeCreeperHeal.MODID+"-config-error.log");
+    		FileWriter out = null;
+    		try {
+    			out = new FileWriter(errorFile);
+    			PrintWriter pw = new PrintWriter(out);
+    			configLoader.getErrorManager().output(pw);
+    			logger.warn("Errors occurs during loading config, more information in "+errorFile.getAbsolutePath());
+    		}catch(IOException e) {
+    			ForgeCreeperHeal.getLogger().error("Errors occurs during loading config, unable to write into "+errorFile.getAbsolutePath()+" : "+e.getMessage());
+    			for(ForgeCreeperHealException error : configLoader.getErrorManager().getErrors()) {
+    				logger.info(error.getMessage());
+    			}
+    		}finally {
+				if(out != null) {
+					try {
+						out.close();
+					} catch (IOException e) {}
+				}
+			}
+    	}
+    	
+    	
+    	try {
+			configLoader.save(config);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ForgeCreeperHeal.getLogger().error("Unable to save config : "+e.getMessage());
+		}
+    	
     }
 	
 	public void onInit(FMLInitializationEvent event)

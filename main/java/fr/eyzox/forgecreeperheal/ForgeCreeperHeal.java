@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 /*
  * Planned feature :
  * - GUI to configure options
+ * - Better config for Entity Filter : idea : use EntityRegistry to get <ModContainer.getModId()>:<EntityRegistration.entityName>
  * 
  * Known Bugs/Issues :
  * - Banner don't keep original color, they become black when healed
@@ -76,7 +77,8 @@ public class ForgeCreeperHeal
     }
     
     public static Config getConfig() {
-    	return proxy.getConfig();
+    	//TODO this is the old config system
+    	return new Config();
     }
     
     /*
@@ -90,7 +92,8 @@ public class ForgeCreeperHeal
     }
     
     public static void reloadConfig() {
-    	proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
+    	//TODO reloadConfig
+    	//proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
     }
     
     public static HealerManager getHealerManager() {
