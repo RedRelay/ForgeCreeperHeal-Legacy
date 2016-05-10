@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.config.loader;
+package fr.eyzox.bsc.config.loader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -6,16 +6,16 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
+import fr.eyzox.bsc.exception.ConfigException;
 
 public class ErrorManager implements IErrorManager{
 
-	private final List<ForgeCreeperHealException> errors = new LinkedList<ForgeCreeperHealException>();
+	private final List<ConfigException> errors = new LinkedList<ConfigException>();
 
 	public ErrorManager() {}
 	
 	@Override
-	public void error(ForgeCreeperHealException exception) {
+	public void error(ConfigException exception) {
 		errors.add(exception);
 	}
 	
@@ -26,13 +26,13 @@ public class ErrorManager implements IErrorManager{
 	
 	@Override
 	public void output(final PrintWriter out) throws IOException{
-		for(final ForgeCreeperHealException e : errors) {
+		for(final ConfigException e : errors) {
 			out.println(e.getMessage());
 		}
 	}
 	
 	@Override
-	public Collection<ForgeCreeperHealException> getErrors() {
+	public Collection<ConfigException> getErrors() {
 		return errors;
 	}
 

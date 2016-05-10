@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.config.loader;
+package fr.eyzox.bsc.config.loader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,8 +9,8 @@ import java.io.PrintWriter;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
 
-import fr.eyzox.forgecreeperheal.config.Config;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
+import fr.eyzox.bsc.config.Config;
+import fr.eyzox.bsc.exception.InvalidValueException;
 
 public abstract class AbstractFileConfigLoader implements IConfigLoader {
 

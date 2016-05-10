@@ -1,13 +1,13 @@
-package fr.eyzox.forgecreeperheal.exception.config;
+package fr.eyzox.bsc.exception;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class MultiInvalidValue extends InvalidValueException {
+public class MultiInvalidValueException extends InvalidValueException {
 
 	private final Collection<InvalidValueException> exceptions = new LinkedList<InvalidValueException>();
 	
-	public MultiInvalidValue(String value) {
+	public MultiInvalidValueException(String value) {
 		super(value);
 	}
 	

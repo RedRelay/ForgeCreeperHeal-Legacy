@@ -45,7 +45,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		//Entity Filter : Retrieve which entity make this explosion
 		Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.explosion);
 		//TODO maybe better config
-		if(exploder == null || ForgeCreeperHeal.getConfig().getFromEntityException().contains(exploder.getClass()))
+		if(exploder == null || ForgeCreeperHeal.getConfig().getSourceException().contains(exploder.getClass()))
 			return;
 		
 		//All filters applied, now begins the real stuff :P

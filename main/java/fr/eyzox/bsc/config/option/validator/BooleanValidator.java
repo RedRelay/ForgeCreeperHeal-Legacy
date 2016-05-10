@@ -1,7 +1,6 @@
-package fr.eyzox.forgecreeperheal.config.option.validator;
+package fr.eyzox.bsc.config.option.validator;
 
-import fr.eyzox.forgecreeperheal.exception.config.FormatException;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
+import fr.eyzox.bsc.exception.InvalidValueException;
 
 public class BooleanValidator implements IValidator {
 

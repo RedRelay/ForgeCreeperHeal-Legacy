@@ -3,8 +3,10 @@ package fr.eyzox.forgecreeperheal;
 
 import org.apache.logging.log4j.Logger;
 
+import fr.eyzox.bsc.config.IConfigProvider;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.builder.dependency.IDependencyBuilder;
+import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
@@ -76,9 +78,12 @@ public class ForgeCreeperHeal
     	return proxy.getLogger();
     }
     
-    public static Config getConfig() {
-    	//TODO this is the old config system
-    	return new Config();
+    public static IConfigProvider getConfigProvider() {
+    	return proxy.getConfigProvider();
+    }
+    
+    public static FastConfig getConfig() {
+    	return proxy.getConfig();
     }
     
     /*

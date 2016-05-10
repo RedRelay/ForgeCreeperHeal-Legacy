@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.apache.logging.log4j.Logger;
 
+import fr.eyzox.bsc.config.IConfigProvider;
+import fr.eyzox.bsc.config.loader.JSONConfigLoader;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.BedBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.builder.blockdata.DefaultBlockDataBuilder;
@@ -30,10 +32,8 @@ import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import fr.eyzox.forgecreeperheal.commands.HealCommand;
 import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
 import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
-import fr.eyzox.forgecreeperheal.config.Config;
 import fr.eyzox.forgecreeperheal.config.ConfigProvider;
-import fr.eyzox.forgecreeperheal.config.IConfigProvider;
-import fr.eyzox.forgecreeperheal.config.loader.JSONConfigLoader;
+import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.ClassKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
@@ -79,6 +79,7 @@ public class CommonProxy {
 	private Logger logger;
     
     private ConfigProvider configProvider;
+    private FastConfig config;
     //private SimpleNetworkWrapper channel;
     
     private HealerFactory healerFactory;
@@ -114,7 +115,8 @@ public class CommonProxy {
     	this.blockDataFactory = loadBlockDataFactory();
     	this.dependencyFactory = loadDependencyFactory();
     	
-    	//Register IConfigListeners
+    	this.config = new FastConfig();
+    	this.configProvider.addConfigListener(config);
     	
     	//Notify listener to update
     	this.configProvider.fireConfigChanged();
@@ -174,6 +176,10 @@ public class CommonProxy {
 
 	public IConfigProvider getConfigProvider() {
 		return configProvider;
+	}
+	
+	public FastConfig getConfig() {
+		return this.config;
 	}
 
 	/*

@@ -1,8 +1,6 @@
-package fr.eyzox.forgecreeperheal.exception.config;
+package fr.eyzox.bsc.exception;
 
-import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
-
-public class ConfigException extends ForgeCreeperHealException {
+public class ConfigException extends RuntimeException {
 
 	public ConfigException() {
 		super();

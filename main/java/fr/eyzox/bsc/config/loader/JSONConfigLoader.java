@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.config.loader;
+package fr.eyzox.bsc.config.loader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,20 +14,18 @@ import java.nio.file.NoSuchFileException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-import fr.eyzox.forgecreeperheal.config.Config;
-import fr.eyzox.forgecreeperheal.config.ConfigOptionGroup;
-import fr.eyzox.forgecreeperheal.config.option.ConfigOption;
-import fr.eyzox.forgecreeperheal.config.option.ConfigOptionList;
-import fr.eyzox.forgecreeperheal.config.option.IConfigOption;
-import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
-import fr.eyzox.forgecreeperheal.exception.config.FormatException;
+import fr.eyzox.bsc.config.Config;
+import fr.eyzox.bsc.config.ConfigOptionGroup;
+import fr.eyzox.bsc.config.option.ConfigOption;
+import fr.eyzox.bsc.config.option.ConfigOptionList;
+import fr.eyzox.bsc.config.option.IConfigOption;
+import fr.eyzox.bsc.exception.ConfigException;
+import fr.eyzox.bsc.exception.FormatException;
+import fr.eyzox.bsc.exception.InvalidValueException;
 
 public class JSONConfigLoader extends AbstractFileConfigLoader {
 
@@ -41,7 +39,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 		InputStream input = null;
 		try {
 			input = new FileInputStream(getFile());
-			this.readJsonStream(getGson(), input, config);
+			this.readJsonStream(input, config);
 		}finally {
 			if(input != null) {
 				input.close();
@@ -56,7 +54,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 		OutputStream output = null;
 		try {
 			output = new FileOutputStream(getFile());
-			this.writeJsonStream(getGson(), output, config);
+			this.writeJsonStream(output, config);
 		}finally {
 			if(output != null) {
 				output.close();
@@ -64,7 +62,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 		}
 	}
 
-	private void readJsonStream(final Gson gson, final InputStream in, final Config config) throws IOException, InvalidValueException {
+	private void readJsonStream(final InputStream in, final Config config) throws IOException, InvalidValueException {
 		final JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 
 		reader.beginObject();
@@ -76,7 +74,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 			if(optionGroup != null) {
 
 				if(reader.peek() != JsonToken.BEGIN_OBJECT) {
-					getErrorManager().error(new ForgeCreeperHealException(optionGroup.getName() + " : " + new FormatException(reader.peek().name(), JsonToken.BEGIN_OBJECT.name()).getMessage()));
+					getErrorManager().error(new ConfigException(optionGroup.getName() + " : " + new FormatException(reader.peek().name(), JsonToken.BEGIN_OBJECT.name()).getMessage()));
 					reader.skipValue();
 				}
 
@@ -97,12 +95,12 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 								//ERROR : Unknow type (this should never happens)
 								throw new RuntimeException("Unknown config option type !");
 							}
-						}catch(ForgeCreeperHealException e) {
+						}catch(ConfigException e) {
 							getErrorManager().error(e);
 						}
 					}else {
 						//warn : Unhandled Option (User has added an option in his configFile that doesn't exist)
-						getErrorManager().error(new ForgeCreeperHealException(optionName+" is not a valid option name"));
+						getErrorManager().error(new ConfigException(optionName+" is not a valid option name"));
 						reader.skipValue();
 					}
 				}
@@ -110,7 +108,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 				reader.endObject();
 			}else {
 				//Unhandled OptionGroup (User has added an optionGroup in his configFile that doesn't exist)
-				getErrorManager().error(new ForgeCreeperHealException(groupOptionName+" is not a valid option group name"));
+				getErrorManager().error(new ConfigException(groupOptionName+" is not a valid option group name"));
 				reader.skipValue();
 			}
 		}
@@ -134,12 +132,12 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 		}
 	}
 
-	private void readConfigOption(final JsonReader reader, final ConfigOption configOption) throws IOException, ForgeCreeperHealException {
+	private void readConfigOption(final JsonReader reader, final ConfigOption configOption) throws IOException, ConfigException {
 		String value = null;
 		try {
 			value = getOptionValue(reader, configOption);
 		}catch(FormatException e) {
-			throw new ForgeCreeperHealException(configOption.getName()+" : "+e.getMessage());
+			throw new ConfigException(configOption.getName()+" : "+e.getMessage());
 		}
 		configOption.setValue(value);
 	}
@@ -150,7 +148,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 
 		if(token != JsonToken.BEGIN_ARRAY) {
 			reader.skipValue();
-			throw new ForgeCreeperHealException(configOptionList.getName()+" : "+new FormatException(token.name(), "<ARRAY>").getMessage());
+			throw new ConfigException(configOptionList.getName()+" : "+new FormatException(token.name(), "<ARRAY>").getMessage());
 		}
 
 		reader.beginArray();
@@ -162,7 +160,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 				value = getOptionValue(reader, configOptionList);
 				values.add(value);
 			}catch(FormatException e) {
-				getErrorManager().error(new ForgeCreeperHealException(configOptionList.getName()+" : "+e.getMessage()));
+				getErrorManager().error(new ConfigException(configOptionList.getName()+" : "+e.getMessage()));
 			}
 
 		}
@@ -173,7 +171,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 
 	}
 
-	private void writeJsonStream(final Gson gson, final OutputStream out, final Config config) throws IOException {
+	private void writeJsonStream(final OutputStream out, final Config config) throws IOException {
 		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
 		writer.setIndent("  ");
 		writer.beginObject();
@@ -205,12 +203,6 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 			writer.value(value);
 		}
 		writer.endArray();
-	}
-
-	private Gson getGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting();
-		return builder.create();
 	}
 
 }

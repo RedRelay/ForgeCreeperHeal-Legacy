@@ -9,19 +9,40 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.eyzox.bsc.config.Config;
+import fr.eyzox.bsc.config.ConfigOptionGroup;
+import fr.eyzox.bsc.config.IConfigListener;
+import fr.eyzox.bsc.config.IConfigProvider;
+import fr.eyzox.bsc.config.loader.IConfigLoader;
+import fr.eyzox.bsc.config.option.ConfigOption;
+import fr.eyzox.bsc.config.option.ConfigOptionList;
+import fr.eyzox.bsc.config.option.validator.BooleanValidator;
+import fr.eyzox.bsc.config.option.validator.IValidator;
+import fr.eyzox.bsc.config.option.validator.IntValidator;
+import fr.eyzox.bsc.exception.ConfigException;
+import fr.eyzox.bsc.exception.InvalidValueException;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.config.loader.IConfigLoader;
-import fr.eyzox.forgecreeperheal.config.option.ConfigOption;
-import fr.eyzox.forgecreeperheal.config.option.ConfigOptionList;
-import fr.eyzox.forgecreeperheal.config.option.validator.BooleanValidator;
-import fr.eyzox.forgecreeperheal.config.option.validator.IValidator;
-import fr.eyzox.forgecreeperheal.config.option.validator.IntValidator;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
-import fr.eyzox.forgecreeperheal.exception.config.ConfigException;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
 
 public class ConfigProvider implements IConfigProvider{
 
+	public static final String GROUP_HEALING_TIME = "healing time";
+	public static final String GROUP_OVERRIDE = "override";
+	public static final String GROUP_CONTAINERS = "containers";
+	public static final String GROUP_FILTERS = "filters";
+	
+	public static final String OPTION_MIN_TICK_BEFORE_HEAL = "minTickStart";
+	public static final String OPTION_MAX_TICK_BEFORE_HEAL = "maxTickStart";
+	public static final String OPTION_MIN_TICK = "minTick";
+	public static final String OPTION_MAX_TICK = "maxTick";
+	public static final String OPTION_OVERRIDE_BLOCK = "overrideBlock";
+	public static final String OPTION_OVERRIDE_FUILD = "overrideFluid";
+	public static final String OPTION_DROP_IF_COLLISION = "dropIfCollision";
+	public static final String OPTION_DROP_ITEMS = "dropItems";
+	public static final String OPTION_REMOVE_EXCEPTION = "removeException";
+	public static final String OPTION_HEAL_EXCEPTION = "healException";
+	public static final String OPTION_SOURCE_EXCEPTION = "sourceException";
+	
 	private final List<IConfigListener> listeners = new LinkedList<IConfigListener>();
 
 	private IConfigLoader configLoader;
@@ -83,7 +104,7 @@ public class ConfigProvider implements IConfigProvider{
     			ForgeCreeperHeal.getLogger().warn("Errors occurs during loading config, more information in "+errorFile.getAbsolutePath());
     		}catch(IOException e) {
     			ForgeCreeperHeal.getLogger().error("Errors occurs during loading config, unable to write into "+errorFile.getAbsolutePath()+" : "+e.getMessage());
-    			for(ForgeCreeperHealException error : configLoader.getErrorManager().getErrors()) {
+    			for(ConfigException error : configLoader.getErrorManager().getErrors()) {
     				ForgeCreeperHeal.getLogger().info(error.getMessage());
     			}
     		}finally {
@@ -132,20 +153,20 @@ public class ConfigProvider implements IConfigProvider{
 
 		//## ConfigOptions
 
-		final ConfigOption minTickBeforeStartHeal = new ConfigOption("minTickBeforeStartHeal");
-		final ConfigOption maxTickBeforeStartHeal = new ConfigOption("maxTickBeforeStartHeal");
-		final ConfigOption minTickBetweenEachHeal = new ConfigOption("minTickBetweenEachHeal");
-		final ConfigOption maxTickBetweenEachHeal = new ConfigOption("maxTickBetweenEachHeal");
+		final ConfigOption minTickBeforeStartHeal = new ConfigOption(OPTION_MIN_TICK_BEFORE_HEAL);
+		final ConfigOption maxTickBeforeStartHeal = new ConfigOption(OPTION_MAX_TICK_BEFORE_HEAL);
+		final ConfigOption minTickBetweenEachHeal = new ConfigOption(OPTION_MIN_TICK);
+		final ConfigOption maxTickBetweenEachHeal = new ConfigOption(OPTION_MAX_TICK);
 
-		final ConfigOption overrideBlock = new ConfigOption("overrideBlock");
-		final ConfigOption overrideFluid = new ConfigOption("overrideFluid");
-		final ConfigOption dropIfAlreadyBlock = new ConfigOption("dropIfAlreadyBlock");
+		final ConfigOption overrideBlock = new ConfigOption(OPTION_OVERRIDE_BLOCK);
+		final ConfigOption overrideFluid = new ConfigOption(OPTION_OVERRIDE_FUILD);
+		final ConfigOption dropIfAlreadyBlock = new ConfigOption(OPTION_DROP_IF_COLLISION);
 
-		final ConfigOption dropItemsFromContainers = new ConfigOption("dropItemsFromContainers");
+		final ConfigOption dropItemsFromContainers = new ConfigOption(OPTION_DROP_ITEMS);
 
-		final ConfigOptionList removeException = new ConfigOptionList("removeException");
-		final ConfigOptionList healException = new ConfigOptionList("healException");
-		final ConfigOptionList fromEntityException = new ConfigOptionList("fromEntityException");
+		final ConfigOptionList removeException = new ConfigOptionList(OPTION_REMOVE_EXCEPTION);
+		final ConfigOptionList healException = new ConfigOptionList(OPTION_HEAL_EXCEPTION);
+		final ConfigOptionList fromEntityException = new ConfigOptionList(OPTION_SOURCE_EXCEPTION);
 
 		//## Default value
 
@@ -260,21 +281,21 @@ public class ConfigProvider implements IConfigProvider{
 
 		//## ConfigOptionGroups
 
-		final ConfigOptionGroup healingTimeGroup = new ConfigOptionGroup("healing time");
+		final ConfigOptionGroup healingTimeGroup = new ConfigOptionGroup(GROUP_HEALING_TIME);
 		healingTimeGroup.addOption(minTickBeforeStartHeal);
 		healingTimeGroup.addOption(maxTickBeforeStartHeal);
 		healingTimeGroup.addOption(minTickBetweenEachHeal);
 		healingTimeGroup.addOption(maxTickBetweenEachHeal);
 
-		final ConfigOptionGroup overrideGroup = new ConfigOptionGroup("override");
+		final ConfigOptionGroup overrideGroup = new ConfigOptionGroup(GROUP_OVERRIDE);
 		overrideGroup.addOption(overrideBlock);
 		overrideGroup.addOption(overrideFluid);
 		overrideGroup.addOption(dropIfAlreadyBlock);
 
-		final ConfigOptionGroup containerGroup = new ConfigOptionGroup("containers");
+		final ConfigOptionGroup containerGroup = new ConfigOptionGroup(GROUP_CONTAINERS);
 		containerGroup.addOption(dropItemsFromContainers);
 
-		final ConfigOptionGroup filtersGroup =  new ConfigOptionGroup("filters");
+		final ConfigOptionGroup filtersGroup =  new ConfigOptionGroup(GROUP_FILTERS);
 		filtersGroup.addOption(removeException);
 		filtersGroup.addOption(healException);
 		filtersGroup.addOption(fromEntityException);

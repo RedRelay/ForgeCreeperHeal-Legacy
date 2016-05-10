@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.config;
+package fr.eyzox.bsc.config;
 
 public interface IConfigProvider {
 	public Config getConfig();

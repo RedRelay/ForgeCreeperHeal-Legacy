@@ -1,10 +1,10 @@
-package fr.eyzox.forgecreeperheal.config;
+package fr.eyzox.bsc.config;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import fr.eyzox.forgecreeperheal.config.option.IConfigOption;
+import fr.eyzox.bsc.config.option.IConfigOption;
 
 public class ConfigOptionGroup {
 

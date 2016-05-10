@@ -1,6 +1,6 @@
-package fr.eyzox.forgecreeperheal.config.loader;
+package fr.eyzox.bsc.config.loader;
 
-import fr.eyzox.forgecreeperheal.config.Config;
+import fr.eyzox.bsc.config.Config;
 
 public interface IConfigLoader {
 	public void load(final Config config) throws Exception;

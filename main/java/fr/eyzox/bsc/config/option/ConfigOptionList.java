@@ -1,12 +1,12 @@
-package fr.eyzox.forgecreeperheal.config.option;
+package fr.eyzox.bsc.config.option;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.eyzox.forgecreeperheal.config.option.validator.IValidator;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
-import fr.eyzox.forgecreeperheal.exception.config.MultiInvalidValue;
+import fr.eyzox.bsc.config.option.validator.IValidator;
+import fr.eyzox.bsc.exception.InvalidValueException;
+import fr.eyzox.bsc.exception.MultiInvalidValueException;
 
 public class ConfigOptionList extends AbstractConfigOption {
 
@@ -27,7 +27,7 @@ public class ConfigOptionList extends AbstractConfigOption {
 	public void setValues(final List<String> values) throws InvalidValueException{
 		this.values.clear();
 		if(getValidator() != null) {
-			final MultiInvalidValue exceptions = new MultiInvalidValue(values.toString());
+			final MultiInvalidValueException exceptions = new MultiInvalidValueException(values.toString());
 			for(final String value : values) {
 				try {
 					if(!getValidator().isValid(value)) {

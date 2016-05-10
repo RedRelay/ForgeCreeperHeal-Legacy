@@ -1,6 +1,4 @@
-package fr.eyzox.forgecreeperheal.exception.config;
-
-import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
+package fr.eyzox.bsc.exception;
 
 public class FormatException extends ConfigException {
 	

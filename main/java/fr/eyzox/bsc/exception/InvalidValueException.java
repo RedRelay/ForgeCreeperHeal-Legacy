@@ -1,6 +1,6 @@
-package fr.eyzox.forgecreeperheal.exception.config;
+package fr.eyzox.bsc.exception;
 
-import fr.eyzox.forgecreeperheal.config.option.IConfigOption;
+import fr.eyzox.bsc.config.option.IConfigOption;
 
 public class InvalidValueException extends ConfigException {
 

@@ -1,18 +1,8 @@
-package fr.eyzox.forgecreeperheal.config;
+package fr.eyzox.bsc.config;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import fr.eyzox.forgecreeperheal.config.option.ConfigOption;
-import fr.eyzox.forgecreeperheal.config.option.ConfigOptionList;
-import fr.eyzox.forgecreeperheal.config.option.validator.BooleanValidator;
-import fr.eyzox.forgecreeperheal.config.option.validator.IValidator;
-import fr.eyzox.forgecreeperheal.config.option.validator.IntValidator;
-import fr.eyzox.forgecreeperheal.exception.config.FormatException;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
 
 public class Config {
 

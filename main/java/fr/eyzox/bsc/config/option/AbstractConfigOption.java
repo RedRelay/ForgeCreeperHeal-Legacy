@@ -1,6 +1,6 @@
-package fr.eyzox.forgecreeperheal.config.option;
+package fr.eyzox.bsc.config.option;
 
-import fr.eyzox.forgecreeperheal.config.option.validator.IValidator;
+import fr.eyzox.bsc.config.option.validator.IValidator;
 
 public abstract class AbstractConfigOption implements IConfigOption{
 
