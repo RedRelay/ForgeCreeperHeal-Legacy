@@ -1,7 +1,7 @@
 package fr.eyzox.forgecreeperheal.config.option;
 
 import fr.eyzox.forgecreeperheal.config.option.validator.IValidator;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidConfigValueException;
+import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
 
 public class ConfigOption extends AbstractConfigOption{
 	
@@ -20,16 +20,16 @@ public class ConfigOption extends AbstractConfigOption{
 		return this.value;
 	}
 	
-	public void setValue(final String newValue) throws InvalidConfigValueException{
-		if(getValidator() != null) {
-			try {
-				if(!getValidator().isValid(newValue)) {
-					throw new InvalidConfigValueException(this, this.value, newValue);
-				}
-			}catch(final Exception e) {
-				throw new InvalidConfigValueException(this, this.value, newValue, e);
+	public void setValue(final String newValue) throws InvalidValueException{
+		try {
+			if(getValidator() == null || getValidator().isValid(newValue) ) {
+				this.value = newValue;
+			}else {
+				throw new InvalidValueException(newValue);
 			}
+		}catch(final InvalidValueException e) {
+			e.setConfigOption(this);
+			throw e;
 		}
-		this.value = newValue;
 	}
 }

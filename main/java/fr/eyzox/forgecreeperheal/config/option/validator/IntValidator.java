@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.config.option.validator;
 
-import fr.eyzox.forgecreeperheal.exception.config.InvalidDataTypeException;
+import fr.eyzox.forgecreeperheal.exception.config.FormatException;
+import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
 
 public class IntValidator implements IValidator {
 
@@ -16,19 +17,19 @@ public class IntValidator implements IValidator {
 	}
 
 	@Override
-	public boolean isValid(String value) throws InvalidDataTypeException{
+	public boolean isValid(String value) throws InvalidValueException{
 		int intValue = 0;
 		
 		try {
 			intValue = Integer.parseInt(value);
 		}catch(NumberFormatException e) {
-			throw new InvalidDataTypeException("INTEGER", value);
+			throw new InvalidValueException(value, "<INTEGER>", e);
 		}
 		
 		if(intValue >= minValue && intValue <= maxValue) {
 			return true;
 		}else {
-			throw new InvalidDataTypeException("INTEGER between ["+minValue+", "+maxValue+"]", value);
+			throw new InvalidValueException(value, "INTEGER between ["+minValue+", "+maxValue+"]");
 		}
 	}
 

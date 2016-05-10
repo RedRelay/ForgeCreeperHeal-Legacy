@@ -26,8 +26,8 @@ import fr.eyzox.forgecreeperheal.config.option.ConfigOption;
 import fr.eyzox.forgecreeperheal.config.option.ConfigOptionList;
 import fr.eyzox.forgecreeperheal.config.option.IConfigOption;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidConfigValueException;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidDataTypeException;
+import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
+import fr.eyzox.forgecreeperheal.exception.config.FormatException;
 
 public class JSONConfigLoader extends AbstractFileConfigLoader {
 
@@ -36,7 +36,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 	}
 
 	@Override
-	public void load(Config config) throws NoSuchFileException, FileNotFoundException, AccessDeniedException, IOException, InvalidConfigValueException {
+	public void load(Config config) throws NoSuchFileException, FileNotFoundException, AccessDeniedException, IOException, InvalidValueException {
 		super.load(config);
 		InputStream input = null;
 		try {
@@ -64,7 +64,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 		}
 	}
 
-	private void readJsonStream(final Gson gson, final InputStream in, final Config config) throws IOException, InvalidConfigValueException {
+	private void readJsonStream(final Gson gson, final InputStream in, final Config config) throws IOException, InvalidValueException {
 		final JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 
 		reader.beginObject();
@@ -76,7 +76,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 			if(optionGroup != null) {
 
 				if(reader.peek() != JsonToken.BEGIN_OBJECT) {
-					getErrorManager().error(new ForgeCreeperHealException(optionGroup.getName() + " : " + new InvalidDataTypeException(JsonToken.BEGIN_OBJECT.name(), reader.peek().name()).getMessage()));
+					getErrorManager().error(new ForgeCreeperHealException(optionGroup.getName() + " : " + new FormatException(reader.peek().name(), JsonToken.BEGIN_OBJECT.name()).getMessage()));
 					reader.skipValue();
 				}
 
@@ -98,7 +98,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 								throw new RuntimeException("Unknown config option type !");
 							}
 						}catch(ForgeCreeperHealException e) {
-							getErrorManager().error(new ForgeCreeperHealException(option.getName()+" : "+e.getMessage()));
+							getErrorManager().error(e);
 						}
 					}else {
 						//warn : Unhandled Option (User has added an option in his configFile that doesn't exist)
@@ -119,7 +119,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 		reader.close();
 	}
 
-	private String getOptionValue(final JsonReader reader, final IConfigOption option) throws IOException {
+	private String getOptionValue(final JsonReader reader, final IConfigOption option) throws IOException, FormatException {
 		final JsonToken token = reader.peek();
 		switch (token) {
 		case BOOLEAN:
@@ -130,22 +130,27 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 			return reader.nextString();
 		default:
 			reader.skipValue();
-			throw new InvalidDataTypeException("BOOLEAN or NUMBER or STRING", token.name());
+			throw new FormatException(token.name(), "<BOOLEAN> or <NUMBER> or <STRING>");
 		}
 	}
 
 	private void readConfigOption(final JsonReader reader, final ConfigOption configOption) throws IOException, ForgeCreeperHealException {
-		String value = getOptionValue(reader, configOption);
+		String value = null;
+		try {
+			value = getOptionValue(reader, configOption);
+		}catch(FormatException e) {
+			throw new ForgeCreeperHealException(configOption.getName()+" : "+e.getMessage());
+		}
 		configOption.setValue(value);
 	}
 
-	private void readConfigOptionList(final JsonReader reader, final ConfigOptionList configOptionList) throws IOException, InvalidConfigValueException {
+	private void readConfigOptionList(final JsonReader reader, final ConfigOptionList configOptionList) throws IOException, InvalidValueException {
 
 		final JsonToken token = reader.peek();
 
 		if(token != JsonToken.BEGIN_ARRAY) {
 			reader.skipValue();
-			throw new InvalidDataTypeException("ARRAY", token.name());
+			throw new ForgeCreeperHealException(configOptionList.getName()+" : "+new FormatException(token.name(), "<ARRAY>").getMessage());
 		}
 
 		reader.beginArray();
@@ -156,7 +161,7 @@ public class JSONConfigLoader extends AbstractFileConfigLoader {
 			try {
 				value = getOptionValue(reader, configOptionList);
 				values.add(value);
-			}catch(ForgeCreeperHealException e) {
+			}catch(FormatException e) {
 				getErrorManager().error(new ForgeCreeperHealException(configOptionList.getName()+" : "+e.getMessage()));
 			}
 

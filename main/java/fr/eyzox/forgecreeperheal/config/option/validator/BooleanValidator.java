@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.config.option.validator;
 
-import fr.eyzox.forgecreeperheal.exception.config.InvalidDataTypeException;
+import fr.eyzox.forgecreeperheal.exception.config.FormatException;
+import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
 
 public class BooleanValidator implements IValidator {
 
@@ -8,11 +9,11 @@ public class BooleanValidator implements IValidator {
 	private BooleanValidator() {}
 	
 	@Override
-	public boolean isValid(String value) throws InvalidDataTypeException {
+	public boolean isValid(String value) throws InvalidValueException {
 		if(value.equalsIgnoreCase("TRUE") || value.equalsIgnoreCase("FALSE")) {
 			return true;
 		}else {
-			throw new InvalidDataTypeException("BOOLEAN", value);
+			throw new InvalidValueException(value, "<BOOLEAN>");
 		}
 	}
 	

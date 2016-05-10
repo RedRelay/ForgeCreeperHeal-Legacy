@@ -1,10 +1,6 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.NoSuchFileException;
 
 import org.apache.logging.log4j.Logger;
 
@@ -35,9 +31,9 @@ import fr.eyzox.forgecreeperheal.commands.HealCommand;
 import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
 import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
 import fr.eyzox.forgecreeperheal.config.Config;
-import fr.eyzox.forgecreeperheal.config.loader.IConfigLoader;
+import fr.eyzox.forgecreeperheal.config.ConfigProvider;
+import fr.eyzox.forgecreeperheal.config.IConfigProvider;
 import fr.eyzox.forgecreeperheal.config.loader.JSONConfigLoader;
-import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.ClassKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
@@ -82,8 +78,7 @@ public class CommonProxy {
 
 	private Logger logger;
     
-    private Config config;
-    private IConfigLoader configLoader;
+    private ConfigProvider configProvider;
     //private SimpleNetworkWrapper channel;
     
     private HealerFactory healerFactory;
@@ -102,46 +97,30 @@ public class CommonProxy {
 	
 	public void onPreInit(FMLPreInitializationEvent event) {
     	this.logger = event.getModLog();
-    	this.config = Config.loadDefaultConfig();
-    	this.configLoader = new JSONConfigLoader(event.getSuggestedConfigurationFile());
+    	this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
+    	this.configProvider.loadConfig();
+    	
+    	//Save config to have a clean config file (add new options or suppress old options / mistake from user)
     	try {
-			this.configLoader.load(config);
-		}catch(final NoSuchFileException e) {
-			ForgeCreeperHeal.getLogger().info("Config File doesn't exist at "+e.getFile()+" : creating a new one");
-		}catch (Exception e2) {
-			e2.printStackTrace();
-			ForgeCreeperHeal.getLogger().error("Unable to load config : "+e2.getMessage());
-		}
-    	
-    	if(configLoader.getErrorManager().hasErrors()) {
-    		final File errorFile = new File(ForgeCreeperHeal.MODID+"-config-error.log");
-    		FileWriter out = null;
-    		try {
-    			out = new FileWriter(errorFile);
-    			PrintWriter pw = new PrintWriter(out);
-    			configLoader.getErrorManager().output(pw);
-    			logger.warn("Errors occurs during loading config, more information in "+errorFile.getAbsolutePath());
-    		}catch(IOException e) {
-    			ForgeCreeperHeal.getLogger().error("Errors occurs during loading config, unable to write into "+errorFile.getAbsolutePath()+" : "+e.getMessage());
-    			for(ForgeCreeperHealException error : configLoader.getErrorManager().getErrors()) {
-    				logger.info(error.getMessage());
-    			}
-    		}finally {
-				if(out != null) {
-					try {
-						out.close();
-					} catch (IOException e) {}
-				}
-			}
-    	}
-    	
-    	
-    	try {
-			configLoader.save(config);
+			this.configProvider.getConfigLoader().save(this.configProvider.getConfig());
 		} catch (Exception e) {
 			e.printStackTrace();
 			ForgeCreeperHeal.getLogger().error("Unable to save config : "+e.getMessage());
 		}
+    	
+    	this.healerFactory = new HealerFactory();
+    	this.healerManager = new HealerManager();
+    	this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
+    	this.blockDataFactory = loadBlockDataFactory();
+    	this.dependencyFactory = loadDependencyFactory();
+    	
+    	//Register IConfigListeners
+    	
+    	//Notify listener to update
+    	this.configProvider.fireConfigChanged();
+    	//Unload config to free some RAM
+    	this.configProvider.unloadConfig();
+    	
     	
     }
 	
@@ -162,48 +141,8 @@ public class CommonProxy {
     }
 	
 	public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-		this.healerFactory = new HealerFactory();
-    	this.healerManager = new HealerManager();
-    	
-    	this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
-    	
-    	this.blockDataFactory = new DefaultFactory<Class<? extends Block>, IBlockDataBuilder>(blockClassKeyBuilder, new DefaultBlockDataBuilder());
-    	this.blockDataFactory.getCustomHandlers().add(new DoorBlockDataBuilder());
-    	this.blockDataFactory.getCustomHandlers().add(new BedBlockDataBuilder());
-    	this.blockDataFactory.getCustomHandlers().add(new PistonBlockDataBuilder());
-    	
-    	this.dependencyFactory = new DefaultFactory<Class<? extends Block>, IDependencyBuilder>(blockClassKeyBuilder, new NoDependencyBuilder());
-    	this.dependencyFactory.getCustomHandlers().add(new VineDependencyBuilder());
-    	this.dependencyFactory.getCustomHandlers().add(new LeverDependencyBuilder());
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTorch.class, new TorchPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockLadder.class, new LadderPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockWallSign.class, new WallSignPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTrapDoor.class, new TrapDoorPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockButton.class, new ButtonPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockBannerHanging.class, new BannerHangingPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTripWireHook.class, new TripWireHookPropertySelector()));
-    	this.dependencyFactory.getCustomHandlers().add(new FacingDependencyBuilder(BlockCocoa.class, new CocoaPropertySelector()));
-    	
-    	final AbstractGenericDependencyBuilder supportByBottomDependencyBuilder = SupportByBottomDependencyBuilder.getInstance();
-    	supportByBottomDependencyBuilder.register(BlockFalling.class);
-    	supportByBottomDependencyBuilder.register(BlockDoor.class);
-    	supportByBottomDependencyBuilder.register(BlockBasePressurePlate.class);
-    	supportByBottomDependencyBuilder.register(BlockBannerStanding.class);
-    	supportByBottomDependencyBuilder.register(BlockRedstoneDiode.class);
-    	supportByBottomDependencyBuilder.register(BlockRedstoneWire.class);
-    	supportByBottomDependencyBuilder.register(BlockStandingSign.class);
-    	supportByBottomDependencyBuilder.register(BlockCrops.class);
-    	supportByBottomDependencyBuilder.register(BlockCactus.class);
-    	supportByBottomDependencyBuilder.register(BlockRailBase.class);
-    	supportByBottomDependencyBuilder.register(BlockReed.class);
-    	supportByBottomDependencyBuilder.register(BlockSnow.class);
-    	supportByBottomDependencyBuilder.register(BlockTripWire.class);
-    	supportByBottomDependencyBuilder.register(BlockCake.class);
-    	supportByBottomDependencyBuilder.register(BlockCarpet.class);
-    	supportByBottomDependencyBuilder.register(BlockDragonEgg.class);
-    	supportByBottomDependencyBuilder.register(BlockFlowerPot.class);
-    	
-    	this.dependencyFactory.getCustomHandlers().add(supportByBottomDependencyBuilder);
+		
+		
 	}
     
 	public void serverStarting(FMLServerStartingEvent event) {
@@ -233,8 +172,8 @@ public class CommonProxy {
 		return logger;
 	}
 
-	public Config getConfig() {
-		return config;
+	public IConfigProvider getConfigProvider() {
+		return configProvider;
 	}
 
 	/*
@@ -242,10 +181,6 @@ public class CommonProxy {
 		return channel;
 	}
 	*/
-
-	public void setConfig(Config config) {
-		this.config = config;
-	}
 	
 	public HealerManager getHealerManager() {
 		return healerManager;
@@ -269,6 +204,51 @@ public class CommonProxy {
 	
 	public ClassKeyBuilder<Block> getBlockClassKeyBuilder() {
 		return blockClassKeyBuilder;
+	}
+	
+	private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> loadBlockDataFactory() {
+		final DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory = new DefaultFactory<Class<? extends Block>, IBlockDataBuilder>(blockClassKeyBuilder, new DefaultBlockDataBuilder());
+    	blockDataFactory.getCustomHandlers().add(new DoorBlockDataBuilder());
+    	blockDataFactory.getCustomHandlers().add(new BedBlockDataBuilder());
+    	blockDataFactory.getCustomHandlers().add(new PistonBlockDataBuilder());
+    	return blockDataFactory;
+	}
+	
+	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> loadDependencyFactory() {
+		final DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory = new DefaultFactory<Class<? extends Block>, IDependencyBuilder>(blockClassKeyBuilder, new NoDependencyBuilder());
+    	dependencyFactory.getCustomHandlers().add(new VineDependencyBuilder());
+    	dependencyFactory.getCustomHandlers().add(new LeverDependencyBuilder());
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTorch.class, new TorchPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockLadder.class, new LadderPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockWallSign.class, new WallSignPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTrapDoor.class, new TrapDoorPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockButton.class, new ButtonPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockBannerHanging.class, new BannerHangingPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTripWireHook.class, new TripWireHookPropertySelector()));
+    	dependencyFactory.getCustomHandlers().add(new FacingDependencyBuilder(BlockCocoa.class, new CocoaPropertySelector()));
+    	
+    	final AbstractGenericDependencyBuilder supportByBottomDependencyBuilder = SupportByBottomDependencyBuilder.getInstance();
+    	supportByBottomDependencyBuilder.register(BlockFalling.class);
+    	supportByBottomDependencyBuilder.register(BlockDoor.class);
+    	supportByBottomDependencyBuilder.register(BlockBasePressurePlate.class);
+    	supportByBottomDependencyBuilder.register(BlockBannerStanding.class);
+    	supportByBottomDependencyBuilder.register(BlockRedstoneDiode.class);
+    	supportByBottomDependencyBuilder.register(BlockRedstoneWire.class);
+    	supportByBottomDependencyBuilder.register(BlockStandingSign.class);
+    	supportByBottomDependencyBuilder.register(BlockCrops.class);
+    	supportByBottomDependencyBuilder.register(BlockCactus.class);
+    	supportByBottomDependencyBuilder.register(BlockRailBase.class);
+    	supportByBottomDependencyBuilder.register(BlockReed.class);
+    	supportByBottomDependencyBuilder.register(BlockSnow.class);
+    	supportByBottomDependencyBuilder.register(BlockTripWire.class);
+    	supportByBottomDependencyBuilder.register(BlockCake.class);
+    	supportByBottomDependencyBuilder.register(BlockCarpet.class);
+    	supportByBottomDependencyBuilder.register(BlockDragonEgg.class);
+    	supportByBottomDependencyBuilder.register(BlockFlowerPot.class);
+    	
+    	dependencyFactory.getCustomHandlers().add(supportByBottomDependencyBuilder);
+    	
+    	return dependencyFactory;
 	}
 	
 }

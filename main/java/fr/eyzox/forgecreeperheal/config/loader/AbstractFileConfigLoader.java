@@ -10,7 +10,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
 
 import fr.eyzox.forgecreeperheal.config.Config;
-import fr.eyzox.forgecreeperheal.exception.config.InvalidConfigValueException;
+import fr.eyzox.forgecreeperheal.exception.config.InvalidValueException;
 
 public abstract class AbstractFileConfigLoader implements IConfigLoader {
 
@@ -22,7 +22,7 @@ public abstract class AbstractFileConfigLoader implements IConfigLoader {
 	}
 	
 	@Override
-	public void load(Config config) throws NoSuchFileException, FileNotFoundException, AccessDeniedException, IOException, InvalidConfigValueException{
+	public void load(Config config) throws NoSuchFileException, FileNotFoundException, AccessDeniedException, IOException, InvalidValueException{
 		if(!file.exists()) {
 			throw new NoSuchFileException(file.getAbsolutePath());
 		}
@@ -34,6 +34,7 @@ public abstract class AbstractFileConfigLoader implements IConfigLoader {
 		if(!file.canRead()) {
 			throw new AccessDeniedException(file.getAbsolutePath() + "must allow reading");
 		}
+		errorManager.getErrors().clear();
 	}
 	
 	@Override
