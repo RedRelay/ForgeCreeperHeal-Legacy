@@ -11,6 +11,7 @@ import fr.eyzox.forgecreeperheal.config.option.ConfigOptionList;
 import fr.eyzox.forgecreeperheal.config.option.validator.BooleanValidator;
 import fr.eyzox.forgecreeperheal.config.option.validator.IValidator;
 import fr.eyzox.forgecreeperheal.config.option.validator.IntValidator;
+import fr.eyzox.forgecreeperheal.exception.config.InvalidDataTypeException;
 
 public class Config {
 
@@ -91,29 +92,61 @@ public class Config {
 		
 		minTickBeforeStartHeal.setValidator(new IValidator() {
 			@Override
-			public boolean isValid(String value) throws Exception {
-				return positiveIntValidator.isValid(value) && Integer.parseInt(value) <= Integer.parseInt(maxTickBeforeStartHeal.getValue());
+			public boolean isValid(String value) throws InvalidDataTypeException {
+				if(positiveIntValidator.isValid(value)) {
+					 if(Integer.parseInt(value) <= Integer.parseInt(maxTickBeforeStartHeal.getValue())) {
+						 return true;
+					 }else {
+						 throw new InvalidDataTypeException(String.format("INTEGER <= %s [%s]", maxTickBeforeStartHeal.getName(), maxTickBeforeStartHeal.getValue()), value);
+					 }
+				}else {
+					return false;
+				}
 			}
 		});
 		
 		maxTickBeforeStartHeal.setValidator(new IValidator() {
 			@Override
-			public boolean isValid(String value) throws Exception {
-				return positiveIntValidator.isValid(value) && Integer.parseInt(minTickBeforeStartHeal.getValue()) <= Integer.parseInt(value);
+			public boolean isValid(String value) throws InvalidDataTypeException {
+				if(positiveIntValidator.isValid(value)) {
+					 if(Integer.parseInt(minTickBeforeStartHeal.getValue()) <= Integer.parseInt(value)) {
+						 return true;
+					 }else {
+						 throw new InvalidDataTypeException(String.format("INTEGER >= %s [%s]", minTickBeforeStartHeal.getName(), minTickBeforeStartHeal.getValue()), value);
+					 }
+				}else {
+					return false;
+				}
 			}
 		});
 		
 		minTickBetweenEachHeal.setValidator(new IValidator() {
 			@Override
-			public boolean isValid(String value) throws Exception {
-				return positiveIntValidator.isValid(value) && Integer.parseInt(value) <= Integer.parseInt(maxTickBetweenEachHeal.getValue());
+			public boolean isValid(String value) throws InvalidDataTypeException {
+				if(positiveIntValidator.isValid(value)) {
+					 if(Integer.parseInt(value) <= Integer.parseInt(maxTickBetweenEachHeal.getValue())) {
+						 return true;
+					 }else {
+						 throw new InvalidDataTypeException(String.format("INTEGER <= %s [%s]", maxTickBetweenEachHeal.getName(), maxTickBetweenEachHeal.getValue()), value);
+					 }
+				}else {
+					return false;
+				}
 			}
 		});
 		
 		maxTickBetweenEachHeal.setValidator(new IValidator() {
 			@Override
-			public boolean isValid(String value) throws Exception {
-				return positiveIntValidator.isValid(value) && Integer.parseInt(minTickBetweenEachHeal.getValue()) <= Integer.parseInt(value);
+			public boolean isValid(String value) throws InvalidDataTypeException {
+				if(positiveIntValidator.isValid(value)) {
+					 if(Integer.parseInt(minTickBetweenEachHeal.getValue()) <= Integer.parseInt(value)) {
+						 return true;
+					 }else {
+						 throw new InvalidDataTypeException(String.format("INTEGER >= %s [%s]", minTickBetweenEachHeal.getName(), minTickBetweenEachHeal.getValue()), value);
+					 }
+				}else {
+					return false;
+				}
 			}
 		});
 		
