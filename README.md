@@ -12,7 +12,7 @@ Clients don't need Forge Creeper Heal installed to join your server BUT they nee
 ## Customizable Settings
 
 See : https://github.com/EyZox/ForgeCreeperHeal/wiki/Customizable-Settings
-**Warn : not implemented yet in 2.0**
+**Warn : implemented in 2.0 but wiki not updated yet for 2.0**
 
 ## Contribute/Compilation Set Up
 
@@ -22,9 +22,8 @@ See : https://github.com/EyZox/ForgeCreeperHeal/wiki/Customizable-Settings
 
 ## Planned improvements
 
-* Config **Warn : not implemented yet in 2.0**
+* Config
   * « fromEntityException » : Choose entities by name not class.
-  * ~~Reload config without relaunch Minecraft~~ Done in 1.1.0
   * Change config by command
   * Change config by GUI
   * Get a per world configuration
@@ -33,7 +32,7 @@ See : https://github.com/EyZox/ForgeCreeperHeal/wiki/Customizable-Settings
   * Replace grass by dirt (*)
   * Replace stone by cobblestone (*)
   * Replace bricks by used bricks (*)
-  * New heal algorithm (*)
+  * New heal algorithms (*)
 
 * Performances **Warn : removed in 2.0**
   * ~~Add a profiler to know mod consumption~~ Done in 1.1.0
@@ -46,6 +45,7 @@ Feel you free to suggest some improvements.
 ### 2.0 :
 
 * Banner becomes black when healed
+* Bugs/Glitches when handle massive explosion (for normal use, you shouldn't have these issues)
 
 ### 1.X
 * Doors
