@@ -2,6 +2,8 @@ package fr.eyzox.forgecreeperheal.healer.tick;
 
 import java.util.Random;
 
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+
 public class TickProvider implements ITickProvider {
 
 	private Random rdn = new Random();
@@ -9,16 +11,17 @@ public class TickProvider implements ITickProvider {
 	public TickProvider() {}
 
 	@Override
-	public int provideTick() {
-		//TODO config
-		final int maxTick = 5;
-		return rdn.nextInt(maxTick);
+	public int getNextTick() {
+		return random(ForgeCreeperHeal.getConfig().getMinTick(), ForgeCreeperHeal.getConfig().getMaxTick());
 	}
 
 	@Override
-	public int getMinimumTickBeforeHeal() {
-		// TODO config
-		return 50;
+	public int getStartTick() {
+		return random(ForgeCreeperHeal.getConfig().getMinTickStart(), ForgeCreeperHeal.getConfig().getMaxTickStart());
+	}
+	
+	private int random(int min, int max) {
+		return min + (max > 0 ? rdn.nextInt(max) : 0);
 	}
 
 }

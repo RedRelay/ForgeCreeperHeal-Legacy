@@ -83,7 +83,7 @@ public class HealerFactory {
 			}
 			
 			//Generate tick
-			final int providedTick = tickProvider.provideTick();
+			final int providedTick = tickProvider.getNextTick();
 			globalTickCounter += providedTick;
 			final int tick = globalTickCounter - dispatchedTimeline.tickCounter;
 			dispatchedTimeline.tickCounter += providedTick;
@@ -98,7 +98,7 @@ public class HealerFactory {
 		}
 		
 		//Set minimal tick before heal
-		final int minTickBeforeHeal = tickProvider.getMinimumTickBeforeHeal();
+		final int minTickBeforeHeal = tickProvider.getStartTick();
 		for(final DispatchedTimeline timeline : dispatchedTimelines.values()) {
 			final Node<? extends ISerializableHealable> firstNode = timeline.timeline.getFirst();
 			firstNode.setTick(minTickBeforeHeal + firstNode.getTick());

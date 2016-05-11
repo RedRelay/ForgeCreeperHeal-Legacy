@@ -2,6 +2,7 @@ package fr.eyzox.forgecreeperheal.healer;
 
 import java.util.Collection;
 
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.reflection.WorldTransform;
 import net.minecraft.util.BlockPos;
@@ -17,8 +18,10 @@ public class WorldRemover {
 	
 	public void process(final Collection<? extends IBlockData> healableBlocks) {
 		for(IBlockData healableBlock : healableBlocks) {
-			for(final BlockPos pos : healableBlock.getAllPos()){
-				this.worldTransform.removeSilentBlockState(pos);
+			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(healableBlock.getState().getBlock())) {
+				for(final BlockPos pos : healableBlock.getAllPos()){
+					this.worldTransform.removeSilentBlockState(pos);
+				}
 			}
 		}
 		this.worldTransform.clearCache();

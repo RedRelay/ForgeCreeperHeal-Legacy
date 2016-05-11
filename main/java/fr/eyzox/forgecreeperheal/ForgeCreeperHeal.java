@@ -3,8 +3,10 @@ package fr.eyzox.forgecreeperheal;
 
 import org.apache.logging.log4j.Logger;
 
+import fr.eyzox.bsc.config.IConfigProvider;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.builder.dependency.IDependencyBuilder;
+import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
@@ -23,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 /*
  * Planned feature :
  * - GUI to configure options
+ * - Better config for Entity Filter : idea : use EntityRegistry to get <ModContainer.getModId()>:<EntityRegistration.entityName>
  * 
  * Known Bugs/Issues :
  * - Banner don't keep original color, they become black when healed
@@ -75,7 +78,11 @@ public class ForgeCreeperHeal
     	return proxy.getLogger();
     }
     
-    public static Config getConfig() {
+    public static IConfigProvider getConfigProvider() {
+    	return proxy.getConfigProvider();
+    }
+    
+    public static FastConfig getConfig() {
     	return proxy.getConfig();
     }
     
@@ -90,7 +97,8 @@ public class ForgeCreeperHeal
     }
     
     public static void reloadConfig() {
-    	proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
+    	//TODO reloadConfig
+    	//proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
     }
     
     public static HealerManager getHealerManager() {

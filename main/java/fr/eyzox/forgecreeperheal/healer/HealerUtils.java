@@ -78,8 +78,8 @@ public class HealerUtils {
 		Block currentBlock = world.getBlockState(pos).getBlock();
 		boolean isAir = currentBlock.isAir(world, pos);
 
-		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlock) != null)) {
-			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
+		if(ForgeCreeperHeal.getConfig().isOverrideBlock() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlock) != null)) {
+			if(ForgeCreeperHeal.getConfig().isDropIfCollision() && !isAir) {
 				world.spawnEntityInWorld(HealerUtils.getEntityItem(world, pos, new ItemStack(currentBlock), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
 
 				TileEntity te = world.getTileEntity(pos);
@@ -98,7 +98,7 @@ public class HealerUtils {
 				}
 			}
 
-		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
+		}else if(ForgeCreeperHeal.getConfig().isDropIfCollision()){
 			world.spawnEntityInWorld(HealerUtils.getEntityItem(world, pos, new ItemStack(state.getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
 			if(tileEntityTag != null) {
 				TileEntity te = state.getBlock().createTileEntity(world, state);
