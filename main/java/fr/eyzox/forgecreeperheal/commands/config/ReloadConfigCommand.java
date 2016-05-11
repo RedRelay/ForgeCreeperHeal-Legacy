@@ -20,7 +20,7 @@ public class ReloadConfigCommand extends CommandBase {
 
 	@Override
 	public void execute(ICommandSender sender, String[] p_71515_2_) {
-		ForgeCreeperHeal.reloadConfig();
+		ForgeCreeperHeal.getProxy().loadConfig();
 		ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Config reloaded"));
 	}
 

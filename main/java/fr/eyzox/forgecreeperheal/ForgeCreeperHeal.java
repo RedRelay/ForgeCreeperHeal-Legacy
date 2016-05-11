@@ -96,11 +96,6 @@ public class ForgeCreeperHeal
     	return proxy;
     }
     
-    public static void reloadConfig() {
-    	//TODO reloadConfig
-    	//proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
-    }
-    
     public static HealerManager getHealerManager() {
     	return proxy.getHealerManager();
     }

@@ -77,96 +77,82 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 public class CommonProxy {
 
 	private Logger logger;
-    
-    private ConfigProvider configProvider;
-    private FastConfig config;
-    //private SimpleNetworkWrapper channel;
-    
-    private HealerFactory healerFactory;
-    private HealerManager healerManager;
-    
-    private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory;
-    private DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory;
-    private ClassKeyBuilder<Block> blockClassKeyBuilder;
-    
-    
-    private ChunkEventHandler chunkEventHandler;
-    private ExplosionEventHandler explosionEventHandler;
-    private WorldTickEventHandler worldTickEventHandler;
-    
-    
-	
+
+	private ConfigProvider configProvider;
+	private FastConfig config;
+	//private SimpleNetworkWrapper channel;
+
+	private HealerFactory healerFactory;
+	private HealerManager healerManager;
+
+	private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory;
+	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory;
+	private ClassKeyBuilder<Block> blockClassKeyBuilder;
+
+
+	private ChunkEventHandler chunkEventHandler;
+	private ExplosionEventHandler explosionEventHandler;
+	private WorldTickEventHandler worldTickEventHandler;
+
+
+
 	public void onPreInit(FMLPreInitializationEvent event) {
-    	this.logger = event.getModLog();
-    	this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
-    	this.configProvider.loadConfig();
-    	
-    	//Save config to have a clean config file (add new options or suppress old options / mistake from user)
-    	try {
-			this.configProvider.getConfigLoader().save(this.configProvider.getConfig());
-		} catch (Exception e) {
-			e.printStackTrace();
-			ForgeCreeperHeal.getLogger().error("Unable to save config : "+e.getMessage());
-		}
-    	
-    	this.healerFactory = new HealerFactory();
-    	this.healerManager = new HealerManager();
-    	this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
-    	this.blockDataFactory = loadBlockDataFactory();
-    	this.dependencyFactory = loadDependencyFactory();
-    	
-    	this.config = new FastConfig();
-    	this.configProvider.addConfigListener(config);
-    	
-    	//Notify listener to update
-    	this.configProvider.fireConfigChanged();
-    	//Unload config to free some RAM
-    	this.configProvider.unloadConfig();
-    	
-    	
-    }
-	
+		this.logger = event.getModLog();
+		this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
+
+		this.healerFactory = new HealerFactory();
+		this.healerManager = new HealerManager();
+		this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
+		this.blockDataFactory = loadBlockDataFactory();
+		this.dependencyFactory = loadDependencyFactory();
+
+		this.config = new FastConfig();
+		this.configProvider.addConfigListener(config);
+		this.loadConfig();
+
+	}
+
 	public void onInit(FMLInitializationEvent event)
-    {	
+	{	
 		this.chunkEventHandler = new ChunkEventHandler();
 		this.chunkEventHandler.register();
-		
+
 		this.explosionEventHandler = new ExplosionEventHandler();
 		this.explosionEventHandler.register();
-		
+
 		this.worldTickEventHandler = new WorldTickEventHandler();
 		this.worldTickEventHandler.register();
-        
-        //channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
-        //channel.registerMessage(ModDataMessage.Handler.class, ModDataMessage.class, 0, Side.SERVER);
-        //channel.registerMessage(ProfilerInfoMessage.Handler.class, ProfilerInfoMessage.class, 1, Side.CLIENT);
-    }
-	
-	public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-		
-		
+
+		//channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
+		//channel.registerMessage(ModDataMessage.Handler.class, ModDataMessage.class, 0, Side.SERVER);
+		//channel.registerMessage(ProfilerInfoMessage.Handler.class, ProfilerInfoMessage.class, 1, Side.CLIENT);
 	}
-    
+
+	public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+
+
+	}
+
 	public void serverStarting(FMLServerStartingEvent event) {
 		registerCommand();
 	}
-    
-    protected void registerCommand() {
-    	ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
-    	
-    	ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
-    	
-    	//Register Config Commands
-    	ConfigCommands configCmds = new ConfigCommands();
-    	configCmds.register(new ReloadConfigCommand());
-    	forgeCreeperHealCmds.register(configCmds);
-    	
-    	//Register Profiler Commands
-    	//forgeCreeperHealCmds.register(new ProfilerCommand());
-    	
-    	//Register Heal Commands
-    	forgeCreeperHealCmds.register(new HealCommand());
-    	
+
+	protected void registerCommand() {
+		ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
+
+		ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
+
+		//Register Config Commands
+		ConfigCommands configCmds = new ConfigCommands();
+		configCmds.register(new ReloadConfigCommand());
+		forgeCreeperHealCmds.register(configCmds);
+
+		//Register Profiler Commands
+		//forgeCreeperHealCmds.register(new ProfilerCommand());
+
+		//Register Heal Commands
+		//forgeCreeperHealCmds.register(new HealCommand());
+
 		m.registerCommand(forgeCreeperHealCmds);
 	}
 
@@ -177,7 +163,7 @@ public class CommonProxy {
 	public IConfigProvider getConfigProvider() {
 		return configProvider;
 	}
-	
+
 	public FastConfig getConfig() {
 		return this.config;
 	}
@@ -186,75 +172,92 @@ public class CommonProxy {
 	public SimpleNetworkWrapper getChannel() {
 		return channel;
 	}
-	*/
-	
+	 */
+
 	public HealerManager getHealerManager() {
 		return healerManager;
 	}
-	
+
 	public HealerFactory getHealerFactory() {
 		return healerFactory;
 	}
-	
+
 	public DefaultFactory<Class<? extends Block>, IBlockDataBuilder> getBlockDataFactory() {
 		return blockDataFactory;
 	}
-	
+
 	public DefaultFactory<Class<? extends Block>, IDependencyBuilder> getDependencyFactory() {
 		return dependencyFactory;
 	}
-	
+
 	public ChunkEventHandler getChunkEventHandler() {
 		return chunkEventHandler;
 	}
-	
+
 	public ClassKeyBuilder<Block> getBlockClassKeyBuilder() {
 		return blockClassKeyBuilder;
 	}
-	
+
+	public void loadConfig() {
+		this.configProvider.loadConfig();
+
+		//Save config to have a clean config file (add new options or suppress old options / mistake from user)
+		try {
+			this.configProvider.getConfigLoader().save(this.configProvider.getConfig());
+		} catch (Exception e) {
+			e.printStackTrace();
+			ForgeCreeperHeal.getLogger().error("Unable to save config : "+e.getMessage());
+		}
+
+		//Notify listener to update
+		this.configProvider.fireConfigChanged();
+		//Unload config to free some RAM
+		this.configProvider.unloadConfig();
+	}
+
 	private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> loadBlockDataFactory() {
 		final DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory = new DefaultFactory<Class<? extends Block>, IBlockDataBuilder>(blockClassKeyBuilder, new DefaultBlockDataBuilder());
-    	blockDataFactory.getCustomHandlers().add(new DoorBlockDataBuilder());
-    	blockDataFactory.getCustomHandlers().add(new BedBlockDataBuilder());
-    	blockDataFactory.getCustomHandlers().add(new PistonBlockDataBuilder());
-    	return blockDataFactory;
+		blockDataFactory.getCustomHandlers().add(new DoorBlockDataBuilder());
+		blockDataFactory.getCustomHandlers().add(new BedBlockDataBuilder());
+		blockDataFactory.getCustomHandlers().add(new PistonBlockDataBuilder());
+		return blockDataFactory;
 	}
-	
+
 	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> loadDependencyFactory() {
 		final DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory = new DefaultFactory<Class<? extends Block>, IDependencyBuilder>(blockClassKeyBuilder, new NoDependencyBuilder());
-    	dependencyFactory.getCustomHandlers().add(new VineDependencyBuilder());
-    	dependencyFactory.getCustomHandlers().add(new LeverDependencyBuilder());
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTorch.class, new TorchPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockLadder.class, new LadderPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockWallSign.class, new WallSignPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTrapDoor.class, new TrapDoorPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockButton.class, new ButtonPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockBannerHanging.class, new BannerHangingPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTripWireHook.class, new TripWireHookPropertySelector()));
-    	dependencyFactory.getCustomHandlers().add(new FacingDependencyBuilder(BlockCocoa.class, new CocoaPropertySelector()));
-    	
-    	final AbstractGenericDependencyBuilder supportByBottomDependencyBuilder = SupportByBottomDependencyBuilder.getInstance();
-    	supportByBottomDependencyBuilder.register(BlockFalling.class);
-    	supportByBottomDependencyBuilder.register(BlockDoor.class);
-    	supportByBottomDependencyBuilder.register(BlockBasePressurePlate.class);
-    	supportByBottomDependencyBuilder.register(BlockBannerStanding.class);
-    	supportByBottomDependencyBuilder.register(BlockRedstoneDiode.class);
-    	supportByBottomDependencyBuilder.register(BlockRedstoneWire.class);
-    	supportByBottomDependencyBuilder.register(BlockStandingSign.class);
-    	supportByBottomDependencyBuilder.register(BlockCrops.class);
-    	supportByBottomDependencyBuilder.register(BlockCactus.class);
-    	supportByBottomDependencyBuilder.register(BlockRailBase.class);
-    	supportByBottomDependencyBuilder.register(BlockReed.class);
-    	supportByBottomDependencyBuilder.register(BlockSnow.class);
-    	supportByBottomDependencyBuilder.register(BlockTripWire.class);
-    	supportByBottomDependencyBuilder.register(BlockCake.class);
-    	supportByBottomDependencyBuilder.register(BlockCarpet.class);
-    	supportByBottomDependencyBuilder.register(BlockDragonEgg.class);
-    	supportByBottomDependencyBuilder.register(BlockFlowerPot.class);
-    	
-    	dependencyFactory.getCustomHandlers().add(supportByBottomDependencyBuilder);
-    	
-    	return dependencyFactory;
+		dependencyFactory.getCustomHandlers().add(new VineDependencyBuilder());
+		dependencyFactory.getCustomHandlers().add(new LeverDependencyBuilder());
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTorch.class, new TorchPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockLadder.class, new LadderPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockWallSign.class, new WallSignPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTrapDoor.class, new TrapDoorPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockButton.class, new ButtonPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockBannerHanging.class, new BannerHangingPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTripWireHook.class, new TripWireHookPropertySelector()));
+		dependencyFactory.getCustomHandlers().add(new FacingDependencyBuilder(BlockCocoa.class, new CocoaPropertySelector()));
+
+		final AbstractGenericDependencyBuilder supportByBottomDependencyBuilder = SupportByBottomDependencyBuilder.getInstance();
+		supportByBottomDependencyBuilder.register(BlockFalling.class);
+		supportByBottomDependencyBuilder.register(BlockDoor.class);
+		supportByBottomDependencyBuilder.register(BlockBasePressurePlate.class);
+		supportByBottomDependencyBuilder.register(BlockBannerStanding.class);
+		supportByBottomDependencyBuilder.register(BlockRedstoneDiode.class);
+		supportByBottomDependencyBuilder.register(BlockRedstoneWire.class);
+		supportByBottomDependencyBuilder.register(BlockStandingSign.class);
+		supportByBottomDependencyBuilder.register(BlockCrops.class);
+		supportByBottomDependencyBuilder.register(BlockCactus.class);
+		supportByBottomDependencyBuilder.register(BlockRailBase.class);
+		supportByBottomDependencyBuilder.register(BlockReed.class);
+		supportByBottomDependencyBuilder.register(BlockSnow.class);
+		supportByBottomDependencyBuilder.register(BlockTripWire.class);
+		supportByBottomDependencyBuilder.register(BlockCake.class);
+		supportByBottomDependencyBuilder.register(BlockCarpet.class);
+		supportByBottomDependencyBuilder.register(BlockDragonEgg.class);
+		supportByBottomDependencyBuilder.register(BlockFlowerPot.class);
+
+		dependencyFactory.getCustomHandlers().add(supportByBottomDependencyBuilder);
+
+		return dependencyFactory;
 	}
-	
+
 }
