@@ -22,7 +22,6 @@ import fr.eyzox.bsc.config.option.validator.IntValidator;
 import fr.eyzox.bsc.exception.ConfigException;
 import fr.eyzox.bsc.exception.InvalidValueException;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 
 public class ConfigProvider implements IConfigProvider{
 
