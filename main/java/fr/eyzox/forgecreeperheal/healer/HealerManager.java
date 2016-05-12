@@ -12,9 +12,11 @@ public class HealerManager {
 	
 	private final WorldServer world;
 	private final Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> healers = new ConcurrentHashMap<ChunkCoordIntPair, TickTimeline<ISerializableHealable>>();
+	private final WorldHealerData worldHealerData;
 	
 	public HealerManager(final WorldServer world) {
 		this.world = world;
+		this.worldHealerData = WorldHealerData.load(world);
 	}
 	
 	public void load(final ChunkCoordIntPair chunk, final TickTimeline<ISerializableHealable> timeline) {
@@ -30,12 +32,12 @@ public class HealerManager {
 			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
 		this.load(chunk, timeline);
-		//TODO notify put for world saved data
+		this.worldHealerData.handleChunk(chunk);
 	}
 	
 	public void remove(final ChunkCoordIntPair chunk) {
 		this.unload(chunk);
-		//TODO notify remove for world saved data
+		this.worldHealerData.unhandleChunk(chunk);
 	}
 	
 	public TickTimeline<ISerializableHealable> get(final ChunkCoordIntPair chunk) {
