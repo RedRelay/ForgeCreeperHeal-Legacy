@@ -1,5 +1,8 @@
 package fr.eyzox.forgecreeperheal.handler;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.TickTimeline;
@@ -15,6 +18,8 @@ public class ChunkEventHandler implements IEventHandler{
 
 	private static final String FCH_TAG = "FCHTAG";
 	private static final String HEALER_TAG = "HEALER";
+	
+	private final Set<ChunkCoordIntPair> unloadQueue = new HashSet<ChunkCoordIntPair>();
 	
 	@SubscribeEvent
 	public void onChunkDataLoad(final ChunkDataEvent.Load event) {
@@ -52,14 +57,24 @@ public class ChunkEventHandler implements IEventHandler{
 			final NBTTagCompound FCHTag = event.getData().getCompoundTag(FCH_TAG);
 			FCHTag.setTag(HEALER_TAG, healerTag);
 			event.getData().setTag(FCH_TAG, FCHTag);
+			
+			//If chunk is unloaded, unhandle its healer
+			if(unloadQueue.remove(chunk)) {
+				ForgeCreeperHeal.getHealerManager(((WorldServer) event.world)).unload(event.getChunk().getChunkCoordIntPair());
+			}
 		}
 	}
 	
-	
 	@SubscribeEvent
-	public void onChunkUnload(final ChunkEvent.Unload event) {
+	public void onChunkUnload(ChunkEvent.Unload event) {
 		if(event.world.isRemote) return;
-		ForgeCreeperHeal.getHealerManager(((WorldServer) event.world)).unload(event.getChunk().getChunkCoordIntPair());
+		
+		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
+		
+		if(ForgeCreeperHeal.getHealerManager((WorldServer)event.world).get(chunk) != null) {
+			unloadQueue.add(chunk);
+		}
+		
 	}
 
 	@Override
