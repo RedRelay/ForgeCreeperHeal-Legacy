@@ -38,6 +38,10 @@ public class WorldHealerData extends WorldSavedData implements INBTSerializable 
 		}
 	}
 	
+	public Set<ChunkCoordIntPair> getChunksWithHealer() {
+		return chunksWithHealer;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		NBTTagList chunksTagList = nbt.getTagList(CHUNKS_WITH_HEALER_TAG, NBT.TAG_INT_ARRAY);

@@ -1,9 +1,12 @@
 package fr.eyzox.forgecreeperheal.healer;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
+import fr.eyzox.ticktimeline.Node;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
@@ -49,6 +52,27 @@ public class HealerManager {
 			//If timeline = null, it means there are no timeline currently for this chunk 
 		}
 		return timeline;
+	}
+	
+	public void heal() {
+		healLoaded();
+		for(final ChunkCoordIntPair chunk : this.worldHealerData.getChunksWithHealer()) {
+			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+		}
+		healLoaded();
+	}
+	
+	private void healLoaded() {
+		for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : healers.entrySet()) {
+			final TickTimeline<ISerializableHealable> timeline = entry.getValue();
+			for(final Node<Collection<ISerializableHealable>> node : timeline.getTimeline()) {
+				for(final ISerializableHealable healable : node.getData()) {
+					healable.heal(world, 7);
+				}
+			}
+			this.worldHealerData.unhandleChunk(entry.getKey());
+		}
+		this.healers.clear();
 	}
 	
 	public WorldServer getWorld() {

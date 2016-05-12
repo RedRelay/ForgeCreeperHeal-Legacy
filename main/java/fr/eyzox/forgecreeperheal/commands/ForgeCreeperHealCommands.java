@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
+import fr.eyzox.forgecreeperheal.commands.heal.HealCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +15,11 @@ import net.minecraft.util.IChatComponent;
 
 public class ForgeCreeperHealCommands extends CommandsContainer {
 
+	public ForgeCreeperHealCommands() {
+		this.register(new ConfigCommands());
+		this.register(new HealCommand());
+	}
+	
 	@Override
 	public String getName() {
 		return ForgeCreeperHeal.MODID;

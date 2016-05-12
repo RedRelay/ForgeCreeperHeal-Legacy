@@ -1,11 +1,15 @@
-package fr.eyzox.forgecreeperheal.commands;
+package fr.eyzox.forgecreeperheal.commands.heal;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
+import fr.eyzox.forgecreeperheal.commands.CommandsContainer;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import net.minecraft.command.ICommandSender;
 
-public class HealCommand extends CommandBase {
+public class HealCommand extends CommandsContainer {
 
+	public HealCommand() {
+		this.register(new HealAllCommand());
+	}
+	
 	@Override
 	public String getName() {
 		return "heal";
@@ -16,10 +20,11 @@ public class HealCommand extends CommandBase {
 		return null;
 	}
 
+	/*
 	@Override
 	public void execute(ICommandSender sender, String[] args) throws CommandException {
 		//TODO HealCommand
-		/*
+		
 		if(args.length > 0) {
 			if("all".equalsIgnoreCase(args[0])) {
 				for(WorldServer world : DimensionManager.getWorlds()) {
@@ -51,8 +56,9 @@ public class HealCommand extends CommandBase {
 		}else {
 			ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("You must specified a dimension id"));
 		}
-		*/
+		
 	}
+	*/
 
 	@Override
 	public boolean canCommandSenderUse(ICommandSender sender) {

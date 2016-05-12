@@ -6,6 +6,10 @@ import net.minecraft.command.ICommandSender;
 
 public class ConfigCommands extends CommandsContainer {
 
+	public ConfigCommands() {
+		this.register(new ReloadConfigCommand());
+	}
+	
 	@Override
 	public String getName() {
 		return "config";

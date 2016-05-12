@@ -31,8 +31,6 @@ import fr.eyzox.forgecreeperheal.builder.dependency.property.TrapDoorPropertySel
 import fr.eyzox.forgecreeperheal.builder.dependency.property.TripWireHookPropertySelector;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.WallSignPropertySelector;
 import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
-import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
-import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
 import fr.eyzox.forgecreeperheal.config.ConfigProvider;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
@@ -139,20 +137,7 @@ public class CommonProxy {
 
 	protected void registerCommand() {
 		ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
-
 		ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
-
-		//Register Config Commands
-		ConfigCommands configCmds = new ConfigCommands();
-		configCmds.register(new ReloadConfigCommand());
-		forgeCreeperHealCmds.register(configCmds);
-
-		//Register Profiler Commands
-		//forgeCreeperHealCmds.register(new ProfilerCommand());
-
-		//Register Heal Commands
-		//forgeCreeperHealCmds.register(new HealCommand());
-
 		m.registerCommand(forgeCreeperHealCmds);
 	}
 
