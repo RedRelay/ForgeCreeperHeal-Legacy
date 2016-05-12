@@ -11,33 +11,26 @@ Clients don't need Forge Creeper Heal installed to join your server BUT they nee
 
 ## Customizable Settings
 
-See : https://github.com/EyZox/ForgeCreeperHeal/wiki/Customizable-Settings
-**Warn : implemented in 2.0 but wiki not updated yet for 2.0**
+See : [https://github.com/EyZox/ForgeCreeperHeal/wiki/Settings](https://github.com/EyZox/ForgeCreeperHeal/wiki/Settings)
 
-## Contribute/Compilation Set Up
+## Commands
 
-* Used libs :
-  * [DependencyGraph](https://github.com/EyZox/DependencyGraph)
-  * [TickTimeline](https://github.com/EyZox/TickTimeline)
+See : [https://github.com/EyZox/ForgeCreeperHeal/wiki/Commands](https://github.com/EyZox/ForgeCreeperHeal/wiki/Commands)
+
 
 ## Planned improvements
 
 * Config
-  * « fromEntityException » : Choose entities by name not class.
+  * « sourceException » : Choose entities by name not class.
   * Change config by command
   * Change config by GUI
   * Get a per world configuration
 
 * Heal
-  * Replace grass by dirt (*)
-  * Replace stone by cobblestone (*)
-  * Replace bricks by used bricks (*)
-  * New heal algorithms (*)
+  * Possibility to replace block by other
+  * New heal algorithms you can choose
+  * Maybe entity
 
-* Performances **Warn : removed in 2.0**
-  * ~~Add a profiler to know mod consumption~~ Done in 1.1.0
-
-(*) = Customizable
 Feel you free to suggest some improvements.
 
 ## Known bugs :
@@ -46,8 +39,4 @@ Feel you free to suggest some improvements.
 
 * Banner becomes black when healed
 * Bugs/Glitches when handle massive explosion (for normal use, you shouldn't have these issues)
-
-### 1.X
-* Doors
-* Somes blocks like crops or redstone
 
