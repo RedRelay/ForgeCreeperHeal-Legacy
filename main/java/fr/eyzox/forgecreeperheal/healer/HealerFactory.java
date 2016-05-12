@@ -51,13 +51,13 @@ public class HealerFactory {
 		
 		final Map<ChunkCoordIntPair, DispatchedTimeline> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
-		final HealerManager manager = ForgeCreeperHeal.getHealerManager();
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager(world);
 		for(final Entry<ChunkCoordIntPair, DispatchedTimeline> entry : dispatchedTimelines.entrySet()) {
 			//Retrieve or create timeline for this chunk
-			TickTimeline<ISerializableHealable> timeline = manager.getHealer(world, entry.getKey());
+			TickTimeline<ISerializableHealable> timeline = manager.get(entry.getKey());
 			if(timeline == null) {
 				timeline = new TickTimeline<ISerializableHealable>();
-				manager.putHealer(world, entry.getKey(), timeline);
+				manager.put(entry.getKey(), timeline);
 			}
 			timeline.add(entry.getValue().timeline);
 		}

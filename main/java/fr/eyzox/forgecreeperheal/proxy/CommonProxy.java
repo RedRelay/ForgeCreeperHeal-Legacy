@@ -1,6 +1,8 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
@@ -34,11 +36,12 @@ import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
 import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
 import fr.eyzox.forgecreeperheal.config.ConfigProvider;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.ClassKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
-import fr.eyzox.forgecreeperheal.handler.WorldTickEventHandler;
+import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import net.minecraft.block.Block;
@@ -69,6 +72,8 @@ import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.BlockWallSign;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
@@ -83,7 +88,7 @@ public class CommonProxy {
 	//private SimpleNetworkWrapper channel;
 
 	private HealerFactory healerFactory;
-	private HealerManager healerManager;
+	private Map<WorldServer, HealerManager> healerManagers;
 
 	private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory;
 	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory;
@@ -92,7 +97,7 @@ public class CommonProxy {
 
 	private ChunkEventHandler chunkEventHandler;
 	private ExplosionEventHandler explosionEventHandler;
-	private WorldTickEventHandler worldTickEventHandler;
+	private WorldEventHandler worldTickEventHandler;
 
 
 
@@ -101,7 +106,6 @@ public class CommonProxy {
 		this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
 
 		this.healerFactory = new HealerFactory();
-		this.healerManager = new HealerManager();
 		this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
 		this.blockDataFactory = loadBlockDataFactory();
 		this.dependencyFactory = loadDependencyFactory();
@@ -120,7 +124,7 @@ public class CommonProxy {
 		this.explosionEventHandler = new ExplosionEventHandler();
 		this.explosionEventHandler.register();
 
-		this.worldTickEventHandler = new WorldTickEventHandler();
+		this.worldTickEventHandler = new WorldEventHandler();
 		this.worldTickEventHandler.register();
 
 		//channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
@@ -129,8 +133,7 @@ public class CommonProxy {
 	}
 
 	public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-
-
+		this.healerManagers = new HashMap<WorldServer, HealerManager>();
 	}
 
 	public void serverStarting(FMLServerStartingEvent event) {
@@ -174,8 +177,8 @@ public class CommonProxy {
 	}
 	 */
 
-	public HealerManager getHealerManager() {
-		return healerManager;
+	public Map<WorldServer, HealerManager> getHealerManagers(){
+		return healerManagers;
 	}
 
 	public HealerFactory getHealerFactory() {

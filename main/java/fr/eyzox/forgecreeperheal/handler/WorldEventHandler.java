@@ -10,11 +10,30 @@ import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-public class WorldTickEventHandler implements IEventHandler{
+public class WorldEventHandler implements IEventHandler{
+
+	@SubscribeEvent
+	public void onWorldLoad(WorldEvent.Load event) {
+		if(event.world.isRemote) return;
+
+		final WorldServer world = (WorldServer) event.world;
+		ForgeCreeperHeal.getProxy().getHealerManagers().put(world, new HealerManager(world));
+
+	}
+
+	@SubscribeEvent
+	public void onWorldUnload(WorldEvent.Unload event) {
+		if(event.world.isRemote) return;
+
+		final WorldServer world = (WorldServer) event.world;
+		ForgeCreeperHeal.getProxy().getHealerManagers().remove(world);
+	}
 
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
@@ -23,8 +42,8 @@ public class WorldTickEventHandler implements IEventHandler{
 
 		final WorldServer world = (WorldServer) event.world;
 
-		final HealerManager healerMananger = ForgeCreeperHeal.getHealerManager();
-		final Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> loadedHealers = healerMananger.getLoadedHealers(world);
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager(world);
+		final Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> loadedHealers = manager.getHealers();
 
 		if(loadedHealers != null) {
 			for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : loadedHealers.entrySet()) {
@@ -35,7 +54,7 @@ public class WorldTickEventHandler implements IEventHandler{
 					}
 
 					if(entry.getValue().isEmpty()) {
-						healerMananger.removeHealer(world, entry.getKey());
+						manager.remove(entry.getKey());
 					}
 
 				}
@@ -48,5 +67,6 @@ public class WorldTickEventHandler implements IEventHandler{
 	@Override
 	public void register() {
 		FMLCommonHandler.instance().bus().register(this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 }

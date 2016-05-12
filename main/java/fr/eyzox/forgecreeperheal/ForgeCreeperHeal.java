@@ -1,17 +1,21 @@
 package fr.eyzox.forgecreeperheal;
 
 
+import java.util.Map;
+
 import org.apache.logging.log4j.Logger;
 
 import fr.eyzox.bsc.config.IConfigProvider;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.builder.dependency.IDependencyBuilder;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
 import net.minecraft.block.Block;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -96,8 +100,12 @@ public class ForgeCreeperHeal
     	return proxy;
     }
     
-    public static HealerManager getHealerManager() {
-    	return proxy.getHealerManager();
+    public static HealerManager getHealerManager(final WorldServer world) throws ForgeCreeperHealException {
+    	Map<WorldServer, HealerManager> healerManagers = proxy.getHealerManagers();
+    	if(healerManagers == null) {
+			throw new ForgeCreeperHealException("HealerManagers are not loaded yet");
+		}
+    	return healerManagers.get(world);
     }
     
     public static HealerFactory getHealerFactory() {
