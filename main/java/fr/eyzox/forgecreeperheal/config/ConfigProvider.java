@@ -270,7 +270,7 @@ public class ConfigProvider implements IConfigProvider{
 
 		overrideBlock.setDescription("When a block is healed, if a replacement block has been placed meanwhile, this block is overrided by the healed block");
 		overrideFluid.setDescription("When a block is healed, if a fluid filled the block position meanwhile, this fluid is overrided at this position by the healed block");
-		dropIfAlreadyBlock.setDescription("if "+overrideBlock.getName()+" then the replacement block is dropped, else the block about to be heal is dropped");
+		dropIfAlreadyBlock.setDescription("If "+overrideBlock.getName()+" then the replacement block is dropped, else the block about to be heal is dropped");
 
 		dropItemsFromContainers.setDescription("Drops all items from a container when it blows up, else items are restored with the container when healed (Only affect new explosions)");
 
