@@ -35,11 +35,13 @@ public class HealerManager {
 			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
 		this.load(chunk, timeline);
+		this.setChunkDirty(chunk);
 		this.worldHealerData.handleChunk(chunk);
 	}
 	
 	public void remove(final ChunkCoordIntPair chunk) {
 		this.unload(chunk);
+		this.setChunkDirty(chunk);
 		this.worldHealerData.unhandleChunk(chunk);
 	}
 	
@@ -60,6 +62,26 @@ public class HealerManager {
 			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
 		healLoaded();
+	}
+	
+	public void tick() {
+		for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : this.healers.entrySet()) {
+			final Collection<ISerializableHealable> healables = entry.getValue().tick();
+			if(healables != null) {
+				for(final ISerializableHealable healable : healables) {
+					healable.heal(world, 7);
+				}
+
+				if(entry.getValue().isEmpty()) {
+					this.remove(entry.getKey());
+				}
+			}
+			this.setChunkDirty(entry.getKey());
+		}
+	}
+	
+	public void setChunkDirty(final ChunkCoordIntPair chunk) {
+		world.getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos).setChunkModified();
 	}
 	
 	private void healLoaded() {
