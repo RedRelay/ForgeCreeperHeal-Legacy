@@ -54,6 +54,7 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockFlowerPot;
+import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRedstoneDiode;
@@ -239,6 +240,7 @@ public class CommonProxy {
 		supportByBottomDependencyBuilder.register(BlockCarpet.class);
 		supportByBottomDependencyBuilder.register(BlockDragonEgg.class);
 		supportByBottomDependencyBuilder.register(BlockFlowerPot.class);
+		supportByBottomDependencyBuilder.register(BlockGrass.class);
 
 		dependencyFactory.getCustomHandlers().add(supportByBottomDependencyBuilder);
 
