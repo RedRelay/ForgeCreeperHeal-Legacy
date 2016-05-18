@@ -62,6 +62,7 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockReed;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.BlockStandingSign;
+import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.BlockTripWire;
@@ -241,6 +242,7 @@ public class CommonProxy {
 		supportByBottomDependencyBuilder.register(BlockDragonEgg.class);
 		supportByBottomDependencyBuilder.register(BlockFlowerPot.class);
 		supportByBottomDependencyBuilder.register(BlockGrass.class);
+		supportByBottomDependencyBuilder.register(BlockTallGrass.class);
 
 		dependencyFactory.getCustomHandlers().add(supportByBottomDependencyBuilder);
 

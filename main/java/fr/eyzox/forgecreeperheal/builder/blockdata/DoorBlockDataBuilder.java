@@ -1,7 +1,7 @@
 package fr.eyzox.forgecreeperheal.builder.blockdata;
 
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
-import fr.eyzox.forgecreeperheal.blockdata.multi.selector.DoorMultiSelector;
+import fr.eyzox.forgecreeperheal.blockdata.multi.selector.FacingMultiSelector;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 public class DoorBlockDataBuilder extends MultiBlockDataBuilder{
 
 	public DoorBlockDataBuilder() {
-		super(BlockDoor.class, new DoorMultiSelector());
+		super(BlockDoor.class, FacingMultiSelector.FACING_UP);
 	}
 
 	@Override
