@@ -9,7 +9,7 @@ import net.minecraft.util.ChatComponentText;
 public class ReloadConfigCommand extends CommandBase {
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "reload";
 	}
 
@@ -19,7 +19,7 @@ public class ReloadConfigCommand extends CommandBase {
 	}
 
 	@Override
-	public void execute(ICommandSender sender, String[] p_71515_2_) {
+	public void processCommand(ICommandSender sender, String[] p_71515_2_) {
 		ForgeCreeperHeal.getProxy().loadConfig();
 		ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Config reloaded"));
 	}

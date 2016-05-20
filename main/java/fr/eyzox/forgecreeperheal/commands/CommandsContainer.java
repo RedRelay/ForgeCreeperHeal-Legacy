@@ -15,12 +15,12 @@ public abstract class CommandsContainer extends CommandBase {
 	private List<CommandBase> cmds = new ArrayList<CommandBase>(); 
 	
 	@Override
-	public void execute(ICommandSender sender, String[] args) throws CommandException {
+	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		if(args.length > 0 && args[0] != null) {
 			for(CommandBase c : cmds) {
-				if(args[0].equalsIgnoreCase(c.getName()) || (c.getAliases() != null && c.getAliases().contains(args[0].toLowerCase()))) {
-					if(c.canCommandSenderUse(sender)) {
-						c.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+				if(args[0].equalsIgnoreCase(c.getCommandName()) || (c.getCommandAliases() != null && c.getCommandAliases().contains(args[0].toLowerCase()))) {
+					if(c.canCommandSenderUseCommand(sender)) {
+						c.processCommand(sender, Arrays.copyOfRange(args, 1, args.length));
 					}else {
 						sender.addChatMessage(new ChatComponentText("Not enought permissions"));
 					}

@@ -14,7 +14,7 @@ public class HealAllCommand extends CommandBase {
 	public HealAllCommand() {}
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "all";
 	}
 
@@ -24,7 +24,7 @@ public class HealAllCommand extends CommandBase {
 	}
 
 	@Override
-	public void execute(ICommandSender sender, String[] args) throws CommandException {
+	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		if(args.length > 0) {
 			String param = args[0];
 			WorldServer world = null;

@@ -46,7 +46,7 @@ public class WorldHealerData extends WorldSavedData implements INBTSerializable 
 	public void readFromNBT(NBTTagCompound nbt) {
 		NBTTagList chunksTagList = nbt.getTagList(CHUNKS_WITH_HEALER_TAG, NBT.TAG_INT_ARRAY);
 		for(int i = 0 ; i < chunksTagList.tagCount(); i++) {
-			final int[] array = chunksTagList.getIntArray(i);
+			final int[] array = chunksTagList.getIntArrayAt(i);
 			if(array.length >= 2) {
 				chunksWithHealer.add(new ChunkCoordIntPair(array[0], array[1]));
 			}else {
