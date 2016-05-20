@@ -4,7 +4,7 @@ import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.builder.ISerializableHealableBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface IBlockDataBuilder extends ISerializableHealableBuilder<Class<? extends Block>> {

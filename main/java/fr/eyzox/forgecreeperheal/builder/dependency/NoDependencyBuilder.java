@@ -4,7 +4,7 @@ import fr.eyzox.dependencygraph.IDependency;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.dependency.NoDependency;
 import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class NoDependencyBuilder implements IDependencyBuilder{
 

@@ -6,7 +6,7 @@ import fr.eyzox.forgecreeperheal.serial.NBTUtils;
 import fr.eyzox.forgecreeperheal.serial.wrapper.BlockSerialWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class DefaultBlockData implements IBlockData{

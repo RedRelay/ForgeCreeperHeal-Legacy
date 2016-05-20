@@ -23,7 +23,7 @@ public class ChunkEventHandler implements IEventHandler{
 	
 	@SubscribeEvent
 	public void onChunkDataLoad(final ChunkDataEvent.Load event) {
-		if(event.world.isRemote) return;
+		if(event.getWorld().isRemote) return;
 		
 		final NBTTagCompound FCHTag = event.getData().getCompoundTag(FCH_TAG);
 		if(!FCHTag.hasNoTags()) {
@@ -33,7 +33,7 @@ public class ChunkEventHandler implements IEventHandler{
 				//TODO Error while unserial
 				final TickTimeline<ISerializableHealable> healer = ForgeCreeperHeal.getHealerFactory().unserialize(healerTag);
 				
-				final WorldServer world = (WorldServer) event.world;
+				final WorldServer world = (WorldServer) event.getWorld();
 				final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
 				
 				ForgeCreeperHeal.getHealerManager(world).load(chunk, healer);
@@ -44,9 +44,9 @@ public class ChunkEventHandler implements IEventHandler{
 	
 	@SubscribeEvent
 	public void onChunkDataSave(final ChunkDataEvent.Save event) {
-		if(event.world.isRemote) return;
+		if(event.getWorld().isRemote) return;
 
-		final WorldServer world = (WorldServer) event.world;
+		final WorldServer world = (WorldServer) event.getWorld();
 		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
 
 		final TickTimeline<ISerializableHealable> healer = ForgeCreeperHeal.getHealerManager(world).getHealers().get(chunk);
@@ -60,18 +60,18 @@ public class ChunkEventHandler implements IEventHandler{
 			
 			//If chunk is unloaded, unhandle its healer
 			if(unloadQueue.remove(chunk)) {
-				ForgeCreeperHeal.getHealerManager(((WorldServer) event.world)).unload(event.getChunk().getChunkCoordIntPair());
+				ForgeCreeperHeal.getHealerManager(((WorldServer) event.getWorld())).unload(event.getChunk().getChunkCoordIntPair());
 			}
 		}
 	}
 	
 	@SubscribeEvent
 	public void onChunkUnload(ChunkEvent.Unload event) {
-		if(event.world.isRemote) return;
+		if(event.getWorld().isRemote) return;
 		
 		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
 		
-		if(ForgeCreeperHeal.getHealerManager((WorldServer)event.world).get(chunk) != null) {
+		if(ForgeCreeperHeal.getHealerManager((WorldServer)event.getWorld()).get(chunk) != null) {
 			unloadQueue.add(chunk);
 		}
 		

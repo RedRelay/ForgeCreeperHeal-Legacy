@@ -8,7 +8,7 @@ import fr.eyzox.dependencygraph.IDependencyProvider;
 import fr.eyzox.dependencygraph.RandomDependencyGraph;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class BlockScheduler implements IScheduler<IBlockData> {
 

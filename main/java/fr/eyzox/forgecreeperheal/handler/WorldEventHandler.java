@@ -13,17 +13,17 @@ public class WorldEventHandler implements IEventHandler{
 
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
-		if(event.world.isRemote) return;
+		if(event.getWorld().isRemote) return;
 
-		final WorldServer world = (WorldServer) event.world;
+		final WorldServer world = (WorldServer) event.getWorld();
 		ForgeCreeperHeal.getProxy().getHealerManagers().put(world, new HealerManager(world));
 
 	}
 
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event) {
-		if(event.world.isRemote) return;
-		ForgeCreeperHeal.getProxy().getHealerManagers().remove((WorldServer) event.world);
+		if(event.getWorld().isRemote) return;
+		ForgeCreeperHeal.getProxy().getHealerManagers().remove((WorldServer) event.getWorld());
 	}
 
 	@SubscribeEvent

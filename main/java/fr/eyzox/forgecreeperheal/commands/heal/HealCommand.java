@@ -20,11 +20,4 @@ public class HealCommand extends CommandsContainer {
 		return null;
 	}
 
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return ForgeCreeperHealCommands.isOp(sender);
-	}
-	
-	
-
 }

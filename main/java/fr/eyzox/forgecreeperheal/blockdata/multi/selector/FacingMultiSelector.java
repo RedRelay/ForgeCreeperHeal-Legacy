@@ -1,8 +1,8 @@
 package fr.eyzox.forgecreeperheal.blockdata.multi.selector;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class FacingMultiSelector implements IMultiSelector {

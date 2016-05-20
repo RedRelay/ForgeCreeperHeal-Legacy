@@ -6,8 +6,8 @@ import fr.eyzox.forgecreeperheal.builder.AbstractFactoryBuilder;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.IPropertySelector;
 import fr.eyzox.forgecreeperheal.dependency.FullAndDependency;
 import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class AbstractFacingDependencyBuilder extends AbstractFactoryBuilder implements IDependencyBuilder{
 

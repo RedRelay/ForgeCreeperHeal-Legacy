@@ -11,7 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -76,7 +76,7 @@ public class HealerUtils {
 	
 	public static void healBlock(World world, BlockPos pos, IBlockState state, NBTTagCompound tileEntityTag, int flags) {
 		Block currentBlock = world.getBlockState(pos).getBlock();
-		boolean isAir = currentBlock.isAir(world, pos);
+		boolean isAir = currentBlock.isAir(state, world, pos);
 
 		if(ForgeCreeperHeal.getConfig().isOverrideBlock() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlock) != null)) {
 			if(ForgeCreeperHeal.getConfig().isDropIfCollision() && !isAir) {

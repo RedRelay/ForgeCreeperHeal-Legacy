@@ -71,6 +71,7 @@ import net.minecraft.block.BlockWallSign;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
@@ -138,7 +139,7 @@ public class CommonProxy {
 	}
 
 	protected void registerCommand() {
-		ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
+		ServerCommandManager m = (ServerCommandManager) FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager();
 		ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
 		m.registerCommand(forgeCreeperHealCmds);
 	}

@@ -14,7 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,16 +34,16 @@ public class ExplosionEventHandler implements IEventHandler{
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onDetonate(ExplosionEvent.Detonate event) {
 		
-		if(event.world.isRemote)
+		if(event.getWorld().isRemote)
 			return;
 		
-		final WorldServer world = (WorldServer) event.world;
+		final WorldServer world = (WorldServer) event.getWorld();
 		
 		//TODO FromPlayer exception config
 		
 		
 		//Entity Filter : Retrieve which entity make this explosion
-		Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.explosion);
+		Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.getExplosion());
 		//TODO maybe better config
 		if(exploder == null || ForgeCreeperHeal.getConfig().getSourceException().contains(exploder.getClass()))
 			return;

@@ -1,5 +1,7 @@
 package fr.eyzox.forgecreeperheal.reflection;
 
+import static net.minecraft.world.chunk.Chunk.NULL_BLOCK_STORAGE;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -7,8 +9,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
@@ -21,13 +24,58 @@ public class ChunkTransform {
 	private final Chunk chunk;
 	
 	private final int[] precipitationHeightMap;
+	private final int[] heightMap;
+	private final World worldObj;
+	private final ExtendedBlockStorage[] storageArrays;
+	
 	
 	public ChunkTransform(final Chunk chunk) {
 		this.chunk = chunk;
-		precipitationHeightMap = (int[]) Reflect.getDataFromField(FIELD_PRECIPITATION_HEIGHT_MAP, this.chunk);
+		this.precipitationHeightMap = (int[]) Reflect.getDataFromField(FIELD_PRECIPITATION_HEIGHT_MAP, this.chunk);
+		this.heightMap = this.chunk.getHeightMap();
+		this.worldObj = this.chunk.getWorld();
+		this.storageArrays = this.chunk.getBlockStorageArray();
 	}
 	
+	private IBlockState getBlockState(BlockPos pos) {
+		return this.chunk.getBlockState(pos);
+	}
+	
+	private TileEntity getTileEntity(BlockPos pos, Chunk.EnumCreateEntityType p_177424_2_) {
+		return this.chunk.getTileEntity(pos, p_177424_2_);
+	}
+	
+	private void generateSkylightMap() {
+		this.chunk.generateSkylightMap();
+	}
+	
+	private void relightBlock(int x, int y, int z) {
+		Reflect.call(this.chunk, METHOD_RELIGHT_BLOCK, x, y, z);
+	}
+	
+	private int getLightFor(EnumSkyBlock p_177413_1_, BlockPos pos){
+		return this.chunk.getLightFor(p_177413_1_, pos);
+	}
+	
+	private void propagateSkylightOcclusion(int x, int z){
+		Reflect.call(this.chunk, METHOD_PROPAGATE_SKYLIGHT_OCCLUSION, x, z);
+	}
+	
+	private void _isModified(boolean v) {
+		this.chunk.setModified(true);
+	}
+	
+	/**
+	 * 
+	 * From {@link net.minecraft.world.chunk.Chunk#setBlockState(BlockPos, IBlockState)}
+	 * Edition : Don't call {@link Block#breakBlock(net.minecraft.world.World, BlockPos, IBlockState)} 
+	 * 
+	 * @param pos
+	 * @param state
+	 * @return
+	 */
 	public IBlockState setBlockState(BlockPos pos, IBlockState state) {
+		
 		int i = pos.getX() & 15;
         int j = pos.getY();
         int k = pos.getZ() & 15;
@@ -38,55 +86,54 @@ public class ChunkTransform {
             this.precipitationHeightMap[l] = -999;
         }
 
-        int i1 = this.chunk.getHeightMap()[l];
-        IBlockState iblockstate1 = this.chunk.getBlockState(pos);
+        int i1 = this.heightMap[l];
+        IBlockState iblockstate = this.getBlockState(pos);
 
-        if (iblockstate1 == state)
+        if (iblockstate == state)
         {
             return null;
         }
         else
         {
             Block block = state.getBlock();
-            Block block1 = iblockstate1.getBlock();
-            ExtendedBlockStorage extendedblockstorage = this.chunk.getBlockStorageArray()[j >> 4];
+            Block block1 = iblockstate.getBlock();
+            int k1 = iblockstate.getLightOpacity(this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
+            ExtendedBlockStorage extendedblockstorage = this.storageArrays[j >> 4];
             boolean flag = false;
 
-            if (extendedblockstorage == null)
+            if (extendedblockstorage == NULL_BLOCK_STORAGE)
             {
                 if (block == Blocks.air)
                 {
                     return null;
                 }
 
-                extendedblockstorage = this.chunk.getBlockStorageArray()[j >> 4] = new ExtendedBlockStorage(j >> 4 << 4, !this.chunk.getWorld().provider.getHasNoSky());
+                extendedblockstorage = this.storageArrays[j >> 4] = new ExtendedBlockStorage(j >> 4 << 4, !this.worldObj.provider.getHasNoSky());
                 flag = j >= i1;
             }
-
-            int j1 = block.getLightOpacity(this.chunk.getWorld(), pos);
 
             extendedblockstorage.set(i, j & 15, k, state);
 
             //if (block1 != block)
             {
-                if (!this.chunk.getWorld().isRemote)
+                if (!this.worldObj.isRemote)
                 {
-                   
-                	//##TRANSFORM[ if (iblockstate1.getBlock() != state.getBlock()) block1.breakBlock(this.chunk.getWorld(), pos, iblockstate1);  //Only fire block breaks when the block changes.]:BEGIN##//
-                	//##TRANSFORM:END##//
-                    	
-                    TileEntity te = this.chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-                    if (te != null && te.shouldRefresh(this.chunk.getWorld(), pos, iblockstate1, state)) this.chunk.getWorld().removeTileEntity(pos);
+                	/* ====== REMOVED ===========
+                    if (block1 != block) //Only fire block breaks when the block changes.
+                    block1.breakBlock(this.worldObj, pos, iblockstate);
+                    ============================= */
+                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state)) this.worldObj.removeTileEntity(pos);
                 }
-                else if (block1.hasTileEntity(iblockstate1))
+                else if (block1.hasTileEntity(iblockstate))
                 {
-                    TileEntity te = this.chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-                    if (te != null && te.shouldRefresh(this.chunk.getWorld(), pos, iblockstate1, state))
-                    this.chunk.getWorld().removeTileEntity(pos);
+                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state))
+                    this.worldObj.removeTileEntity(pos);
                 }
             }
 
-            if (extendedblockstorage.getBlockByExtId(i, j & 15, k) != block)
+            if (extendedblockstorage.get(i, j & 15, k).getBlock() != block)
             {
                 return null;
             }
@@ -94,56 +141,56 @@ public class ChunkTransform {
             {
                 if (flag)
                 {
-                    this.chunk.generateSkylightMap();
+                    this.generateSkylightMap();
                 }
                 else
                 {
-                    int k1 = block.getLightOpacity(this.chunk.getWorld(), pos);
+                    int j1 = state.getLightOpacity(this.worldObj, pos);
 
                     if (j1 > 0)
                     {
                         if (j >= i1)
                         {
-                        	Reflect.call(this.chunk, METHOD_RELIGHT_BLOCK, i, j + 1, k);
+                            this.relightBlock(i, j + 1, k);
                         }
                     }
                     else if (j == i1 - 1)
                     {
-                        Reflect.call(this.chunk, METHOD_RELIGHT_BLOCK, i, j, k);
+                        this.relightBlock(i, j, k);
                     }
 
-                    if (j1 != k1 && (j1 < k1 || this.chunk.getLightFor(EnumSkyBlock.SKY, pos) > 0 || this.chunk.getLightFor(EnumSkyBlock.BLOCK, pos) > 0))
+                    if (j1 != k1 && (j1 < k1 || this.getLightFor(EnumSkyBlock.SKY, pos) > 0 || this.getLightFor(EnumSkyBlock.BLOCK, pos) > 0))
                     {
-                    	Reflect.call(this.chunk, METHOD_PROPAGATE_SKYLIGHT_OCCLUSION, i, k);
+                        this.propagateSkylightOcclusion(i, k);
                     }
                 }
 
-                TileEntity tileentity;
-
-                if (!this.chunk.getWorld().isRemote && block1 != block)
+                // If capturing blocks, only run block physics for TE's. Non-TE's are handled in ForgeHooks.onPlaceItemIntoWorld
+                if (!this.worldObj.isRemote && block1 != block && (!this.worldObj.captureBlockSnapshots || block.hasTileEntity(state)))
                 {
-                    block.onBlockAdded(this.chunk.getWorld(), pos, state);
+                    block.onBlockAdded(this.worldObj, pos, state);
                 }
 
                 if (block.hasTileEntity(state))
                 {
-                    tileentity = this.chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+                    TileEntity tileentity1 = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
 
-                    if (tileentity == null)
+                    if (tileentity1 == null)
                     {
-                        tileentity = block.createTileEntity(this.chunk.getWorld(), state);
-                        this.chunk.getWorld().setTileEntity(pos, tileentity);
+                        tileentity1 = block.createTileEntity(this.worldObj, state);
+                        this.worldObj.setTileEntity(pos, tileentity1);
                     }
 
-                    if (tileentity != null)
+                    if (tileentity1 != null)
                     {
-                        tileentity.updateContainingBlockInfo();
+                        tileentity1.updateContainingBlockInfo();
                     }
                 }
 
-                this.chunk.setModified(true);
-                return iblockstate1;
+                this._isModified(true);
+                return iblockstate;
             }
+		
         }
 	}
 }

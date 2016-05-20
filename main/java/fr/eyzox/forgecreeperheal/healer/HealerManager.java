@@ -47,8 +47,8 @@ public class HealerManager {
 	 * @param timeline
 	 */
 	public void put(final ChunkCoordIntPair chunk, final TickTimeline<ISerializableHealable> timeline) {
-		if(!world.theChunkProviderServer.chunkExists(chunk.chunkXPos, chunk.chunkZPos)) {
-			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+		if(!world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos)) {
+			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
 		this.load(chunk, timeline);
 		this.setChunkDirty(chunk);
@@ -74,7 +74,7 @@ public class HealerManager {
 		TickTimeline<ISerializableHealable> timeline = healers.get(chunk);
 		if(timeline == null) {
 			//Maybe timeline is not loaded yet, so we load the chunk
-			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 			timeline = healers.get(chunk);
 			//If timeline = null, it means there are no timeline currently for this chunk 
 		}
@@ -87,7 +87,7 @@ public class HealerManager {
 	public void heal() {
 		healLoaded();
 		for(final ChunkCoordIntPair chunk : this.worldHealerData.getChunksWithHealer()) {
-			world.theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
 		healLoaded();
 	}

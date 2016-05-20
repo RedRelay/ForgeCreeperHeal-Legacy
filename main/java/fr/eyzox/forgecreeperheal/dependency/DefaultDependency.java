@@ -1,7 +1,7 @@
 package fr.eyzox.forgecreeperheal.dependency;
 
 import fr.eyzox.dependencygraph.IDependency;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * All dependencies have to be released to be available

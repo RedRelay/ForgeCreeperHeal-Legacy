@@ -8,10 +8,9 @@ import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
 import fr.eyzox.forgecreeperheal.commands.heal.HealCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 
 public class ForgeCreeperHealCommands extends CommandsContainer {
 
@@ -38,27 +37,16 @@ public class ForgeCreeperHealCommands extends CommandsContainer {
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if(args.length > 0 && args[0] != null) {
-			super.processCommand(sender, args);
+			super.execute(server, sender, args);
 		}else {
-			addChatMessage(sender, new ChatComponentText("Server version : "+ ForgeCreeperHeal.VERSION));
+			addChatMessage(sender, new TextComponentString("Server version : "+ ForgeCreeperHeal.VERSION));
 		}
 	}
 	
-	
-	
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_) {
-		return true;
-	}
-
-	public static boolean isOp(ICommandSender sender) {
-		return !(sender instanceof EntityPlayer) || MinecraftServer.getServer().getConfigurationManager().canSendCommands(((EntityPlayer)sender).getGameProfile());
-	}
-	
-	public static void addChatMessage(ICommandSender sender, IChatComponent msg) {
-		ChatComponentText cct = new ChatComponentText(String.format("[%s] ", ForgeCreeperHeal.MODNAME));
+	public static void addChatMessage(ICommandSender sender, ITextComponent msg) {
+		TextComponentString cct = new TextComponentString(String.format("[%s] ", ForgeCreeperHeal.MODNAME));
 		cct.appendSibling(msg);
 		sender.addChatMessage(cct);
 	}

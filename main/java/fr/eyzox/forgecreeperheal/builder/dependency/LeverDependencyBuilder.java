@@ -6,7 +6,7 @@ import fr.eyzox.forgecreeperheal.dependency.FullAndDependency;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class LeverDependencyBuilder implements IDependencyBuilder{
 
