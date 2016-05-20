@@ -8,37 +8,37 @@ import fr.eyzox.forgecreeperheal.serial.INBTSerializable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class WorldHealerData extends WorldSavedData implements INBTSerializable {
+public class WorldHealerData extends WorldSavedData {
 
 	public static final String KEY = ForgeCreeperHeal.MODID+":WHD";
 	
 	private final static String CHUNKS_WITH_HEALER_TAG = "chunks";
 	
-	private final Set<ChunkCoordIntPair> chunksWithHealer = new HashSet<ChunkCoordIntPair>();
+	private final Set<ChunkPos> chunksWithHealer = new HashSet<ChunkPos>();
 	
 	public WorldHealerData(String name) {
 		super(name);
 	}
 
-	public void handleChunk(final ChunkCoordIntPair chunk) {
+	public void handleChunk(final ChunkPos chunk) {
 		if(this.chunksWithHealer.add(chunk)) {
 			this.markDirty();
 		}
 	}
 	
-	public void unhandleChunk(final ChunkCoordIntPair chunk) {
+	public void unhandleChunk(final ChunkPos chunk) {
 		if(this.chunksWithHealer.remove(chunk)) {
 			this.markDirty();
 		}
 	}
 	
-	public Set<ChunkCoordIntPair> getChunksWithHealer() {
+	public Set<ChunkPos> getChunksWithHealer() {
 		return chunksWithHealer;
 	}
 	
@@ -48,7 +48,7 @@ public class WorldHealerData extends WorldSavedData implements INBTSerializable 
 		for(int i = 0 ; i < chunksTagList.tagCount(); i++) {
 			final int[] array = chunksTagList.getIntArrayAt(i);
 			if(array.length >= 2) {
-				chunksWithHealer.add(new ChunkCoordIntPair(array[0], array[1]));
+				chunksWithHealer.add(new ChunkPos(array[0], array[1]));
 			}else {
 				//TODO serial exception
 			}
@@ -58,18 +58,19 @@ public class WorldHealerData extends WorldSavedData implements INBTSerializable 
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		NBTTagList chunksTagList = new NBTTagList();
-		for(final ChunkCoordIntPair chunk : chunksWithHealer) {
+		for(final ChunkPos chunk : chunksWithHealer) {
 			chunksTagList.appendTag(new NBTTagIntArray(new int[]{chunk.chunkXPos, chunk.chunkZPos}));
 		}
 		nbt.setTag(CHUNKS_WITH_HEALER_TAG, chunksTagList);
+		return nbt;
 
 	}
 	
 	public static WorldHealerData load(WorldServer w) {
 		MapStorage storage = w.getPerWorldStorage();
-		WorldHealerData result = (WorldHealerData)storage.loadData(WorldHealerData.class, KEY);
+		WorldHealerData result = (WorldHealerData)storage.getOrLoadData(WorldHealerData.class, KEY);
 		if(result == null) {
 			result = new WorldHealerData(KEY);
 			storage.setData(KEY, result);

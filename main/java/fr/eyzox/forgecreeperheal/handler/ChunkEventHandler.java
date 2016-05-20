@@ -7,7 +7,7 @@ import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -19,7 +19,7 @@ public class ChunkEventHandler implements IEventHandler{
 	private static final String FCH_TAG = "FCHTAG";
 	private static final String HEALER_TAG = "HEALER";
 	
-	private final Set<ChunkCoordIntPair> unloadQueue = new HashSet<ChunkCoordIntPair>();
+	private final Set<ChunkPos> unloadQueue = new HashSet<ChunkPos>();
 	
 	@SubscribeEvent
 	public void onChunkDataLoad(final ChunkDataEvent.Load event) {
@@ -34,7 +34,7 @@ public class ChunkEventHandler implements IEventHandler{
 				final TickTimeline<ISerializableHealable> healer = ForgeCreeperHeal.getHealerFactory().unserialize(healerTag);
 				
 				final WorldServer world = (WorldServer) event.getWorld();
-				final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
+				final ChunkPos chunk = event.getChunk().getChunkCoordIntPair();
 				
 				ForgeCreeperHeal.getHealerManager(world).load(chunk, healer);
 			}
@@ -47,7 +47,7 @@ public class ChunkEventHandler implements IEventHandler{
 		if(event.getWorld().isRemote) return;
 
 		final WorldServer world = (WorldServer) event.getWorld();
-		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
+		final ChunkPos chunk = event.getChunk().getChunkCoordIntPair();
 
 		final TickTimeline<ISerializableHealable> healer = ForgeCreeperHeal.getHealerManager(world).getHealers().get(chunk);
 		if(healer != null) {
@@ -69,7 +69,7 @@ public class ChunkEventHandler implements IEventHandler{
 	public void onChunkUnload(ChunkEvent.Unload event) {
 		if(event.getWorld().isRemote) return;
 		
-		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
+		final ChunkPos chunk = event.getChunk().getChunkCoordIntPair();
 		
 		if(ForgeCreeperHeal.getHealerManager((WorldServer)event.getWorld()).get(chunk) != null) {
 			unloadQueue.add(chunk);

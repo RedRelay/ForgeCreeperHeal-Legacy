@@ -21,7 +21,7 @@ import fr.eyzox.ticktimeline.Node;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants.NBT;
 
@@ -49,11 +49,11 @@ public class HealerFactory {
 		
 		final IScheduler<IBlockData> scheduler = new BlockScheduler(healables);
 		
-		final Map<ChunkCoordIntPair, DispatchedTimeline> dispatchedTimelines = this.scheduleHealables(scheduler);
+		final Map<ChunkPos, DispatchedTimeline> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager(world);
-		for(final Entry<ChunkCoordIntPair, DispatchedTimeline> entry : dispatchedTimelines.entrySet()) {
-			final ChunkCoordIntPair chunk = entry.getKey();
+		for(final Entry<ChunkPos, DispatchedTimeline> entry : dispatchedTimelines.entrySet()) {
+			final ChunkPos chunk = entry.getKey();
 			//Retrieve or create timeline for this chunk
 			TickTimeline<ISerializableHealable> timeline = manager.get(entry.getKey());
 			if(timeline == null) {
@@ -66,9 +66,9 @@ public class HealerFactory {
 		}
 	}
 
-	private Map<ChunkCoordIntPair, DispatchedTimeline> scheduleHealables(final IScheduler<IBlockData> scheduler) {
+	private Map<ChunkPos, DispatchedTimeline> scheduleHealables(final IScheduler<IBlockData> scheduler) {
 		
-		final Map<ChunkCoordIntPair, DispatchedTimeline> dispatchedTimelines = new HashMap<ChunkCoordIntPair, DispatchedTimeline>();
+		final Map<ChunkPos, DispatchedTimeline> dispatchedTimelines = new HashMap<ChunkPos, DispatchedTimeline>();
 		
 		int globalTickCounter = 0;
 		
@@ -76,7 +76,7 @@ public class HealerFactory {
 			final IBlockData healable = scheduler.next();
 			
 			//Retrieve chunk for this block
-			final ChunkCoordIntPair chunk = new ChunkCoordIntPair(healable.getPos().getX() >> 4, healable.getPos().getZ() >> 4);
+			final ChunkPos chunk = new ChunkPos(healable.getPos().getX() >> 4, healable.getPos().getZ() >> 4);
 			
 			//Retrieve or create DispatchedTimeline for a chunk
 			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(chunk);

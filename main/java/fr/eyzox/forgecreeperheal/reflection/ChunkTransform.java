@@ -103,7 +103,7 @@ public class ChunkTransform {
 
             if (extendedblockstorage == NULL_BLOCK_STORAGE)
             {
-                if (block == Blocks.air)
+                if (block == Blocks.AIR)
                 {
                     return null;
                 }

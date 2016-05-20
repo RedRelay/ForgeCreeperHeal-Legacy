@@ -10,13 +10,13 @@ import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.Node;
 import fr.eyzox.ticktimeline.TickTimeline;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 
 public class HealerManager {
 	
 	private final WorldServer world;
-	private final Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> healers = new ConcurrentHashMap<ChunkCoordIntPair, TickTimeline<ISerializableHealable>>();
+	private final Map<ChunkPos, TickTimeline<ISerializableHealable>> healers = new ConcurrentHashMap<ChunkPos, TickTimeline<ISerializableHealable>>();
 	private final WorldHealerData worldHealerData;
 	
 	public HealerManager(final WorldServer world) {
@@ -29,7 +29,7 @@ public class HealerManager {
 	 * @param chunk
 	 * @param timeline
 	 */
-	public void load(final ChunkCoordIntPair chunk, final TickTimeline<ISerializableHealable> timeline) {
+	public void load(final ChunkPos chunk, final TickTimeline<ISerializableHealable> timeline) {
 		healers.put(chunk, timeline);
 	}
 	
@@ -37,7 +37,7 @@ public class HealerManager {
 	 * Fired when a chunk is unloaded by {@link ChunkEventHandler#onChunkUnload(net.minecraftforge.event.world.ChunkEvent.Unload)}
 	 * @param chunk
 	 */
-	public void unload(final ChunkCoordIntPair chunk) {
+	public void unload(final ChunkPos chunk) {
 		healers.remove(chunk);
 	}
 	
@@ -46,7 +46,7 @@ public class HealerManager {
 	 * @param chunk
 	 * @param timeline
 	 */
-	public void put(final ChunkCoordIntPair chunk, final TickTimeline<ISerializableHealable> timeline) {
+	public void put(final ChunkPos chunk, final TickTimeline<ISerializableHealable> timeline) {
 		if(!world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos)) {
 			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
@@ -59,7 +59,7 @@ public class HealerManager {
 	 * Removes the healer for a chunk
 	 * @param chunk
 	 */
-	public void remove(final ChunkCoordIntPair chunk) {
+	public void remove(final ChunkPos chunk) {
 		this.unload(chunk);
 		this.setChunkDirty(chunk);
 		this.worldHealerData.unhandleChunk(chunk);
@@ -70,7 +70,7 @@ public class HealerManager {
 	 * @param chunk
 	 * @return
 	 */
-	public TickTimeline<ISerializableHealable> get(final ChunkCoordIntPair chunk) {
+	public TickTimeline<ISerializableHealable> get(final ChunkPos chunk) {
 		TickTimeline<ISerializableHealable> timeline = healers.get(chunk);
 		if(timeline == null) {
 			//Maybe timeline is not loaded yet, so we load the chunk
@@ -86,7 +86,7 @@ public class HealerManager {
 	 */
 	public void heal() {
 		healLoaded();
-		for(final ChunkCoordIntPair chunk : this.worldHealerData.getChunksWithHealer()) {
+		for(final ChunkPos chunk : this.worldHealerData.getChunksWithHealer()) {
 			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
 		}
 		healLoaded();
@@ -96,7 +96,7 @@ public class HealerManager {
 	 * Called by {@link WorldEventHandler#onWorldTick(net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent)}
 	 */
 	public void tick() {
-		for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : this.healers.entrySet()) {
+		for(final Entry<ChunkPos, TickTimeline<ISerializableHealable>> entry : this.healers.entrySet()) {
 			final Collection<ISerializableHealable> healables = entry.getValue().tick();
 			if(healables != null) {
 				for(final ISerializableHealable healable : healables) {
@@ -111,7 +111,7 @@ public class HealerManager {
 		}
 	}
 	
-	public void setChunkDirty(final ChunkCoordIntPair chunk) {
+	public void setChunkDirty(final ChunkPos chunk) {
 		world.getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos).setChunkModified();
 	}
 	
@@ -119,7 +119,7 @@ public class HealerManager {
 	 * Heals only loaded healers
 	 */
 	private void healLoaded() {
-		for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : healers.entrySet()) {
+		for(final Entry<ChunkPos, TickTimeline<ISerializableHealable>> entry : healers.entrySet()) {
 			final TickTimeline<ISerializableHealable> timeline = entry.getValue();
 			for(final Node<Collection<ISerializableHealable>> node : timeline.getTimeline()) {
 				for(final ISerializableHealable healable : node.getData()) {
@@ -135,7 +135,7 @@ public class HealerManager {
 		return world;
 	}
 	
-	public Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> getHealers() {
+	public Map<ChunkPos, TickTimeline<ISerializableHealable>> getHealers() {
 		return healers;
 	}
 
