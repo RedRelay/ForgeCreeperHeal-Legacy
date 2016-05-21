@@ -3,18 +3,26 @@ package fr.eyzox.forgecreeperheal.handler;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
+import fr.eyzox.forgecreeperheal.healer.Healer;
+import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.reflection.Reflect;
+import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
+import fr.eyzox.ticktimeline.Node;
+import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -51,7 +59,20 @@ public class ExplosionEventHandler implements IEventHandler{
 		//All filters applied, now begins the real stuff :P
 		
 		final Collection<IBlockData> healables = this.buildBlockDataCollection(world, event.getAffectedBlocks());
-		ForgeCreeperHeal.getHealerFactory().create(world, healables);
+		final Map<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables);
+		
+		
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
+		for(final Entry<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> entry : addToTimeline.entrySet()) {
+			Healer healer = manager.load(entry.getKey());
+			if(healer == null) {
+				final TickTimeline<ISerializableHealable> timeline = new TickTimeline<ISerializableHealable>();
+				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos), timeline);
+			}
+			healer.getTimeline().add(entry.getValue());
+			manager.hook(healer);
+		}
+		
 		//Remove future healed block from world to destroy drop appearing after the explosion and avoid item duplication
 		final WorldRemover remover = new WorldRemover(world);
 		remover.process(healables);

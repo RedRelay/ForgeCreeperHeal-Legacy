@@ -1,13 +1,11 @@
 package fr.eyzox.forgecreeperheal.handler;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.healer.Healer;
+import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -19,8 +17,6 @@ public class ChunkEventHandler implements IEventHandler{
 	private static final String FCH_TAG = "FCHTAG";
 	private static final String HEALER_TAG = "HEALER";
 	
-	private final Set<ChunkCoordIntPair> unloadQueue = new HashSet<ChunkCoordIntPair>();
-	
 	@SubscribeEvent
 	public void onChunkDataLoad(final ChunkDataEvent.Load event) {
 		if(event.world.isRemote) return;
@@ -31,12 +27,12 @@ public class ChunkEventHandler implements IEventHandler{
 			if(!healerTag.hasNoTags()) {
 				
 				//TODO Error while unserial
-				final TickTimeline<ISerializableHealable> healer = ForgeCreeperHeal.getHealerFactory().unserialize(healerTag);
+				final TickTimeline<ISerializableHealable> timeline = ForgeCreeperHeal.getHealerFactory().unserialize(healerTag);
 				
-				final WorldServer world = (WorldServer) event.world;
-				final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
+				final Healer healer = new Healer(event.getChunk(), timeline);
+				healer.setLoaded(true);
 				
-				ForgeCreeperHeal.getHealerManager(world).load(chunk, healer);
+				ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld()).getLoadedHealers().put(event.getChunk(), healer);
 			}
 		}
 	}
@@ -46,33 +42,34 @@ public class ChunkEventHandler implements IEventHandler{
 	public void onChunkDataSave(final ChunkDataEvent.Save event) {
 		if(event.world.isRemote) return;
 
-		final WorldServer world = (WorldServer) event.world;
-		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
-
-		final TickTimeline<ISerializableHealable> healer = ForgeCreeperHeal.getHealerManager(world).getHealers().get(chunk);
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
+		
+		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
+		
 		if(healer != null) {
 			//TODO Error while serial
-			final NBTTagCompound healerTag = ForgeCreeperHeal.getHealerFactory().serialize(healer);
+			
+			final NBTTagCompound healerTag = ForgeCreeperHeal.getHealerFactory().serialize(healer.getTimeline());
 
 			final NBTTagCompound FCHTag = event.getData().getCompoundTag(FCH_TAG);
 			FCHTag.setTag(HEALER_TAG, healerTag);
 			event.getData().setTag(FCH_TAG, FCHTag);
 			
 			//If chunk is unloaded, unhandle its healer
-			if(unloadQueue.remove(chunk)) {
-				ForgeCreeperHeal.getHealerManager(((WorldServer) event.world)).unload(event.getChunk().getChunkCoordIntPair());
+			if(!healer.isLoaded()) {
+				manager.getLoadedHealers().remove(event.getChunk());
 			}
 		}
 	}
 	
 	@SubscribeEvent
 	public void onChunkUnload(ChunkEvent.Unload event) {
-		if(event.world.isRemote) return;
+		if(event.getWorld().isRemote) return;
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer)event.getWorld());
 		
-		final ChunkCoordIntPair chunk = event.getChunk().getChunkCoordIntPair();
-		
-		if(ForgeCreeperHeal.getHealerManager((WorldServer)event.world).get(chunk) != null) {
-			unloadQueue.add(chunk);
+		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
+		if(healer != null) {
+			healer.setLoaded(false);
 		}
 		
 	}
