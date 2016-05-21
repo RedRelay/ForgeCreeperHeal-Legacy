@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.builder.ISerializableHealableBuilder;
 import fr.eyzox.forgecreeperheal.factory.Factory;
@@ -17,6 +16,7 @@ import fr.eyzox.forgecreeperheal.healer.tick.ITickProvider;
 import fr.eyzox.forgecreeperheal.healer.tick.TickProvider;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.forgecreeperheal.serial.wrapper.ISerialWrapper;
+import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,30 +45,22 @@ public class HealerFactory {
 	 * @param world - The world the healer must be created
 	 * @param healables - The block to be heal (no specified order)
 	 */
-	public void create(final WorldServer world, final Collection<? extends IBlockData> healables) {
+	public Map<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> create(final WorldServer world, final Collection<? extends IBlockData> healables) {
 		
 		final IScheduler<IBlockData> scheduler = new BlockScheduler(healables);
+		final ChunkDataProvider<DispatchedTimeline> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
-		final Map<ChunkPos, DispatchedTimeline> dispatchedTimelines = this.scheduleHealables(scheduler);
-		
-		final HealerManager manager = ForgeCreeperHeal.getHealerManager(world);
-		for(final Entry<ChunkPos, DispatchedTimeline> entry : dispatchedTimelines.entrySet()) {
-			final ChunkPos chunk = entry.getKey();
-			//Retrieve or create timeline for this chunk
-			TickTimeline<ISerializableHealable> timeline = manager.get(entry.getKey());
-			if(timeline == null) {
-				timeline = new TickTimeline<ISerializableHealable>();
-				manager.put(chunk, timeline);
-			}
-			timeline.add(entry.getValue().timeline);
-			
-			manager.setChunkDirty(chunk);
+		final Map<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> result = new HashMap<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>>(dispatchedTimelines.size());
+		for(final Entry<ChunkCoordIntPair, DispatchedTimeline> entry : dispatchedTimelines.entrySet()) {
+			result.put(entry.getKey(), entry.getValue().timeline);
 		}
+		
+		return result;
 	}
 
-	private Map<ChunkPos, DispatchedTimeline> scheduleHealables(final IScheduler<IBlockData> scheduler) {
+	private ChunkDataProvider<DispatchedTimeline> scheduleHealables(final IScheduler<IBlockData> scheduler) {
 		
-		final Map<ChunkPos, DispatchedTimeline> dispatchedTimelines = new HashMap<ChunkPos, DispatchedTimeline>();
+		final ChunkDataProvider<DispatchedTimeline> dispatchedTimelines = new ChunkDataProvider<DispatchedTimeline>();
 		
 		int globalTickCounter = 0;
 		
@@ -76,13 +68,14 @@ public class HealerFactory {
 			final IBlockData healable = scheduler.next();
 			
 			//Retrieve chunk for this block
-			final ChunkPos chunk = new ChunkPos(healable.getPos().getX() >> 4, healable.getPos().getZ() >> 4);
+			final int xChunk = healable.getPos().getX() >> 4;
+			final int zChunk = healable.getPos().getZ() >> 4;
 			
 			//Retrieve or create DispatchedTimeline for a chunk
-			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(chunk);
+			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk));
 			if(dispatchedTimeline == null) {
 				dispatchedTimeline = new DispatchedTimeline();
-				dispatchedTimelines.put(chunk, dispatchedTimeline);
+				dispatchedTimelines.put(new ChunkCoordIntPair(xChunk, zChunk), dispatchedTimeline);
 			}
 			
 			//Generate tick
