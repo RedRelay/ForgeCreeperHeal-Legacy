@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.serial.INBTSerializable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -13,8 +12,9 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class WorldHealerData extends WorldSavedData implements INBTSerializable {
+public class WorldHealerData extends WorldSavedData implements INBTSerializable<NBTTagCompound> {
 
 	public static final String KEY = ForgeCreeperHeal.MODID+":WHD";
 	

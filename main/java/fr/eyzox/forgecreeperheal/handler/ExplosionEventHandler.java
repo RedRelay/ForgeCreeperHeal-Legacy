@@ -16,7 +16,6 @@ import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.reflection.Reflect;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.Node;
-import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
@@ -66,8 +65,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		for(final Entry<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> entry : addToTimeline.entrySet()) {
 			Healer healer = manager.load(entry.getKey());
 			if(healer == null) {
-				final TickTimeline<ISerializableHealable> timeline = new TickTimeline<ISerializableHealable>();
-				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos), timeline);
+				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
 			}
 			healer.getTimeline().add(entry.getValue());
 			manager.hook(healer);
