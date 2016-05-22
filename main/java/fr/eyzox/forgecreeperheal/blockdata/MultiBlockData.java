@@ -63,25 +63,25 @@ public class MultiBlockData extends TileEntityBlockData {
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound serializeNBT() {
+		final NBTTagCompound tag = super.serializeNBT();
 		final NBTTagList wrapperListTag = new NBTTagList();
 		for(IBlockData other : others){
 			final NBTTagCompound wrapperTag = new NBTTagCompound();
 			wrapperTag.setString(TAG_WRAPPER_FACTORY_KEY, ForgeCreeperHeal.getProxy().getBlockClassKeyBuilder().convertToString(other.getState().getBlock().getClass()));
 			
-			final NBTTagCompound otherTag = new NBTTagCompound();
-			other.writeToNBT(otherTag);
+			final NBTTagCompound otherTag = other.serializeNBT();
 			wrapperTag.setTag(TAG_WRAPPER_DATA, otherTag);
 			wrapperListTag.appendTag(wrapperTag);
 		}
 		
 		tag.setTag(TAG_WRAPPERS, wrapperListTag);
+		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		super.readFromNBT(tag);
+	public void deserializeNBT(NBTTagCompound tag) {
+		super.deserializeNBT(tag);
 		
 		final NBTTagList wrapperListTag = tag.getTagList(TAG_WRAPPERS, NBT.TAG_COMPOUND);
 		this.others = new IBlockData[wrapperListTag.tagCount()];
