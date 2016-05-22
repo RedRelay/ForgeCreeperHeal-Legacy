@@ -26,7 +26,7 @@ public class DefaultBlockData implements IBlockData{
 	}
 	
 	public DefaultBlockData(final NBTTagCompound tag) {
-		this.readFromNBT(tag);
+		this.deserializeNBT(tag);
 		this.wrapper.initialize(ForgeCreeperHeal.getProxy().getBlockClassKeyBuilder().convertToString(this.state.getBlock().getClass()));
 	}
 	
@@ -56,13 +56,15 @@ public class DefaultBlockData implements IBlockData{
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound serializeNBT() {
+		final NBTTagCompound tag =  new NBTTagCompound();
 		tag.setLong(TAG_POS, this.pos.toLong());
 		tag.setTag(TAG_STATE, NBTUtils.iBlockStateToNBT(this.state));
+		return tag;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
+	public void deserializeNBT(NBTTagCompound tag) {
 		this.pos = BlockPos.fromLong(tag.getLong(TAG_POS));
 		this.state = NBTUtils.iBlockStateFromNBT(tag.getCompoundTag(TAG_STATE));
 	}

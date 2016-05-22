@@ -3,8 +3,6 @@ package fr.eyzox.forgecreeperheal.handler;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healer.Healer;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
-import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,10 +24,9 @@ public class ChunkEventHandler implements IEventHandler{
 			final NBTTagCompound healerTag = FCHTag.getCompoundTag(HEALER_TAG);
 			if(!healerTag.hasNoTags()) {
 				
-				//TODO Error while unserial
-				final TickTimeline<ISerializableHealable> timeline = ForgeCreeperHeal.getHealerFactory().unserialize(healerTag);
+				final Healer healer = new Healer(event.getChunk());
+				healer.deserializeNBT(healerTag);
 				
-				final Healer healer = new Healer(event.getChunk(), timeline);
 				healer.setLoaded(true);
 				
 				ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld()).getLoadedHealers().put(event.getChunk(), healer);
@@ -49,7 +46,7 @@ public class ChunkEventHandler implements IEventHandler{
 		if(healer != null) {
 			//TODO Error while serial
 			
-			final NBTTagCompound healerTag = ForgeCreeperHeal.getHealerFactory().serialize(healer.getTimeline());
+			final NBTTagCompound healerTag = healer.serializeNBT();
 
 			final NBTTagCompound FCHTag = event.getData().getCompoundTag(FCH_TAG);
 			FCHTag.setTag(HEALER_TAG, healerTag);

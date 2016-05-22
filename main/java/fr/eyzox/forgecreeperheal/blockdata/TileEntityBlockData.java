@@ -24,16 +24,17 @@ public class TileEntityBlockData extends DefaultBlockData{
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound serializeNBT() {
+		final NBTTagCompound tag = super.serializeNBT();
 		if(tileEntityTag != null) {
 			tag.setTag(TAG_TILE_ENTITY, tileEntityTag);
 		}
+		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		super.readFromNBT(tag);
+	public void deserializeNBT(NBTTagCompound tag) {
+		super.deserializeNBT(tag);
 		final NBTTagCompound tileEntityTag = tag.getCompoundTag(TAG_TILE_ENTITY);
 		if(!tileEntityTag.hasNoTags()) {
 			this.tileEntityTag = tileEntityTag;
