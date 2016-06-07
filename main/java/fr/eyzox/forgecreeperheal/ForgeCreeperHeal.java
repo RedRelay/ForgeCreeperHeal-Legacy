@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import org.apache.logging.log4j.Logger;
 
+import fr.eyzox.forgecreeperheal.commands.ProfilerCommand;
+import fr.eyzox.forgecreeperheal.commands.ReloadConfigCommand;
 import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
@@ -38,6 +40,8 @@ public class ForgeCreeperHeal
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
     	proxy.onPreInit(event);
+    	
+    	reloadConfig();
     }
     
     @EventHandler
@@ -47,7 +51,10 @@ public class ForgeCreeperHeal
     
     @EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
-		proxy.serverStarting(event);
+    	 System.out.println("registerCommands");
+ 		event.registerServerCommand(new ProfilerCommand());
+ 		//reload config has a bunch of NullPointerExceptions so i removed it for now
+ 		event.registerServerCommand(new ReloadConfigCommand());
 	}
 
 	public static ForgeCreeperHeal getInstance() {

@@ -1,5 +1,7 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
+import net.minecraft.command.ICommandSender;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -14,10 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import fr.eyzox.forgecreeperheal.Config;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
-import fr.eyzox.forgecreeperheal.commands.config.ConfigCommands;
-import fr.eyzox.forgecreeperheal.commands.config.ReloadConfigCommand;
-import fr.eyzox.forgecreeperheal.commands.profiler.ProfilerCommand;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldTickEventHandler;
@@ -47,29 +45,17 @@ public class CommonProxy {
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
         channel.registerMessage(ProfilerInfoMessage.Handler.class, ProfilerInfoMessage.class, 1, Side.CLIENT);
     }
-    
-    @EventHandler
-	public void serverStarting(FMLServerStartingEvent event) {
-		registerCommands(event);
-	}
-    
-    protected void registerCommands(FMLServerStartingEvent event) {
- 
-//    	ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
-    	
-    	ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
-    	
-    	//Register Config Commands
-    	ConfigCommands configCmds = new ConfigCommands();
-    	configCmds.register(new ReloadConfigCommand());
-    	forgeCreeperHealCmds.register(configCmds);
-    	
-    	//Register Profiler Commands
-    	forgeCreeperHealCmds.register(new ProfilerCommand());
-    	
-		event.registerServerCommand(forgeCreeperHealCmds);
+
+    public static void addChatMessage(ICommandSender sender, TextComponentTranslation msg) {
+		TextComponentTranslation cct = new TextComponentTranslation(String.format("[%s] ", ForgeCreeperHeal.MODNAME));
+		cct.appendSibling(msg);
+		sender.addChatMessage(cct);
 	}
 
+	public static void addChatMessage(ICommandSender sender, String string) {
+		addChatMessage(sender,new TextComponentTranslation(string));
+	}
+   
 	public Logger getLogger() {
 		return logger;
 	}

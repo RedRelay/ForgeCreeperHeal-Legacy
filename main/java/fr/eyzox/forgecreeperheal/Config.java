@@ -105,6 +105,7 @@ public class Config {
 	}
 	
 	public static Config loadConfig(File configFile) {
+		System.out.println("load config");
 		
 		Config c = null;
 		
