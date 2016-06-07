@@ -84,6 +84,16 @@ public class Config {
 		
 		dropIfAlreadyBlock = forgeConfig.getBoolean("dropIfAlreadyBlock", "override", false, "If this is true, and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
 		
+
+		boolean healTNT = forgeConfig.getBoolean("healTNT", "override", false, "If this is true, then TNT explosions will also heal as well as creepers");
+
+		removeException = new HashSet<Block>();
+		healException = new HashSet<Block>();
+		if(healTNT){
+			removeException.add(Blocks.TNT);
+			healException.add(Blocks.TNT);
+		}
+		
 		//TODO: the TNT exception list is not in config right now
 		
 		forgeConfig.save();
@@ -128,5 +138,4 @@ public class Config {
 	public String toString(){
 		return "minimumTicksBeforeHeal = "+minimumTicksBeforeHeal;
 	}
-	 
 }
