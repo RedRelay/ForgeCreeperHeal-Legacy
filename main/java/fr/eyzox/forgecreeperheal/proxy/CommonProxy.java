@@ -1,5 +1,6 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,7 +23,6 @@ import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
 public class CommonProxy {
 
 	private Logger logger;
-    
     private Config config;
     private WorldEventHandler worldEventHandler;
     private SimpleNetworkWrapper channel;
@@ -32,8 +32,7 @@ public class CommonProxy {
     	this.config = new Config(new Configuration(event.getSuggestedConfigurationFile()));
     }
 	
-	public void onInit(FMLInitializationEvent event)
-    {
+	public void onInit(FMLInitializationEvent event){
     	this.worldEventHandler = new WorldEventHandler();
     	
     	MinecraftForge.EVENT_BUS.register(new WorldTickEventHandler());
@@ -51,7 +50,7 @@ public class CommonProxy {
 	}
 
 	public static void addChatMessage(ICommandSender sender, String string) {
-		addChatMessage(sender,new TextComponentTranslation(string));
+		addChatMessage(sender,new TextComponentTranslation(I18n.format(string)));
 	}
    
 	public Logger getLogger() {
@@ -73,5 +72,4 @@ public class CommonProxy {
 	public void setConfig(Config config) {
 		this.config = config;
 	}
-	
 }

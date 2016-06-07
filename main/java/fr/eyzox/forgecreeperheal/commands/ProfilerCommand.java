@@ -55,7 +55,7 @@ public class ProfilerCommand extends CommandBase{
 					try {
 						dimensionID = Integer.parseInt(args[startIndex]);
 					}catch(NumberFormatException e) {
-						CommonProxy.addChatMessage(sender, "Dimension must be an integer");
+						CommonProxy.addChatMessage(sender, "command.profiler.dimension");
 						return;
 					}
 					startIndex++;
@@ -65,7 +65,7 @@ public class ProfilerCommand extends CommandBase{
 				}
 				
 				if(w == null) {
-					CommonProxy.addChatMessage(sender, "You must specified a valid dimensionID or use \"all\"");
+					CommonProxy.addChatMessage(sender, "command.profiler.dimension");
 					return;
 				}
 			}
@@ -107,9 +107,6 @@ public class ProfilerCommand extends CommandBase{
 					else w.disableProfiler(sender);
 				}
 			}
-			
 		}
-
 	}
-
 }

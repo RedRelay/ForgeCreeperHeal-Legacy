@@ -70,6 +70,4 @@ public class BlockData {
 	public void setBlockPos(BlockPos blockPos) {
 		this.blockPos = blockPos;
 	}
-	
-	
 }

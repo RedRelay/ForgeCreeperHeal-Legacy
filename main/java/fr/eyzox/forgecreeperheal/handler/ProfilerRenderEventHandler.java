@@ -46,6 +46,4 @@ public class ProfilerRenderEventHandler {
 	private String getKey(String worldName, int dimensionID) {
 		return worldName+'#'+dimensionID;
 	}
-
-
 }

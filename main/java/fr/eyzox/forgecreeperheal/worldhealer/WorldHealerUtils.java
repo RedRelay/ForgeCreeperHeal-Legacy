@@ -14,18 +14,14 @@ public class WorldHealerUtils {
 		{
 			ItemStack itemstack = inventory.getStackInSlot(inventoryIndex);
 
-			if (itemstack != null)
-			{
-
+			if (itemstack != null){
 				float f = world.rand.nextFloat() * 0.8F + 0.1F;
 				float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-				for (float f2 = world.rand.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; )
-				{
+				for (float f2 = world.rand.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; ){
 					int j1 = world.rand.nextInt(21) + 10;
 
-					if (j1 > itemstack.stackSize)
-					{
+					if (j1 > itemstack.stackSize){
 						j1 = itemstack.stackSize;
 					}
 
@@ -36,8 +32,7 @@ public class WorldHealerUtils {
 					
 
 
-					if (itemstack.hasTagCompound())
-					{
+					if (itemstack.hasTagCompound()){
 						entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
 					}
 					

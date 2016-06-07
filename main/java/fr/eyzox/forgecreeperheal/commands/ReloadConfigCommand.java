@@ -21,7 +21,9 @@ public class ReloadConfigCommand extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server,ICommandSender sender, String[] args) {
 		ForgeCreeperHeal.getProxy().getConfig().syncConfig();
-		CommonProxy.addChatMessage(sender, "Config reloaded : "+ForgeCreeperHeal.getProxy().getConfig().toString());
+		CommonProxy.addChatMessage(sender, "command.reload.success");
+		
+		//+ForgeCreeperHeal.getProxy().getConfig().toString()
 	}
 
 }

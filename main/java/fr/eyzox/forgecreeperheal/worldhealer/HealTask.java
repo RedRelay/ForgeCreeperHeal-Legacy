@@ -24,6 +24,4 @@ public class HealTask extends AbstractTickContainerLinkedList<Collection<BlockDa
 		c.add(data);
 		add(tick, c);
 	}
-
-
 }

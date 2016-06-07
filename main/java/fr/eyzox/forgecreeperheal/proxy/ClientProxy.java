@@ -18,5 +18,4 @@ public class ClientProxy extends CommonProxy {
 	public ProfilerRenderEventHandler getProfilerRenderEventHandler() {
 		return profilerRenderEventHandler;
 	}
-
 }
