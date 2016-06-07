@@ -17,8 +17,8 @@ public class ProfilerCommand extends CommandBase{
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender p_71518_1_) {
-		return "/"+getCommandName();
+	public String getCommandUsage(ICommandSender sender) {
+		return "/"+getCommandName() + "[enable|disable] <dimension|all>";
 	}
 //
 //	@Override
@@ -35,9 +35,11 @@ public class ProfilerCommand extends CommandBase{
 			boolean switchProfiler = false, force = false, all = false;
 			
 			//Gets switchProfiler
-			if(args[0].equalsIgnoreCase("enable")) switchProfiler = true;
-			else if(!args[0].equalsIgnoreCase("disable")) return;
-			
+			if(args[0].equalsIgnoreCase("enable")) {switchProfiler = true;}
+			else if(args[0].equalsIgnoreCase("disable")){ switchProfiler = false;}
+			else{
+				CommonProxy.addChatMessage(sender, this.getCommandUsage(sender));
+			}
 			//Gets all
 			for(int i = startIndex; i<args.length ; i++) {
 				if("all".equalsIgnoreCase(args[i])){
