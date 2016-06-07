@@ -1,47 +1,92 @@
 package fr.eyzox.forgecreeperheal;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-
-import fr.eyzox.forgecreeperheal.json.adapter.BlockAdapter;
-import fr.eyzox.forgecreeperheal.json.adapter.ClassAdapter;
+import net.minecraftforge.common.config.Configuration;
 
 public class Config {
+	
+	/*
+	 // old version looked like this
+	 {
+  "healing time": {
+    "minTickStart": "100",
+    "maxTickStart": "500",
+    "minTick": "0",
+    "maxTick": "200"
+  },
+ 
+ "override": {
+    "overrideBlock": "false",
+    "overrideFluid": "true",
+    "dropIfCollision": "true"
+  },
+
+  "containers": {
+    "dropItems": "false"
+  },
+  "filters": {
+    "removeException": [
+      "minecraft:tnt"
+    ],
+    "healException": [
+      "minecraft:tnt"
+    ],
+    "sourceException": []
+  }
+}
+	 * */
 	private int minimumTicksBeforeHeal;
 	private int randomTickVar;
 	private boolean override;
 	private boolean overrideFluid;
 	private boolean dropItemsFromContainer;
 	private boolean dropIfAlreadyBlock;
+	private static Configuration forgeConfig;
 	
 
 	private Set<Block> removeException = new HashSet<Block>();
 	private Set<Block> healException = new HashSet<Block>();
 	private Set<Class<? extends Entity>> fromEntityException = new HashSet<Class<? extends Entity>>();
 	
-	private transient File configFile;
-	
-	public Config() {
+	public Config(Configuration conf) {
+		forgeConfig = conf;
+		//now set defaults
 		minimumTicksBeforeHeal = 6000;
 		randomTickVar = 12000;
 		override = false;
 		overrideFluid = true;
 		dropItemsFromContainer = true;
 		dropIfAlreadyBlock = false;
+		removeException.add(Blocks.TNT);
+		healException.add(Blocks.TNT);
 		
+		syncConfig();
+	}
+	 
+	public void syncConfig(){
+		forgeConfig.load();
+		
+		minimumTicksBeforeHeal = forgeConfig.getInt("minTickStart", "healing time", 
+				6000, 0, 600000, "A lower number means it will heal faster");
+
+		randomTickVar = forgeConfig.getInt("randomTickVar", "healing time", 
+				12000, 0, 600000, "Determines the random nature of the heal");
+		
+		override = forgeConfig.getBoolean("overrideBlock", "override", false, "If the healing will replace blocks that were put in after");
+		
+		overrideFluid = forgeConfig.getBoolean("overrideFluid", "override", false, "If the healing will replace liquid (flowing or source) that were put in after");
+		dropItemsFromContainer = forgeConfig.getBoolean("dropItemsFromContainer", "override", false, "");
+		
+		dropIfAlreadyBlock = forgeConfig.getBoolean("dropIfAlreadyBlock", "override", false, "If this is true, and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
+		
+		//TODO: the TNT exception list is not in config right now
+		
+		forgeConfig.save();
 	}
 	
 	public int getMinimumTicksBeforeHeal() {
@@ -79,91 +124,9 @@ public class Config {
 		return fromEntityException;
 	}
 
-	public File getConfigFile() {
-		return configFile;
-	}
-	
-	public void setConfigFile(File f) {
-		this.configFile = f;
-	}
-	
-	private void loadDefaultConfig() {
-		removeException.add(Blocks.TNT);
-		healException.add(Blocks.TNT);
-	}
-	
-	public void save() {
-		Gson gson = getGsonBuilder().setPrettyPrinting().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
-		try {
-			PrintWriter pw = new PrintWriter(configFile);
-			gson.toJson(this, pw);
-			pw.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-			ForgeCreeperHeal.getLogger().warn("Unable to save configuration file at "+configFile.getAbsolutePath());
-		}
-	}
-	
-	public static Config loadConfig(File configFile) {
-		System.out.println("load config");
-		
-		Config c = null;
-		
-		if(configFile.exists() && configFile.length() > 0) {
-			Gson gson = getGsonBuilder().create();
-			try {
-				c = gson.fromJson(new FileReader(configFile), Config.class);
-				c.setConfigFile(configFile);
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-				ForgeCreeperHeal.getLogger().warn("Unable to load configuration from "+configFile.getAbsolutePath()+" loading default configuration");
-				c = new Config();
-				c.loadDefaultConfig();
-			} catch (FileNotFoundException e) {
-				ForgeCreeperHeal.getLogger().info("Unable to find configuration file from "+configFile.getAbsolutePath()+" : creating a config file at this location with default configuration");
-				c = createNewConfig(configFile);
-			}
-		}else {
-			c = createNewConfig(configFile);
-		}
-		
-		c.correctIllegalValues();
-		
-		return c;
-	}
-	
-	private void correctIllegalValues() {
-		if(minimumTicksBeforeHeal <= 0) minimumTicksBeforeHeal = 1;
-		if(randomTickVar <= 0) randomTickVar = 1;
-	}
-	
-	private static Config createNewConfig(File configFile) {
-		Config c = new Config();
-		c.loadDefaultConfig();
-		c.setConfigFile(configFile);
-		c.save();
-		return c;
-	}
-	
-	private static GsonBuilder getGsonBuilder() {
-		GsonBuilder gson = new GsonBuilder();
-		gson.registerTypeHierarchyAdapter(Block.class, new BlockAdapter());
-		gson.registerTypeHierarchyAdapter(Class.class, new ClassAdapter());
-		return gson;
-	}
 
-	@Override
-	public String toString() {
-		return "Config ["
-				+ "\n\tminimumTicksBeforeHeal=" + minimumTicksBeforeHeal
-				+ "\n\trandomTickVar=" + randomTickVar
-				+ "\n\toverride=" + override
-				+ "\n\tdropItempFromContainer=" + dropItemsFromContainer
-				+ "\n\tremoveException=" + removeException
-				+ "\n\thealException="+ healException
-				+ "\n\tfromEntityException="+ fromEntityException
-				+ "\n]";
+	public String toString(){
+		return "minimumTicksBeforeHeal = "+minimumTicksBeforeHeal;
 	}
-	
-	
+	 
 }

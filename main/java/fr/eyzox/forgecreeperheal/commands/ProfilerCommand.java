@@ -18,7 +18,7 @@ public class ProfilerCommand extends CommandBase{
 
 	@Override
 	public String getCommandUsage(ICommandSender p_71518_1_) {
-		return null;
+		return "/"+getCommandName();
 	}
 //
 //	@Override

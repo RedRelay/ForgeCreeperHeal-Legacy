@@ -14,14 +14,14 @@ public class ReloadConfigCommand extends CommandBase {
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender p_71518_1_) {
-		return null;
+	public String getCommandUsage(ICommandSender sender) {
+		return "/"+getCommandName();
 	}
 
 	@Override
-	public void execute(MinecraftServer server,ICommandSender sender, String[] p_71515_2_) {
-		ForgeCreeperHeal.reloadConfig();
-		CommonProxy.addChatMessage(sender, "Config reloaded");
+	public void execute(MinecraftServer server,ICommandSender sender, String[] args) {
+		ForgeCreeperHeal.getProxy().getConfig().syncConfig();
+		CommonProxy.addChatMessage(sender, "Config reloaded : "+ForgeCreeperHeal.getProxy().getConfig().toString());
 	}
 
 }

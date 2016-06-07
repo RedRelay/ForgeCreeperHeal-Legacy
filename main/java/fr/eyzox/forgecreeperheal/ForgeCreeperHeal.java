@@ -40,8 +40,6 @@ public class ForgeCreeperHeal
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
     	proxy.onPreInit(event);
-    	
-    	reloadConfig();
     }
     
     @EventHandler
@@ -51,10 +49,8 @@ public class ForgeCreeperHeal
     
     @EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
-    	 System.out.println("registerCommands");
- 		event.registerServerCommand(new ProfilerCommand());
- 		//reload config has a bunch of NullPointerExceptions so i removed it for now
- 		event.registerServerCommand(new ReloadConfigCommand());
+ 		event.registerServerCommand(new ProfilerCommand()); 
+ 		event.registerServerCommand(new ReloadConfigCommand()); 
 	}
 
 	public static ForgeCreeperHeal getInstance() {
@@ -79,9 +75,5 @@ public class ForgeCreeperHeal
     
     public static CommonProxy getProxy() {
     	return proxy;
-    }
-    
-    public static void reloadConfig() {
-    	proxy.setConfig(Config.loadConfig(ForgeCreeperHeal.proxy.getConfig().getConfigFile()));
     }
 }

@@ -3,6 +3,7 @@ package fr.eyzox.forgecreeperheal.proxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -31,7 +32,7 @@ public class CommonProxy {
 	
 	public void onPreInit(FMLPreInitializationEvent event) {
     	this.logger = event.getModLog();
-    	this.config = Config.loadConfig(event.getSuggestedConfigurationFile());
+    	this.config = new Config(new Configuration(event.getSuggestedConfigurationFile()));
     }
 	
 	public void onInit(FMLInitializationEvent event)
