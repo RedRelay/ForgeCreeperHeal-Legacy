@@ -8,22 +8,25 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.reflection.Reflect;
 import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class ExplosionEventHandler {
 
-	private Field exploder;
+//	private Field exploder;
 
 	public ExplosionEventHandler() {
-		exploder = Reflect.getFieldForClass(Explosion.class, "exploder", "field_77283_e");
+//		exploder = Reflect.getFieldForClass(Explosion.class, "exploder", "field_77283_e");
 	}
 
 	@SubscribeEvent
 	public void onDetonate(ExplosionEvent.Detonate event) {
 		//TODO FromPlayer exception config
 		if(!event.getWorld().isRemote) {
-			Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.getExplosion());
+			Entity exploder = event.getExplosion().getExplosivePlacedBy();
+				//(Entity) Reflect.getDataFromField(this.exploder, event.getExplosion());
+			
+			//we no longer need reflection since we have the getExplosivePlacedBy  function
+
 			if(exploder != null && !ForgeCreeperHeal.getConfig().getFromEntityException().contains(exploder.getClass())) {
 				WorldHealer worldHealer = ForgeCreeperHeal.getWorldHealer((WorldServer) event.getWorld());
 				if(worldHealer != null) {
