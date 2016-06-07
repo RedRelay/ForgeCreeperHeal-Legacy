@@ -18,15 +18,15 @@ public class WorldEventHandler {
 	
 	@SubscribeEvent
 	public void onLoad(WorldEvent.Load event) {
-		if(!event.world.isRemote) {
-			worldHealers.put((WorldServer) event.world, WorldHealer.loadWorldHealer(event.world));
+		if(!event.getWorld().isRemote) {
+			worldHealers.put((WorldServer) event.getWorld(), WorldHealer.loadWorldHealer(event.getWorld()));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onUnload(WorldEvent.Unload event) {
-		if(!event.world.isRemote) {
-			worldHealers.remove(event.world);
+		if(!event.getWorld().isRemote) {
+			worldHealers.remove(event.getWorld());
 		}
 	}
 	

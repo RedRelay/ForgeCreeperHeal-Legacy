@@ -1,7 +1,6 @@
 package fr.eyzox.forgecreeperheal.network;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.PlayerModData;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -34,10 +33,11 @@ public class ModDataMessage implements IMessage {
 
 		@Override
 		public IMessage onMessage(ModDataMessage message, MessageContext ctx) {
-			if(message.modVersion != null) {
-				PlayerModData data = new PlayerModData(message.modVersion);
-				PlayerModData.register(ctx.getServerHandler().playerEntity, data);
-			}
+			System.out.println("mod version data packet?"+message.modVersion);
+//			if(message.modVersion != null) {
+//				PlayerModData data = new PlayerModData(message.modVersion);
+//				PlayerModData.register(ctx.getServerHandler().playerEntity, data);
+//			}
 			return null;
 		}
 		

@@ -54,11 +54,12 @@ public class CommonProxy {
     
     @EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
-		registerCommand();
+		registerCommands(event);
 	}
     
-    protected void registerCommand() {
-    	ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
+    protected void registerCommands(FMLServerStartingEvent event) {
+ 
+//    	ServerCommandManager m = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
     	
     	ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
     	
@@ -70,7 +71,7 @@ public class CommonProxy {
     	//Register Profiler Commands
     	forgeCreeperHealCmds.register(new ProfilerCommand());
     	
-		m.registerCommand(forgeCreeperHealCmds);
+		event.registerServerCommand(forgeCreeperHealCmds);
 	}
 
 	public Logger getLogger() {

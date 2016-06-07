@@ -22,7 +22,7 @@ public class ProfilerInfoMessage implements IMessage {
 	
 	public ProfilerInfoMessage(World world, double ticks, long blocksUsed) {
 		this.worldName = world.getWorldInfo().getWorldName();
-		this.dimensionID = world.provider.getDimensionId();
+		this.dimensionID = world.provider.getDimension();
 		this.ticks = ticks;
 		this.blocksUsed = blocksUsed;
 	}

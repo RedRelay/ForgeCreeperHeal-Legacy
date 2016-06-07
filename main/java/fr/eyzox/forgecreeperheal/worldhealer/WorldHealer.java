@@ -11,7 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
@@ -61,11 +62,12 @@ public class WorldHealer extends WorldSavedData{
 		if(profiler != null) {
 			profiler.explosionStart();
 		}
+		World world = event.getWorld();
 		int maxTicksBeforeHeal = 0;
 		//Process primary blocks
 		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
-			IBlockState blockStateExplosion = event.world.getBlockState(blockPosExplosion);
-			if(blockStateExplosion.getBlock().isNormalCube()) {
+			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
+			if(blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {
 
 				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal()+world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
 				if(ticksBeforeHeal > maxTicksBeforeHeal) {
@@ -77,10 +79,11 @@ public class WorldHealer extends WorldSavedData{
 		}
 		maxTicksBeforeHeal++;
 
+		//new isnormal is 	    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
 		//Process secondary blocks
 		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
-			IBlockState blockStateExplosion = event.world.getBlockState(blockPosExplosion);
-			if(!blockStateExplosion.getBlock().isNormalCube() && !blockStateExplosion.getBlock().isAir(event.world, blockPosExplosion)) {
+			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
+			if(!blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion) && !(blockStateExplosion.getBlock()==Blocks.AIR)) {//.isAir(world, blockPosExplosion)
 				onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
 			}
 		}
@@ -103,7 +106,7 @@ public class WorldHealer extends WorldSavedData{
 
 		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
 			world.removeTileEntity(blockPosExplosion);
-			world.setBlockState(blockPosExplosion, Blocks.air.getDefaultState(), 7);
+			world.setBlockState(blockPosExplosion, Blocks.AIR.getDefaultState(), 7);
 		}
 	}
 
@@ -168,7 +171,7 @@ public class WorldHealer extends WorldSavedData{
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		NBTTagList tagList = new NBTTagList();
 		for(TickContainer<Collection<BlockData>> tc : this.healTask.getLinkedList()) {
 			NBTTagCompound tickContainerTag = new NBTTagCompound();
@@ -183,16 +186,17 @@ public class WorldHealer extends WorldSavedData{
 			tagList.appendTag(tickContainerTag);
 		}
 		tag.setTag("healtasklist", tagList);
+		return tag;
 	}
 
 	public static WorldHealer loadWorldHealer(World w) {
 		MapStorage storage = w.getPerWorldStorage();
 		final String KEY = getDataStorageKey();
-		WorldHealer result = (WorldHealer)storage.loadData(WorldHealer.class, KEY);
+		WorldHealer result = (WorldHealer)storage.getOrLoadData(WorldHealer.class, KEY);
 		if (result == null) {
 			result = new WorldHealer(KEY);
 			storage.setData(KEY, result);
-			ForgeCreeperHeal.getLogger().info("Unable to find data for world "+w.getWorldInfo().getWorldName()+"["+w.provider.getDimensionId()+"], new data created");
+			ForgeCreeperHeal.getLogger().info("Unable to find data for world "+w.getWorldInfo().getWorldName()+"["+w.provider.getDimension()+"], new data created");
 		}
 
 		result.world = w;

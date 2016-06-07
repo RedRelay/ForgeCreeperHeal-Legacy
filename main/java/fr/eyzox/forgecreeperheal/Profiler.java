@@ -96,13 +96,16 @@ public class Profiler {
 	
 	public void addListener(ICommandSender sender) {
 		if(sender instanceof EntityPlayerMP) {
-			EntityPlayerMP player = (EntityPlayerMP) sender;
-			PlayerModData playerModData = PlayerModData.get(player);
-			if(playerModData != null && playerModData.MOD_VERSION.compareToIgnoreCase("1.1.0") >= 0) {
-				clientSideModListeners.add(player);
-			}else {
-				noClientSideModListeners.add(player);
-			}
+			//TODO: no idea what this was for, but IEEP was removed in 1.9 anyway
+			// ill test the mod without it for now
+			clientSideModListeners.add((EntityPlayerMP) sender);
+//			EntityPlayerMP player = (EntityPlayerMP) sender;
+//			PlayerModData playerModData = PlayerModData.get(player);
+//			if(playerModData != null && playerModData.MOD_VERSION.compareToIgnoreCase("1.1.0") >= 0) {
+//				clientSideModListeners.add(player);
+//			}else {
+//				noClientSideModListeners.add(player);
+//			}
 		}else {
 			serverWatch = true;
 		}

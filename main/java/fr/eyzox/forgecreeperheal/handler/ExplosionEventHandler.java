@@ -24,10 +24,10 @@ public class ExplosionEventHandler {
 	@SubscribeEvent
 	public void onDetonate(ExplosionEvent.Detonate event) {
 		//TODO FromPlayer exception config
-		if(!event.world.isRemote) {
-			Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.explosion);
+		if(!event.getWorld().isRemote) {
+			Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.getExplosion());
 			if(exploder != null && !ForgeCreeperHeal.getConfig().getFromEntityException().contains(exploder.getClass())) {
-				WorldHealer worldHealer = ForgeCreeperHeal.getWorldHealer((WorldServer) event.world);
+				WorldHealer worldHealer = ForgeCreeperHeal.getWorldHealer((WorldServer) event.getWorld());
 				if(worldHealer != null) {
 					worldHealer.onDetonate(event);
 				}
@@ -35,15 +35,15 @@ public class ExplosionEventHandler {
 		}
 	}
 
-	private Entity getExploderFromExplosion(Explosion explosion) {
-		Entity entity = null;
-		try {
-			entity = (Entity)exploder.get(explosion);
-		} catch (ReflectiveOperationException e) {
-			CrashReport crash = new CrashReport(e.getLocalizedMessage(), e);
-			FMLCommonHandler.instance().enhanceCrashReport(crash, crash.makeCategory(ForgeCreeperHeal.MODNAME));
-		}
-		return entity;
-	}
+//	private Entity getExploderFromExplosion(Explosion explosion) {
+//		Entity entity = null;
+//		try {
+//			entity = (Entity)exploder.get(explosion);
+//		} catch (ReflectiveOperationException e) {
+//			CrashReport crash = new CrashReport(e.getLocalizedMessage(), e);
+//			FMLCommonHandler.instance().enhanceCrashReport(crash, crash.makeCategory(ForgeCreeperHeal.MODNAME));
+//		}
+//		return entity;
+//	}
 
 }

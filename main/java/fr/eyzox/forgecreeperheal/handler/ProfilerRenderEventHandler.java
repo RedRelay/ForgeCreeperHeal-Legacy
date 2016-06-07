@@ -25,7 +25,7 @@ public class ProfilerRenderEventHandler {
 				Entry<String, ProfilerInfoMessage> item = it.next();
 				
 				ProfilerInfoMessage msg = item.getValue();
-				event.left.add(getDrawString(msg));
+				event.getLeft().add(getDrawString(msg));
 				msg.setDisplayTicks(msg.getDisplayTicks()+1);
 				
 				if(msg.getDisplayTicks() > 40) {	

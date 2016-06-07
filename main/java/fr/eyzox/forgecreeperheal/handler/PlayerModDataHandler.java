@@ -11,7 +11,7 @@ public class PlayerModDataHandler {
 	@SubscribeEvent
 
 	public void onLogged(EntityJoinWorldEvent event) {
-		if(event.entity == Minecraft.getMinecraft().thePlayer) {
+		if(event.getEntity() == Minecraft.getMinecraft().thePlayer) {
 			ForgeCreeperHeal.getChannel().sendToServer(new ModDataMessage().fill());
 		}
 	}
