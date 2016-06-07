@@ -72,17 +72,17 @@ public class Config {
 		forgeConfig.load();
 		
 		minimumTicksBeforeHeal = forgeConfig.getInt("minTickStart", "healing time", 
-				6000, 0, 600000, "A lower number means it will heal faster");
+				600, 1, 600000, "A lower number means it will heal faster");
 
 		randomTickVar = forgeConfig.getInt("randomTickVar", "healing time", 
-				12000, 0, 600000, "Determines the random nature of the heal");
+				1200, 1, 600000, "Determines the random nature of the heal");
 		
 		override = forgeConfig.getBoolean("overrideBlock", "override", false, "If the healing will replace blocks that were put in after");
 		
-		overrideFluid = forgeConfig.getBoolean("overrideFluid", "override", false, "If the healing will replace liquid (flowing or source) that were put in after");
-		dropItemsFromContainer = forgeConfig.getBoolean("dropItemsFromContainer", "override", false, "");
+		overrideFluid = forgeConfig.getBoolean("overrideFluid", "override", true, "If the healing will replace liquid (flowing or source) that were put in after");
+		dropItemsFromContainer = forgeConfig.getBoolean("dropItemsFromContainer", "override", true, "");
 		
-		dropIfAlreadyBlock = forgeConfig.getBoolean("dropIfAlreadyBlock", "override", false, "If this is true, and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
+		dropIfAlreadyBlock = forgeConfig.getBoolean("dropIfAlreadyBlock", "override", true, "If this is true, and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
 		
 
 		boolean healTNT = forgeConfig.getBoolean("healTNT", "override", false, "If this is true, then TNT explosions will also heal as well as creepers");
