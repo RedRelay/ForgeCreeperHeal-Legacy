@@ -7,8 +7,8 @@
   "mcversion": "1.9.4",
   "url": "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2482250-forge-creeper-heal",
   "updateUrl": "",
-  "authorList": ["EyZox","Lothrazar"],
-  "credits": "All credit to EyZox who created this and did 99% of the work.  I (Lothrazar) just updated to new forge & MC versions, did some refactoring, and changed the config file a bit.  Also it looks like EyZox is working hard on a great 2.0 version so check that out when it is released, I just wanted to continue the 1.x version",
+  "authorList": ["EyZox","Nitnelave","Lothrazar"],
+  "credits": "All credit Nitnelave who created the bukkit plugin, and to EyZox who created this forge version.  Lothrazar forked version 1.2.0, did some refactoring, and changed the config file a bit.  Also EyZox is working hard on a great 2.0 version so check that out when it is released",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
