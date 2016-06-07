@@ -88,8 +88,8 @@ public class Config {
 	}
 	
 	private void loadDefaultConfig() {
-		removeException.add(Blocks.tnt);
-		healException.add(Blocks.tnt);
+		removeException.add(Blocks.TNT);
+		healException.add(Blocks.TNT);
 	}
 	
 	public void save() {

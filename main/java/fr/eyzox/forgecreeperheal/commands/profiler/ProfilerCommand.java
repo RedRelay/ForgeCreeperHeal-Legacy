@@ -2,7 +2,7 @@ package fr.eyzox.forgecreeperheal.commands.profiler;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
@@ -20,14 +20,14 @@ public class ProfilerCommand extends CommandBase{
 	public String getCommandUsage(ICommandSender p_71518_1_) {
 		return null;
 	}
+//
+//	@Override
+//	public boolean canCommandSenderUseCommand(ICommandSender sender) {
+//		return ForgeCreeperHealCommands.isOp(sender);
+//	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return ForgeCreeperHealCommands.isOp(sender);
-	}
-
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
+	public void execute(MinecraftServer server,ICommandSender sender, String[] args) {
 		if(args.length > 0 && args[0] != null) {
 			
 			WorldHealer w = null;
@@ -53,7 +53,7 @@ public class ProfilerCommand extends CommandBase{
 					try {
 						dimensionID = Integer.parseInt(args[startIndex]);
 					}catch(NumberFormatException e) {
-						ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("Dimension must be an integer"));
+						ForgeCreeperHealCommands.addChatMessage(sender, "Dimension must be an integer");
 						return;
 					}
 					startIndex++;
@@ -63,7 +63,7 @@ public class ProfilerCommand extends CommandBase{
 				}
 				
 				if(w == null) {
-					ForgeCreeperHealCommands.addChatMessage(sender, new ChatComponentText("You must specified a valid dimensionID or use \"all\""));
+					ForgeCreeperHealCommands.addChatMessage(sender, "You must specified a valid dimensionID or use \"all\"");
 					return;
 				}
 			}

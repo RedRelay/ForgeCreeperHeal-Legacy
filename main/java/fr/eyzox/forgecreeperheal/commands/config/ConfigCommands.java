@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.commands.config;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import fr.eyzox.forgecreeperheal.commands.CommandsContainer;
 import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 
@@ -16,8 +17,10 @@ public class ConfigCommands extends CommandsContainer {
 		return null;
 	}
 
+	private final static int	OP	= 2;
+	boolean requiresOP = true;
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return ForgeCreeperHealCommands.isOp(sender);
+	public boolean checkPermission(MinecraftServer server,ICommandSender sender) {
+		return (requiresOP) ? sender.canCommandSenderUseCommand(OP, this.getCommandName()) : true;
 	}
 }

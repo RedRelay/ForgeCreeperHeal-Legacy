@@ -6,10 +6,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentTranslation;
 import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
 import fr.eyzox.forgecreeperheal.worldhealer.BlockData;
@@ -128,9 +129,10 @@ public class Profiler {
 	public void report() {
 		if(currentTick < totalTicks) return;
 		double totalTicks = this.avgTick+this.avgExplosion;
-		if(serverWatch) ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.getDimensionId(), totalTicks, this.blocksUsed));
+		if(serverWatch) ForgeCreeperHeal.getLogger().info(String.format("[PROFILER:%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.getDimension(), totalTicks, this.blocksUsed));
 		for(EntityPlayerMP player : clientSideModListeners) {
-			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
+			
+			if(player.getServer().getPlayerList().getPlayerByUUID(player.getPersistentID()) != null) {
 				ForgeCreeperHeal.getChannel().sendTo(new ProfilerInfoMessage(worldHealer.getWorld(), totalTicks, blocksUsed), player);
 			}else {
 				worldHealer.disableProfiler(player);
@@ -138,8 +140,9 @@ public class Profiler {
 		}
 		
 		for(EntityPlayerMP player : noClientSideModListeners) {
-			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
-				ForgeCreeperHealCommands.addChatMessage(player, new ChatComponentText(String.format("[%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.getDimensionId(), totalTicks, this.blocksUsed)));
+//			if(MinecraftServer.getServer().getConfigurationManager().playerEntityList.contains(player)) {
+			if(player.getServer().getPlayerList().getPlayerByUUID(player.getPersistentID()) != null) {
+				ForgeCreeperHealCommands.addChatMessage(player, new TextComponentTranslation(String.format("[%s#%d] Tick : %.4f ms, Memory usage : %d blocks", this.worldHealer.getWorld().getWorldInfo().getWorldName(), this.worldHealer.getWorld().provider.getDimension(), totalTicks, this.blocksUsed)));
 			}else {
 				worldHealer.disableProfiler(player);
 			}
