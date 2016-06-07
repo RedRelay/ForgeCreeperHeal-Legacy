@@ -1,7 +1,5 @@
 package fr.eyzox.forgecreeperheal.proxy;
 
-import net.minecraft.command.ServerCommandManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -23,7 +21,6 @@ import fr.eyzox.forgecreeperheal.commands.profiler.ProfilerCommand;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldTickEventHandler;
-import fr.eyzox.forgecreeperheal.network.ModDataMessage;
 import fr.eyzox.forgecreeperheal.network.ProfilerInfoMessage;
 
 public class CommonProxy {
@@ -43,12 +40,11 @@ public class CommonProxy {
     {
     	this.worldEventHandler = new WorldEventHandler();
     	
-    	FMLCommonHandler.instance().bus().register(new WorldTickEventHandler());
+    	MinecraftForge.EVENT_BUS.register(new WorldTickEventHandler());
     	MinecraftForge.EVENT_BUS.register(worldEventHandler);
         MinecraftForge.EVENT_BUS.register(new ExplosionEventHandler());
         
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
-        channel.registerMessage(ModDataMessage.Handler.class, ModDataMessage.class, 0, Side.SERVER);
         channel.registerMessage(ProfilerInfoMessage.Handler.class, ProfilerInfoMessage.class, 1, Side.CLIENT);
     }
     

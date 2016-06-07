@@ -3,7 +3,6 @@ package fr.eyzox.forgecreeperheal.commands.config;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import fr.eyzox.forgecreeperheal.commands.CommandsContainer;
-import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 
 public class ConfigCommands extends CommandsContainer {
 

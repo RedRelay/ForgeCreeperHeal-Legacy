@@ -75,6 +75,6 @@ public class ForgeCreeperHeal
     }
     
     public static void reloadConfig() {
-    	proxy.setConfig(Config.loadConfig(instance.proxy.getConfig().getConfigFile()));
+    	proxy.setConfig(Config.loadConfig(ForgeCreeperHeal.proxy.getConfig().getConfigFile()));
     }
 }
