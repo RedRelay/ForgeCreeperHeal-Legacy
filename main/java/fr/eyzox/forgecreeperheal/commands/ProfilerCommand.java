@@ -13,7 +13,7 @@ public class ProfilerCommand extends CommandBase{
 
 	@Override
 	public String getCommandName() {
-		return "profiler";
+		return "creeperhealprofiler";
 	}
 
 	@Override

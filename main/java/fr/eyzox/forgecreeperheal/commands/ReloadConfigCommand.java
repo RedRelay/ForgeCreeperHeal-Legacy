@@ -10,7 +10,7 @@ public class ReloadConfigCommand extends CommandBase {
 
 	@Override
 	public String getCommandName() {
-		return "reload";
+		return "creeperhealreload";
 	}
 
 	@Override
