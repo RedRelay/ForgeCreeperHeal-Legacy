@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -29,11 +31,18 @@ public class WorldHealer extends WorldSavedData{
 	private World world;
 	private HealTask healTask;
 	private Profiler profiler;
+	private boolean logspam = false;
 
 	private ArrayList<Block> blacklist = new ArrayList<Block>();
 			
-	public WorldHealer() {
-		this(getDataStorageKey());
+//	public WorldHealer() {
+//		this(getDataStorageKey());
+//	}
+
+	public WorldHealer(String key) {
+		super(key);
+		healTask = new HealTask();
+
 		//for simplicity , just ignore any 2 size blocks (beds)
 		blacklist.add(null);
 		blacklist.add(Blocks.AIR);
@@ -43,11 +52,6 @@ public class WorldHealer extends WorldSavedData{
 		blacklist.add(Blocks.BIRCH_DOOR);
 		blacklist.add(Blocks.OAK_DOOR);
 		blacklist.add(Blocks.DARK_OAK_DOOR);
-	}
-
-	public WorldHealer(String key) {
-		super(key);
-		healTask = new HealTask();
 	}
 
 	public World getWorld() {
@@ -91,6 +95,9 @@ public class WorldHealer extends WorldSavedData{
 					maxTicksBeforeHeal = ticksBeforeHeal;
 				}
 
+				if(logspam){
+					ForgeCreeperHeal.getLogger().log(Level.INFO, "cube:"+blockStateExplosion.getBlock().getUnlocalizedName());
+				}
 				onBlockHealed(blockPosExplosion, blockStateExplosion, ticksBeforeHeal);
 			}
 		}
@@ -102,6 +109,9 @@ public class WorldHealer extends WorldSavedData{
 			if(blacklist.contains(blockStateExplosion.getBlock())){continue;}
 			if(!blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {//.isAir(world, blockPosExplosion)
 
+				if(logspam){
+					ForgeCreeperHeal.getLogger().log(Level.INFO, "noncube:"+blockStateExplosion.getBlock().getUnlocalizedName());
+				}
 				onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
 			}
 		}
