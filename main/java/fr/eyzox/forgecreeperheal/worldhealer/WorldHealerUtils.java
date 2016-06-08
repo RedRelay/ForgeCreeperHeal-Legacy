@@ -30,11 +30,13 @@ public class WorldHealerUtils {
 					float f3 = 0.05F;
 					EntityItem entityitem = getEntityItem(world, cp, new ItemStack(itemstack.getItem(), j1, itemstack.getItemDamage()), f, f1, f2, f3);
 					 
-					if (itemstack.hasTagCompound()){
-						entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+					if(entityitem != null){
+						if (itemstack.hasTagCompound()){
+							entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+						}
+						
+						world.spawnEntityInWorld(entityitem);
 					}
-					
-					world.spawnEntityInWorld(entityitem);
 				}
 
 				/*ADDED TO REMOVE ITEMSTACK FROM INVENTORY*/
@@ -44,6 +46,9 @@ public class WorldHealerUtils {
 	}
 	
 	protected static EntityItem getEntityItem(World world, BlockPos cp, ItemStack itemStack, float deltaX, float deltaY, float deltaZ, float motion) {
+		if(itemStack == null || itemStack.getItem() == null){
+			return null;
+		}
 		EntityItem entityitem = new EntityItem(world, (double)((float)cp.getX() + deltaX), (double)((float)cp.getY() + deltaY), (double)((float)cp.getZ() + deltaZ), itemStack);
 		entityitem.motionX = (double)((float)world.rand.nextGaussian() * motion);
 		entityitem.motionY = (double)((float)world.rand.nextGaussian() * motion + 0.2F);

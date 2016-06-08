@@ -1,10 +1,13 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -27,8 +30,19 @@ public class WorldHealer extends WorldSavedData{
 	private HealTask healTask;
 	private Profiler profiler;
 
+	private ArrayList<Block> blacklist = new ArrayList<Block>();
+			
 	public WorldHealer() {
 		this(getDataStorageKey());
+		//for simplicity , just ignore any 2 size blocks (beds)
+		blacklist.add(null);
+		blacklist.add(Blocks.AIR);
+		blacklist.add(Blocks.BED);
+		blacklist.add(Blocks.ACACIA_DOOR);
+		blacklist.add(Blocks.JUNGLE_DOOR);
+		blacklist.add(Blocks.BIRCH_DOOR);
+		blacklist.add(Blocks.OAK_DOOR);
+		blacklist.add(Blocks.DARK_OAK_DOOR);
 	}
 
 	public WorldHealer(String key) {
@@ -69,7 +83,7 @@ public class WorldHealer extends WorldSavedData{
 		//Process primary blocks
 		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
 			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
-			if(blockStateExplosion.getBlock() == Blocks.AIR){continue;}
+			if(blacklist.contains(blockStateExplosion.getBlock())){continue;}
 			if(blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {
 
 				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal() + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
@@ -85,7 +99,7 @@ public class WorldHealer extends WorldSavedData{
 		//Process secondary blocks. ex: Leaves must come AFTER dirt
 		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
 			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
-			if(blockStateExplosion.getBlock() == Blocks.AIR){continue;}
+			if(blacklist.contains(blockStateExplosion.getBlock())){continue;}
 			if(!blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {//.isAir(world, blockPosExplosion)
 
 				onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
@@ -107,11 +121,17 @@ public class WorldHealer extends WorldSavedData{
 
 		if(ForgeCreeperHeal.getConfig().isOverride() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(this.world.getBlockState(blockData.getBlockPos()).getBlock()) != null)) {
 			if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
-				world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(world.getBlockState(blockData.getBlockPos()).getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
-
-				TileEntity te = world.getTileEntity(blockData.getBlockPos());
-				if(te instanceof IInventory) {
-					WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
+				
+				if(world.getBlockState(blockData.getBlockPos()).getBlock() != null){
+					EntityItem ei = WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(world.getBlockState(blockData.getBlockPos()).getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F);
+					
+					if(ei != null){
+						world.spawnEntityInWorld(ei);
+						TileEntity te = world.getTileEntity(blockData.getBlockPos());
+						if(te instanceof IInventory) {
+							WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
+						}
+					}
 				}
 			}
 
@@ -125,16 +145,19 @@ public class WorldHealer extends WorldSavedData{
 				}
 			}
 
-		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock()){
-			world.spawnEntityInWorld(WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(blockData.getBlockState().getBlock()),world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F));
-			if(blockData.getTileEntityTag() != null) {
-				TileEntity te = blockData.getBlockState().getBlock().createTileEntity(world, blockData.getBlockState());
-				if(te instanceof IInventory) {
-					te.readFromNBT(blockData.getTileEntityTag());
-					WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
+		}else if(ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && blockData.getBlockState().getBlock() != null){
+ 
+			EntityItem ei = WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(blockData.getBlockState().getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F);
+			if(ei != null){
+				world.spawnEntityInWorld(ei);
+				if(blockData.getTileEntityTag() != null) {
+					TileEntity te = blockData.getBlockState().getBlock().createTileEntity(world, blockData.getBlockState());
+					if(te instanceof IInventory) {
+						te.readFromNBT(blockData.getTileEntityTag());
+						WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
+					}
 				}
 			}
-
 		}
 	}
 
