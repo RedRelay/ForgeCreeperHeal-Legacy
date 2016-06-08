@@ -48,6 +48,7 @@ public class BlockData {
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
+	 
 		tag.setString("block", GameData.getBlockRegistry().getNameForObject(this.blockState.getBlock()).toString());
 		int metadata = blockState.getBlock().getMetaFromState(blockState);
 		if(metadata != 0) {

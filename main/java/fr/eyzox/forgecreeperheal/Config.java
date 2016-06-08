@@ -10,6 +10,7 @@ public class Config {
 	private boolean overrideFluid;
 
 	private boolean dropIfAlreadyBlock;
+	private boolean onlyCreepers;
 	private static Configuration forgeConfig;
 	
 	public Config(Configuration conf) {
@@ -20,6 +21,7 @@ public class Config {
 		overrideBlock = false;
 		overrideFluid = true; 
 		dropIfAlreadyBlock = false;
+		 
 	
 		syncConfig();
 	}
@@ -39,6 +41,9 @@ public class Config {
 		 
 		dropIfAlreadyBlock = forgeConfig.getBoolean("dropIfAlreadyBlock", "override", true, "If this is true, and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
 	
+		onlyCreepers = forgeConfig.getBoolean("onlyCreepers", "override", true, "If this is true, only creeper explosions are healed.  Otherwise, all explosions will be healed (TNT, stuff from other mods, etc)");
+		
+		
 		forgeConfig.save();
 	}
 	
@@ -63,5 +68,9 @@ public class Config {
 
 	public String toString(){
 		return "minimumTicksBeforeHeal = "+minimumTicksBeforeHeal;
+	}
+
+	public boolean isOnlyCreepers() {
+		return onlyCreepers;
 	}
 }
