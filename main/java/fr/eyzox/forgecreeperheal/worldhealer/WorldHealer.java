@@ -68,7 +68,7 @@ public class WorldHealer extends WorldSavedData{
 			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
 			if(blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {
 
-				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal()+world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
+				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal() + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
 				if(ticksBeforeHeal > maxTicksBeforeHeal) {
 					maxTicksBeforeHeal = ticksBeforeHeal;
 				}
@@ -92,21 +92,15 @@ public class WorldHealer extends WorldSavedData{
 	}
 
 	private void onBlockHealed(BlockPos blockPosExplosion, IBlockState blockStateExplosion, int ticks) {
-		if(ForgeCreeperHeal.getConfig().isDropItemsFromContainer() && !ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
-			TileEntity te = world.getTileEntity(blockPosExplosion);
-			if(te instanceof IInventory) {
-				WorldHealerUtils.dropInventory(world, blockPosExplosion, (IInventory) te);
-			}
-		}
-
-		if(!ForgeCreeperHeal.getConfig().getHealException().contains(blockStateExplosion.getBlock())) {
+ 
+//		if(!ForgeCreeperHeal.getConfig().getHealException().contains(blockStateExplosion.getBlock())) {
 			healTask.add(ticks, new BlockData(world,blockPosExplosion, blockStateExplosion));
-		}
+//		}
 
-		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
+//		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
 			world.removeTileEntity(blockPosExplosion);
 			world.setBlockState(blockPosExplosion, Blocks.AIR.getDefaultState(), 7);
-		}
+//		}
 	}
 
 	private void heal(BlockData blockData) {

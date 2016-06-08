@@ -29,9 +29,7 @@ public class WorldHealerUtils {
 
 					float f3 = 0.05F;
 					EntityItem entityitem = getEntityItem(world, cp, new ItemStack(itemstack.getItem(), j1, itemstack.getItemDamage()), f, f1, f2, f3);
-					
-
-
+					 
 					if (itemstack.hasTagCompound()){
 						entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
 					}
