@@ -29,20 +29,21 @@ public class Config {
 	public void syncConfig(){
 		forgeConfig.load();
 		
-		minimumTicksBeforeHeal = forgeConfig.getInt("minTickStart", "healing time", 
-				600, 1, 600000, "A lower number means it will heal faster");
+		String category = ForgeCreeperHeal.MODID;
+		
+		minimumTicksBeforeHeal = forgeConfig.getInt("Tick Start Delay", category, 
+				600, 1, 600000, "A lower number means it will start healing faster");
 
-		randomTickVar = forgeConfig.getInt("randomTickVar", "healing time", 
+		randomTickVar = forgeConfig.getInt("Tick Random Interval", category, 
 				1200, 1, 600000, "Determines the random nature of the heal.  Time between in ticks is the minimum + rand(1,this)");
 		
-		overrideBlock = forgeConfig.getBoolean("overrideBlock", "override", false, "If the healing will replace blocks that were put in after");
+		overrideBlock = forgeConfig.getBoolean("Override Blocks", category, false, "If the healing will replace blocks that were put in after (such as fallen gravel or placed blocks)");
 		
-		overrideFluid = forgeConfig.getBoolean("overrideFluid", "override", true, "If the healing will replace liquid (flowing or source) that were put in after");
+		overrideFluid = forgeConfig.getBoolean("Override Fluids", category, true, "If the healing will replace liquid that flowed into the exploded area");
 		 
-		dropIfAlreadyBlock = forgeConfig.getBoolean("dropIfAlreadyBlock", "override", true, "If this is true, and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
+		dropIfAlreadyBlock = forgeConfig.getBoolean("Drop Block Conflict", category, true, "If this is true (and we are not overriding blocks), and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
 	
-		onlyCreepers = forgeConfig.getBoolean("onlyCreepers", "override", true, "If this is true, only creeper explosions are healed.  Otherwise, all explosions will be healed (TNT, stuff from other mods, etc)");
-		
+		onlyCreepers = forgeConfig.getBoolean("Only Creepers", category, true, "If this is true, only creeper explosions are healed.  Otherwise, all explosions will be healed (TNT, stuff from other mods, etc)");
 		
 		forgeConfig.save();
 	}
@@ -73,4 +74,7 @@ public class Config {
 	public boolean isOnlyCreepers() {
 		return onlyCreepers;
 	}
+    public Configuration getForgeConfig() {
+    	return forgeConfig;
+    }
 }
