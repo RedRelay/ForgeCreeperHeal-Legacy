@@ -25,7 +25,6 @@ public class WorldHealer extends WorldSavedData{
 
 	private World world;
 	private HealTask healTask;
-
 	private Profiler profiler;
 
 	public WorldHealer() {
@@ -35,6 +34,10 @@ public class WorldHealer extends WorldSavedData{
 	public WorldHealer(String key) {
 		super(key);
 		healTask = new HealTask();
+	}
+
+	public World getWorld() {
+		return world;
 	}
 
 	public void onTick() {
@@ -66,6 +69,7 @@ public class WorldHealer extends WorldSavedData{
 		//Process primary blocks
 		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
 			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
+			if(blockStateExplosion.getBlock() == Blocks.AIR){continue;}
 			if(blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {
 
 				int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal() + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
@@ -78,11 +82,12 @@ public class WorldHealer extends WorldSavedData{
 		}
 		maxTicksBeforeHeal++;
 
-		//new isnormal is 	    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
-		//Process secondary blocks
+		//Process secondary blocks. ex: Leaves must come AFTER dirt
 		for(BlockPos blockPosExplosion : event.getAffectedBlocks()) {
 			IBlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
-			if(!blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion) && !(blockStateExplosion.getBlock()==Blocks.AIR)) {//.isAir(world, blockPosExplosion)
+			if(blockStateExplosion.getBlock() == Blocks.AIR){continue;}
+			if(!blockStateExplosion.getBlock().isNormalCube(blockStateExplosion,world,blockPosExplosion)) {//.isAir(world, blockPosExplosion)
+
 				onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
 			}
 		}
@@ -92,15 +97,9 @@ public class WorldHealer extends WorldSavedData{
 	}
 
 	private void onBlockHealed(BlockPos blockPosExplosion, IBlockState blockStateExplosion, int ticks) {
- 
-//		if(!ForgeCreeperHeal.getConfig().getHealException().contains(blockStateExplosion.getBlock())) {
-			healTask.add(ticks, new BlockData(world,blockPosExplosion, blockStateExplosion));
-//		}
-
-//		if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(blockStateExplosion.getBlock())) {
-			world.removeTileEntity(blockPosExplosion);
-			world.setBlockState(blockPosExplosion, Blocks.AIR.getDefaultState(), 7);
-//		}
+		healTask.add(ticks, new BlockData(world,blockPosExplosion, blockStateExplosion));
+		world.removeTileEntity(blockPosExplosion);
+		world.setBlockState(blockPosExplosion, Blocks.AIR.getDefaultState(), 7);
 	}
 
 	private void heal(BlockData blockData) {
@@ -137,11 +136,6 @@ public class WorldHealer extends WorldSavedData{
 			}
 
 		}
-	}
-
-
-	public World getWorld() {
-		return world;
 	}
 
 	@Override

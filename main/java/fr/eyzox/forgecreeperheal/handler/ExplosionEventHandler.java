@@ -1,7 +1,6 @@
 package fr.eyzox.forgecreeperheal.handler;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.ExplosionEvent;
