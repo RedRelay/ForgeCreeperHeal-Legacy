@@ -19,7 +19,7 @@ public class ExplosionEventHandler {
 		Entity exploder = event.getExplosion().getExplosivePlacedBy();
 		
 		boolean isCreeper = (exploder != null && exploder instanceof EntityCreeper);
-		 
+
 		if(ForgeCreeperHeal.getConfig().isOnlyCreepers() == false || //anything is allowed in, NOT only creepers
 				(ForgeCreeperHeal.getConfig().isOnlyCreepers() && isCreeper)){//only creepers allowed in, so it better be one
 			

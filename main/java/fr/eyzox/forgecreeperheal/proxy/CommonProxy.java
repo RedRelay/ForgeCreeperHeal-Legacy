@@ -44,13 +44,11 @@ public class CommonProxy {
     }
 
     public static void addChatMessage(ICommandSender sender, TextComponentTranslation msg) {
-		TextComponentTranslation cct = new TextComponentTranslation(String.format("[%s] ", ForgeCreeperHeal.MODNAME));
-		cct.appendSibling(msg);
-		sender.addChatMessage(cct);
+		sender.addChatMessage(msg);
 	}
 
 	public static void addChatMessage(ICommandSender sender, String string) {
-		addChatMessage(sender,new TextComponentTranslation(I18n.format(string)));
+		sender.addChatMessage(new TextComponentTranslation(I18n.format(string)));
 	}
    
 	public Logger getLogger() {

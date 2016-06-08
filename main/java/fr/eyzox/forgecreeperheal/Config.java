@@ -22,13 +22,12 @@ public class Config {
 		overrideFluid = true; 
 		dropIfAlreadyBlock = false;
 		 
-	
+
+		forgeConfig.load();
 		syncConfig();
 	}
 	 
 	public void syncConfig(){
-		forgeConfig.load();
-		
 		String category = ForgeCreeperHeal.MODID;
 		
 		minimumTicksBeforeHeal = forgeConfig.getInt("Tick Start Delay", category, 
@@ -44,7 +43,7 @@ public class Config {
 		dropIfAlreadyBlock = forgeConfig.getBoolean("Drop Block Conflict", category, true, "If this is true (and we are not overriding blocks), and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground");
 	
 		onlyCreepers = forgeConfig.getBoolean("Only Creepers", category, true, "If this is true, only creeper explosions are healed.  Otherwise, all explosions will be healed (TNT, stuff from other mods, etc)");
-		
+
 		forgeConfig.save();
 	}
 	
