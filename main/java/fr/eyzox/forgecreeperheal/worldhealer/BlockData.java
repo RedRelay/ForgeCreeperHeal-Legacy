@@ -40,6 +40,7 @@ public class BlockData {
 	public void readFromNBT(NBTTagCompound tag) {
 		Block block = Block.getBlockFromName(tag.getString("block"));
 		if(block != null) {
+		  //deprecated in 1.10, possibly earlier
 			this.blockState = block.getStateFromMeta(tag.getInteger("metadata"));
 			this.blockPos = BlockPos.fromLong(tag.getLong("coords"));
 			this.tileEntityTag = tag.getCompoundTag("tileentity");
@@ -48,7 +49,8 @@ public class BlockData {
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
-	 
+
+    //deprecated in 1.10, possibly earlier
 		tag.setString("block", GameData.getBlockRegistry().getNameForObject(this.blockState.getBlock()).toString());
 		int metadata = blockState.getBlock().getMetaFromState(blockState);
 		if(metadata != 0) {
