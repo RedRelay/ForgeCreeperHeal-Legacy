@@ -1,7 +1,6 @@
 package fr.eyzox.forgecreeperheal.builder.blockdata;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 import fr.eyzox.forgecreeperheal.blockdata.DefaultBlockData;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
@@ -28,7 +27,7 @@ public class MultiBlockDataBuilder extends TileEntityBlockDataBuilder {
 
 		final BlockPos[] otherPosArray = sel.getBlockPos(w,pos,state);
 
-		final List<IBlockData> otherList = new LinkedList<IBlockData>(); 
+		final ArrayList<IBlockData> otherList = new ArrayList<IBlockData>(otherPosArray.length); 
 
 		for(final BlockPos otherPos : otherPosArray) {
 			final IBlockState otherState = w.getBlockState(otherPos);
@@ -41,10 +40,7 @@ public class MultiBlockDataBuilder extends TileEntityBlockDataBuilder {
 			otherList.add(other);
 		}
 
-		final IBlockData[] others = new IBlockData[otherList.size()];
-		otherList.toArray(others);
-
-		return new MultiBlockData(pos, state, tileEntity, others);
+		return new MultiBlockData(pos, state, tileEntity, otherList);
 
 	}
 	

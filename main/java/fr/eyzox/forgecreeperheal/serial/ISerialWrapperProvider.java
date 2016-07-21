@@ -1,5 +1,5 @@
 package fr.eyzox.forgecreeperheal.serial;
 
-public interface ISerialWrapperProvider {
-	public ISerialWrapper<? extends ISerialWrapperProvider> getSerialWrapper();
+public interface ISerialWrapperProvider<T> {
+	public ISerialWrapper<T> getSerialWrapper();
 }
