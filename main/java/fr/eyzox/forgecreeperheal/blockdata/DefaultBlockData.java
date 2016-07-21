@@ -11,7 +11,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameData;
 
 public class DefaultBlockData implements IBlockData{
 
@@ -81,7 +80,7 @@ public class DefaultBlockData implements IBlockData{
 	
 	protected static NBTTagCompound iBlockStateToNBT(final IBlockState blockstate) {
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setString(TAG_IBLOCKSTATE_BLOCK, GameData.getBlockRegistry().getNameForObject(blockstate.getBlock()).toString());
+		tag.setString(TAG_IBLOCKSTATE_BLOCK, ForgeCreeperHeal.getProxy().getBlockKeyBuilder().convertToString(blockstate.getBlock()));
 		final int metadata = blockstate.getBlock().getMetaFromState(blockstate);
 		if(metadata != 0) {
 			tag.setInteger(TAG_IBLOCKSTATE_METADATA, metadata);
@@ -90,7 +89,7 @@ public class DefaultBlockData implements IBlockData{
 	}
 	
 	protected static IBlockState iBlockStateFromNBT(final NBTTagCompound tag) {
-		final Block block = Block.getBlockFromName(tag.getString(TAG_IBLOCKSTATE_BLOCK));
+		final Block block = ForgeCreeperHeal.getProxy().getBlockKeyBuilder().convertToKey(tag.getString(TAG_IBLOCKSTATE_BLOCK));
 		final IBlockState state = block.getStateFromMeta(tag.getInteger(TAG_IBLOCKSTATE_METADATA));
 		return state;
 	}
