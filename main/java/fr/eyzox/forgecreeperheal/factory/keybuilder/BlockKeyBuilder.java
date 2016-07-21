@@ -6,6 +6,9 @@ public class BlockKeyBuilder implements IKeyBuilder<Block> {
 
 	private static final BlockKeyBuilder INSTANCE = new BlockKeyBuilder();
 	
+	private BlockKeyBuilder() {
+	}
+	
 	@Override
 	public String convertToString(Block key) {
 		return key.getRegistryName().toString();
