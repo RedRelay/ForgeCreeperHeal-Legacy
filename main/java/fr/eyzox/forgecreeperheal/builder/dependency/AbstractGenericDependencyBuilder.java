@@ -10,9 +10,9 @@ public abstract class AbstractGenericDependencyBuilder implements IDependencyBui
 	private final List<Class<? extends Block>> registeredClasses = new LinkedList<Class<? extends Block>>();
 
 	@Override
-	public boolean accept(Class<? extends Block> in) {
+	public boolean accept(Block in) {
 		for(final Class<? extends Block> clazz : registeredClasses) {
-			if(clazz.isAssignableFrom(in)) {
+			if(clazz.isAssignableFrom(in.getClass())) {
 				return true;
 			}
 		}

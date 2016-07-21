@@ -112,11 +112,11 @@ public class ForgeCreeperHeal
     	return proxy.getHealerFactory();
     }
     
-    public static DefaultFactory<Class<? extends Block>, IBlockDataBuilder> getBlockDataFactory() {
+    public static DefaultFactory<Block, IBlockDataBuilder> getBlockDataFactory() {
     	return proxy.getBlockDataFactory();
     }
     
-    public static DefaultFactory<Class<? extends Block>, IDependencyBuilder> getDependencyFactory() {
+    public static DefaultFactory<Block, IDependencyBuilder> getDependencyFactory() {
     	return proxy.getDependencyFactory();
     }
 }
