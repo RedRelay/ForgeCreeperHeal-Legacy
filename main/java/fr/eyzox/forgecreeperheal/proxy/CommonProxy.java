@@ -91,8 +91,6 @@ public class CommonProxy {
 	private DefaultFactory<Block, IBlockDataBuilder> blockDataFactory;
 	private DefaultFactory<Block, IDependencyBuilder> dependencyFactory;
 
-	private TimelineSerializer timelineSerializer;
-
 	private ChunkEventHandler chunkEventHandler;
 	private ExplosionEventHandler explosionEventHandler;
 	private WorldEventHandler worldTickEventHandler;
@@ -107,8 +105,6 @@ public class CommonProxy {
 		this.blockDataFactory = loadBlockDataFactory();
 		this.dependencyFactory = loadDependencyFactory();
 		
-		this.timelineSerializer = new TimelineSerializer();
-
 		this.config = new FastConfig();
 		this.configProvider.addConfigListener(config);
 		this.loadConfig();
@@ -181,10 +177,6 @@ public class CommonProxy {
 
 	public ChunkEventHandler getChunkEventHandler() {
 		return chunkEventHandler;
-	}
-	
-	public TimelineSerializer getTimelineSerializer() {
-		return timelineSerializer;
 	}
 
 	public void loadConfig() {
