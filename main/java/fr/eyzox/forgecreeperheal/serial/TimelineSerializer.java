@@ -27,6 +27,13 @@ public class TimelineSerializer {
 	private static final String TAG_WRAPPER = "wrapper";
 	private static final String TAG_WRAPPER_DATA = "data";
 	
+	private static final TimelineSerializer INSTANCE = new TimelineSerializer();
+	
+	public static TimelineSerializer getInstance() { return INSTANCE;}
+	
+	private TimelineSerializer() {
+	}
+	
 	public <T extends ISerialWrapperProvider> NBTTagCompound serializeNBT(final TickTimeline<T> timeline) {
 		final NBTTagCompound tag = new NBTTagCompound();
 		
