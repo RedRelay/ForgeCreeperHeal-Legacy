@@ -14,8 +14,8 @@ import net.minecraft.util.math.BlockPos;
 public class VineDependencyBuilder implements IDependencyBuilder{
 
 	@Override
-	public boolean accept(Class<? extends Block> in) {
-		return BlockVine.class.isAssignableFrom(in);
+	public boolean accept(Block in) {
+		return BlockVine.class.isAssignableFrom(in.getClass());
 	}
 
 	@Override

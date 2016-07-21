@@ -34,7 +34,7 @@ public class BlockScheduler implements IScheduler<IBlockData> {
 
 		@Override
 		public IDependency<BlockPos> provideDependency(IBlockData data) {
-			return ForgeCreeperHeal.getDependencyFactory().getData(data.getState().getBlock().getClass()).getDependencies(data);
+			return ForgeCreeperHeal.getDependencyFactory().getData(data.getState().getBlock()).getDependencies(data);
 		}
 		
 	}
