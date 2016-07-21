@@ -1,13 +1,13 @@
 package fr.eyzox.minecraft.util;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 
-public class ChunkDataProvider<E> extends HashMap<ChunkCoordIntPair, E>{
+public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E>{
 	private static final String NULL_KEY = "Null key is not allowed";
 	private static final String CLASS_KEYS = "Key should be a "+ChunkCoordIntPair.class.getCanonicalName();
 	
@@ -20,7 +20,7 @@ public class ChunkDataProvider<E> extends HashMap<ChunkCoordIntPair, E>{
 	}
 
 	@Override
-	public Object clone() {
+	public Object clone() throws CloneNotSupportedException {
 		final ChunkDataProvider<E> clone = (ChunkDataProvider<E>) super.clone();
 		final LongHashMap<E> map = new LongHashMap<E>();
 		for(final Map.Entry<ChunkCoordIntPair, E> entry : this.entrySet()) {
