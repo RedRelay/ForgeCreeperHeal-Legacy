@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 
 public class BlockKeyBuilder implements IKeyBuilder<Block> {
 
+	private static final BlockKeyBuilder INSTANCE = new BlockKeyBuilder();
+	
 	@Override
 	public String convertToString(Block key) {
 		return key.getRegistryName().toString();
@@ -12,6 +14,10 @@ public class BlockKeyBuilder implements IKeyBuilder<Block> {
 	@Override
 	public Block convertToKey(String keyStr) {
 		return Block.getBlockFromName(keyStr);
+	}
+	
+	public static BlockKeyBuilder getInstance() {
+		return INSTANCE;
 	}
 
 }
