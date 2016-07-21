@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.ticktimeline.Node;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,7 +75,7 @@ public class TimelineSerializer {
 			try {
 				final T data = SerialUtils.unserializeWrappedData(contentListTag.getCompoundTagAt(i));
 				dataList.add(data);
-			} catch (ReflectiveOperationException e) {
+			} catch (ForgeCreeperHealerSerialException e) {
 				ForgeCreeperHeal.getLogger().error("Error while unserialize data : "+e.getMessage());
 			}
 		}

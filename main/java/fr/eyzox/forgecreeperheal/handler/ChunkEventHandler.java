@@ -44,7 +44,6 @@ public class ChunkEventHandler implements IEventHandler{
 		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
 		
 		if(healer != null) {
-			//TODO Error while serial
 			
 			final NBTTagCompound healerTag = healer.serializeNBT();
 
