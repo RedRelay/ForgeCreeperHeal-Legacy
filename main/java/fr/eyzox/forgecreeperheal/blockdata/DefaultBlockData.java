@@ -2,6 +2,7 @@ package fr.eyzox.forgecreeperheal.blockdata;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.forgecreeperheal.factory.Factory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.healer.HealerUtils;
@@ -11,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public class DefaultBlockData implements IBlockData{
 
@@ -67,6 +69,15 @@ public class DefaultBlockData implements IBlockData{
 
 	@Override
 	public void deserializeNBT(NBTTagCompound tag) {
+		
+		if(!tag.hasKey(TAG_POS, NBT.TAG_LONG)) {
+			throw new ForgeCreeperHealerSerialException("Missing BlockPos data");
+		}
+		
+		if(!tag.hasKey(TAG_STATE, NBT.TAG_COMPOUND)) {
+			throw new ForgeCreeperHealerSerialException("Missing BlockState data");
+		}
+		
 		this.pos = BlockPos.fromLong(tag.getLong(TAG_POS));
 		this.state = iBlockStateFromNBT(tag.getCompoundTag(TAG_STATE));
 	}
@@ -87,6 +98,11 @@ public class DefaultBlockData implements IBlockData{
 	}
 	
 	protected static IBlockState iBlockStateFromNBT(final NBTTagCompound tag) {
+		
+		if(!tag.hasKey(TAG_IBLOCKSTATE_BLOCK, NBT.TAG_STRING)) {
+			throw new ForgeCreeperHealerSerialException("Missing Block's name");
+		}
+		
 		final Block block = BlockKeyBuilder.getInstance().convertToKey(tag.getString(TAG_IBLOCKSTATE_BLOCK));
 		final IBlockState state = block.getStateFromMeta(tag.getInteger(TAG_IBLOCKSTATE_METADATA));
 		return state;
@@ -101,9 +117,14 @@ public class DefaultBlockData implements IBlockData{
 		private BlockDataSerialWrapper() {}
 
 		@Override
-		public DefaultBlockData unserialize(NBTTagCompound tag) {
+		public DefaultBlockData unserialize(NBTTagCompound tag) throws ForgeCreeperHealerSerialException{
 			final Factory<Block, IBlockDataBuilder> factory = ForgeCreeperHeal.getBlockDataFactory();
 			final String blockName = getBlockName(tag);
+			
+			if(blockName.isEmpty()) {
+				throw new ForgeCreeperHealerSerialException("Missing Block's name");
+			}
+			
 			return (DefaultBlockData) factory.getData(blockName).create(tag);
 		}
 

@@ -14,7 +14,7 @@ import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class WorldHealerData extends WorldSavedData implements INBTSerializable<NBTTagCompound> {
+public class WorldHealerData extends WorldSavedData {
 
 	public static final String KEY = ForgeCreeperHeal.MODID+":WHD";
 	
@@ -50,7 +50,7 @@ public class WorldHealerData extends WorldSavedData implements INBTSerializable<
 			if(array.length >= 2) {
 				chunksWithHealer.add(new ChunkPos(array[0], array[1]));
 			}else {
-				//TODO serial exception
+				ForgeCreeperHeal.getLogger().error("Ignoring a chunk with healer (array length < 2)");
 			}
 		}
 		

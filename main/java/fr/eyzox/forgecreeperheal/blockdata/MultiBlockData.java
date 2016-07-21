@@ -3,6 +3,7 @@ package fr.eyzox.forgecreeperheal.blockdata;
 import java.util.ArrayList;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.forgecreeperheal.serial.SerialUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -88,8 +89,8 @@ public class MultiBlockData extends TileEntityBlockData {
 			IBlockData data = null;
 			try {
 				data = SerialUtils.unserializeWrappedData(wrapperListTag.getCompoundTagAt(i));
-			} catch (ReflectiveOperationException e) {
-				ForgeCreeperHeal.getLogger().error("Error while unserialize data from MultiBlockData: "+e.getMessage());
+			} catch (ForgeCreeperHealerSerialException e) {
+				ForgeCreeperHeal.getLogger().error("Error while unserialize MultiBlockData: "+e.getMessage());
 			}
 			
 			if(data != null) {
