@@ -56,7 +56,7 @@ public class Healer implements INBTSerializable<NBTTagCompound>{
 			throw new ForgeCreeperHealException("Unable to serialize : TickTimeline cannot be null");
 		}
 		
-		final TimelineSerializer timelineSerializer = ForgeCreeperHeal.getProxy().getTimelineSerializer();
+		final TimelineSerializer timelineSerializer = TimelineSerializer.getInstance();
 		
 		final NBTTagCompound tag = new NBTTagCompound();
 		tag.setTag(TAG_TIMELINE, timelineSerializer.serializeNBT(timeline));
@@ -66,7 +66,7 @@ public class Healer implements INBTSerializable<NBTTagCompound>{
 
 	@Override
 	public void deserializeNBT(NBTTagCompound tag) {
-		final TimelineSerializer timelineSerializer = ForgeCreeperHeal.getProxy().getTimelineSerializer();
+		final TimelineSerializer timelineSerializer = TimelineSerializer.getInstance();
 		this.timeline = timelineSerializer.deserializeNBT(tag.getCompoundTag(TAG_TIMELINE));
 	}
 	
