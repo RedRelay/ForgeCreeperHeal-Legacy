@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.blockdata;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -68,7 +69,7 @@ public class MultiBlockData extends TileEntityBlockData {
 		final NBTTagList wrapperListTag = new NBTTagList();
 		for(IBlockData other : others){
 			final NBTTagCompound wrapperTag = new NBTTagCompound();
-			wrapperTag.setString(TAG_WRAPPER_FACTORY_KEY, ForgeCreeperHeal.getProxy().getBlockKeyBuilder().convertToString(other.getState().getBlock()));
+			wrapperTag.setString(TAG_WRAPPER_FACTORY_KEY, BlockKeyBuilder.getInstance().convertToString(other.getState().getBlock()));
 			
 			final NBTTagCompound otherTag = other.serializeNBT();
 			wrapperTag.setTag(TAG_WRAPPER_DATA, otherTag);
