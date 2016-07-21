@@ -3,7 +3,7 @@ package fr.eyzox.forgecreeperheal.builder;
 import fr.eyzox.forgecreeperheal.factory.IData;
 import net.minecraft.block.Block;
 
-public abstract class AbstractFactoryBuilder implements IData<Class<? extends Block>> {
+public abstract class AbstractFactoryBuilder implements IData<Block> {
 
 	private final Class<? extends Block> clazz;
 	
@@ -12,8 +12,8 @@ public abstract class AbstractFactoryBuilder implements IData<Class<? extends Bl
 	}
 	
 	@Override
-	public boolean accept(Class<? extends Block> clazz) {
-		return this.clazz.isAssignableFrom(clazz);
+	public boolean accept(Block block) {
+		return this.clazz.isAssignableFrom(block.getClass());
 	}
 
 }

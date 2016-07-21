@@ -38,7 +38,7 @@ public class DefaultBlockDataBuilder implements IBlockDataBuilder {
 	}
 	
 	@Override
-	public boolean accept(Class<? extends Block> clazz) {
+	public boolean accept(Block block) {
 		return true;
 	}
 }
