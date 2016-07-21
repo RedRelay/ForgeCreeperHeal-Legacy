@@ -1,6 +1,5 @@
 package fr.eyzox.forgecreeperheal.healer;
 
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.forgecreeperheal.serial.TimelineSerializer;

@@ -6,7 +6,6 @@ import fr.eyzox.forgecreeperheal.factory.Factory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.healer.HealerUtils;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapper;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,8 +18,6 @@ public class DefaultBlockData implements IBlockData{
 	public static final String TAG_STATE = "state";
 	public static final String TAG_IBLOCKSTATE_BLOCK = "block";
 	public static final String TAG_IBLOCKSTATE_METADATA = "meta";
-	
-	private static final BlockDataSerialWrapper wrapper = new BlockDataSerialWrapper();
 	
 	private BlockPos pos;
 	private IBlockState state;
@@ -76,7 +73,7 @@ public class DefaultBlockData implements IBlockData{
 
 	@Override
 	public BlockDataSerialWrapper getSerialWrapper() {
-		return this.wrapper;
+		return BlockDataSerialWrapper.getInstance();
 	}
 	
 	protected static NBTTagCompound iBlockStateToNBT(final IBlockState blockstate) {
@@ -95,19 +92,23 @@ public class DefaultBlockData implements IBlockData{
 		return state;
 	}
 	
-	public static class BlockDataSerialWrapper implements ISerialWrapper<ISerializableHealable>{
+	public static class BlockDataSerialWrapper implements ISerialWrapper<DefaultBlockData>{
 		
-		public BlockDataSerialWrapper() {}
+		private static final BlockDataSerialWrapper INSTANCE = new BlockDataSerialWrapper();
+		
+		public static BlockDataSerialWrapper getInstance() { return INSTANCE;}
+		
+		private BlockDataSerialWrapper() {}
 
 		@Override
-		public ISerializableHealable unserialize(NBTTagCompound tag) {
+		public DefaultBlockData unserialize(NBTTagCompound tag) {
 			final Factory<Block, IBlockDataBuilder> factory = ForgeCreeperHeal.getBlockDataFactory();
 			final String blockName = getBlockName(tag);
-			return factory.getData(blockName).create(tag);
+			return (DefaultBlockData) factory.getData(blockName).create(tag);
 		}
 
 		@Override
-		public NBTTagCompound serialize(ISerializableHealable data) {
+		public NBTTagCompound serialize(DefaultBlockData data) {
 			return data.serializeNBT();
 		}
 		
