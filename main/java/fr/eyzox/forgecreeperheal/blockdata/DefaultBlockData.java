@@ -101,7 +101,7 @@ public class DefaultBlockData implements IBlockData{
 
 		@Override
 		public ISerializableHealable unserialize(NBTTagCompound tag) {
-			final Factory<Class<? extends Block>, IBlockDataBuilder> factory = ForgeCreeperHeal.getBlockDataFactory();
+			final Factory<Block, IBlockDataBuilder> factory = ForgeCreeperHeal.getBlockDataFactory();
 			final String blockName = getBlockName(tag);
 			return factory.getData(blockName).create(tag);
 		}

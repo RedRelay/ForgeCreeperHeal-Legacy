@@ -11,8 +11,8 @@ import net.minecraft.util.BlockPos;
 public class LeverDependencyBuilder implements IDependencyBuilder{
 
 	@Override
-	public boolean accept(Class<? extends Block> in) {
-		return BlockLever.class.isAssignableFrom(in);
+	public boolean accept(Block in) {
+		return BlockLever.class.isAssignableFrom(in.getClass());
 	}
 
 	@Override

@@ -34,7 +34,8 @@ import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import fr.eyzox.forgecreeperheal.config.ConfigProvider;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
-import fr.eyzox.forgecreeperheal.factory.keybuilder.ClassKeyBuilder;
+import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
+import fr.eyzox.forgecreeperheal.factory.keybuilder.IKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
@@ -87,9 +88,9 @@ public class CommonProxy {
 	private HealerFactory healerFactory;
 	private Map<WorldServer, HealerManager> healerManagers;
 
-	private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory;
-	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory;
-	private ClassKeyBuilder<Block> blockClassKeyBuilder;
+	private DefaultFactory<Block, IBlockDataBuilder> blockDataFactory;
+	private DefaultFactory<Block, IDependencyBuilder> dependencyFactory;
+	private BlockKeyBuilder blockClassKeyBuilder;
 
 	private TimelineSerializer timelineSerializer;
 
@@ -104,7 +105,7 @@ public class CommonProxy {
 		this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
 
 		this.healerFactory = new HealerFactory();
-		this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
+		this.blockClassKeyBuilder = new BlockKeyBuilder();
 		this.blockDataFactory = loadBlockDataFactory();
 		this.dependencyFactory = loadDependencyFactory();
 		
@@ -172,11 +173,11 @@ public class CommonProxy {
 		return healerFactory;
 	}
 
-	public DefaultFactory<Class<? extends Block>, IBlockDataBuilder> getBlockDataFactory() {
+	public DefaultFactory<Block, IBlockDataBuilder> getBlockDataFactory() {
 		return blockDataFactory;
 	}
 
-	public DefaultFactory<Class<? extends Block>, IDependencyBuilder> getDependencyFactory() {
+	public DefaultFactory<Block, IDependencyBuilder> getDependencyFactory() {
 		return dependencyFactory;
 	}
 
@@ -184,7 +185,7 @@ public class CommonProxy {
 		return chunkEventHandler;
 	}
 
-	public ClassKeyBuilder<Block> getBlockClassKeyBuilder() {
+	public IKeyBuilder<Block> getBlockClassKeyBuilder() {
 		return blockClassKeyBuilder;
 	}
 	
@@ -209,16 +210,16 @@ public class CommonProxy {
 		this.configProvider.unloadConfig();
 	}
 
-	private DefaultFactory<Class<? extends Block>, IBlockDataBuilder> loadBlockDataFactory() {
-		final DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory = new DefaultFactory<Class<? extends Block>, IBlockDataBuilder>(blockClassKeyBuilder, new DefaultBlockDataBuilder());
+	private DefaultFactory<Block, IBlockDataBuilder> loadBlockDataFactory() {
+		final DefaultFactory<Block, IBlockDataBuilder> blockDataFactory = new DefaultFactory<Block, IBlockDataBuilder>(blockClassKeyBuilder, new DefaultBlockDataBuilder());
 		blockDataFactory.getCustomHandlers().add(new DoorBlockDataBuilder());
 		blockDataFactory.getCustomHandlers().add(new BedBlockDataBuilder());
 		blockDataFactory.getCustomHandlers().add(new PistonBlockDataBuilder());
 		return blockDataFactory;
 	}
 
-	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> loadDependencyFactory() {
-		final DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory = new DefaultFactory<Class<? extends Block>, IDependencyBuilder>(blockClassKeyBuilder, new NoDependencyBuilder());
+	private DefaultFactory<Block, IDependencyBuilder> loadDependencyFactory() {
+		final DefaultFactory<Block, IDependencyBuilder> dependencyFactory = new DefaultFactory<Block, IDependencyBuilder>(blockClassKeyBuilder, new NoDependencyBuilder());
 		dependencyFactory.getCustomHandlers().add(new VineDependencyBuilder());
 		dependencyFactory.getCustomHandlers().add(new LeverDependencyBuilder());
 		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTorch.class, new TorchPropertySelector()));

@@ -13,7 +13,7 @@ public class NoDependencyBuilder implements IDependencyBuilder{
 	public NoDependencyBuilder() {}
 
 	@Override
-	public boolean accept(Class<? extends Block> in) {
+	public boolean accept(Block in) {
 		return true;
 	}
 

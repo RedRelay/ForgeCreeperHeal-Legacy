@@ -20,8 +20,8 @@ public class PistonBlockDataBuilder extends MultiBlockDataBuilder {
 	}
 
 	@Override
-	public boolean accept(Class<? extends Block> clazz) {
-		return BlockPistonBase.class.isAssignableFrom(clazz) || BlockPistonExtension.class.isAssignableFrom(clazz) || BlockPistonMoving.class.isAssignableFrom(clazz);
+	public boolean accept(Block block) {
+		return BlockPistonBase.class.isAssignableFrom(block.getClass()) || BlockPistonExtension.class.isAssignableFrom(block.getClass()) || BlockPistonMoving.class.isAssignableFrom(block.getClass());
 	}
 
 	@Override
