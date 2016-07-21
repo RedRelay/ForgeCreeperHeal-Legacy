@@ -40,6 +40,7 @@ import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
+import fr.eyzox.forgecreeperheal.serial.TimelineSerializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBanner.BlockBannerHanging;
 import net.minecraft.block.BlockBanner.BlockBannerStanding;
@@ -90,6 +91,7 @@ public class CommonProxy {
 	private DefaultFactory<Class<? extends Block>, IDependencyBuilder> dependencyFactory;
 	private ClassKeyBuilder<Block> blockClassKeyBuilder;
 
+	private TimelineSerializer timelineSerializer;
 
 	private ChunkEventHandler chunkEventHandler;
 	private ExplosionEventHandler explosionEventHandler;
@@ -105,6 +107,8 @@ public class CommonProxy {
 		this.blockClassKeyBuilder = new ClassKeyBuilder<Block>();
 		this.blockDataFactory = loadBlockDataFactory();
 		this.dependencyFactory = loadDependencyFactory();
+		
+		this.timelineSerializer = new TimelineSerializer();
 
 		this.config = new FastConfig();
 		this.configProvider.addConfigListener(config);
@@ -182,6 +186,10 @@ public class CommonProxy {
 
 	public ClassKeyBuilder<Block> getBlockClassKeyBuilder() {
 		return blockClassKeyBuilder;
+	}
+	
+	public TimelineSerializer getTimelineSerializer() {
+		return timelineSerializer;
 	}
 
 	public void loadConfig() {
