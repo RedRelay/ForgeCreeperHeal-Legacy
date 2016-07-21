@@ -91,7 +91,6 @@ public class CommonProxy {
 
 	private DefaultFactory<Block, IBlockDataBuilder> blockDataFactory;
 	private DefaultFactory<Block, IDependencyBuilder> dependencyFactory;
-	private BlockKeyBuilder blockKeyBuilder;
 
 	private TimelineSerializer timelineSerializer;
 
@@ -106,7 +105,6 @@ public class CommonProxy {
 		this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
 
 		this.healerFactory = new HealerFactory();
-		this.blockKeyBuilder = new BlockKeyBuilder();
 		this.blockDataFactory = loadBlockDataFactory();
 		this.dependencyFactory = loadDependencyFactory();
 		
@@ -185,10 +183,6 @@ public class CommonProxy {
 	public ChunkEventHandler getChunkEventHandler() {
 		return chunkEventHandler;
 	}
-
-	public IKeyBuilder<Block> getBlockKeyBuilder() {
-		return blockKeyBuilder;
-	}
 	
 	public TimelineSerializer getTimelineSerializer() {
 		return timelineSerializer;
@@ -212,7 +206,7 @@ public class CommonProxy {
 	}
 
 	private DefaultFactory<Block, IBlockDataBuilder> loadBlockDataFactory() {
-		final DefaultFactory<Block, IBlockDataBuilder> blockDataFactory = new DefaultFactory<Block, IBlockDataBuilder>(blockKeyBuilder, new DefaultBlockDataBuilder());
+		final DefaultFactory<Block, IBlockDataBuilder> blockDataFactory = new DefaultFactory<Block, IBlockDataBuilder>(BlockKeyBuilder.getInstance(), new DefaultBlockDataBuilder());
 		blockDataFactory.getCustomHandlers().add(new DoorBlockDataBuilder());
 		blockDataFactory.getCustomHandlers().add(new BedBlockDataBuilder());
 		blockDataFactory.getCustomHandlers().add(new PistonBlockDataBuilder());
@@ -220,7 +214,7 @@ public class CommonProxy {
 	}
 
 	private DefaultFactory<Block, IDependencyBuilder> loadDependencyFactory() {
-		final DefaultFactory<Block, IDependencyBuilder> dependencyFactory = new DefaultFactory<Block, IDependencyBuilder>(blockKeyBuilder, new NoDependencyBuilder());
+		final DefaultFactory<Block, IDependencyBuilder> dependencyFactory = new DefaultFactory<Block, IDependencyBuilder>(BlockKeyBuilder.getInstance(), new NoDependencyBuilder());
 		dependencyFactory.getCustomHandlers().add(new VineDependencyBuilder());
 		dependencyFactory.getCustomHandlers().add(new LeverDependencyBuilder());
 		dependencyFactory.getCustomHandlers().add(new OppositeFacingDependencyBuilder(BlockTorch.class, new TorchPropertySelector()));
