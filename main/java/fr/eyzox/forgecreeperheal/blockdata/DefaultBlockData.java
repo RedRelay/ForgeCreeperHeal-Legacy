@@ -3,6 +3,7 @@ package fr.eyzox.forgecreeperheal.blockdata;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.factory.Factory;
+import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.healer.HealerUtils;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapper;
 import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
@@ -80,7 +81,7 @@ public class DefaultBlockData implements IBlockData{
 	
 	protected static NBTTagCompound iBlockStateToNBT(final IBlockState blockstate) {
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setString(TAG_IBLOCKSTATE_BLOCK, ForgeCreeperHeal.getProxy().getBlockKeyBuilder().convertToString(blockstate.getBlock()));
+		tag.setString(TAG_IBLOCKSTATE_BLOCK, BlockKeyBuilder.getInstance().convertToString(blockstate.getBlock()));
 		final int metadata = blockstate.getBlock().getMetaFromState(blockstate);
 		if(metadata != 0) {
 			tag.setInteger(TAG_IBLOCKSTATE_METADATA, metadata);
@@ -89,7 +90,7 @@ public class DefaultBlockData implements IBlockData{
 	}
 	
 	protected static IBlockState iBlockStateFromNBT(final NBTTagCompound tag) {
-		final Block block = ForgeCreeperHeal.getProxy().getBlockKeyBuilder().convertToKey(tag.getString(TAG_IBLOCKSTATE_BLOCK));
+		final Block block = BlockKeyBuilder.getInstance().convertToKey(tag.getString(TAG_IBLOCKSTATE_BLOCK));
 		final IBlockState state = block.getStateFromMeta(tag.getInteger(TAG_IBLOCKSTATE_METADATA));
 		return state;
 	}
