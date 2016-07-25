@@ -6,12 +6,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
-import fr.eyzox.forgecreeperheal.healer.scheduler.BlockScheduler;
-import fr.eyzox.forgecreeperheal.healer.scheduler.IScheduler;
+import fr.eyzox.dependencygraph.RandomDependencyGraph;
+import fr.eyzox.dependencygraph.interfaces.IData;
 import fr.eyzox.forgecreeperheal.healer.tick.ITickProvider;
 import fr.eyzox.forgecreeperheal.healer.tick.TickProvider;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -28,37 +26,35 @@ public class HealerFactory {
 	 * @param world - The world the healer must be created
 	 * @param healables - The block to be heal (no specified order)
 	 */
-	public Map<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> create(final WorldServer world, final Collection<? extends IBlockData> healables) {
+	public <T extends IHealable & IChunked & IData<?>> Map<ChunkCoordIntPair, Collection<Node<T>>> create(final WorldServer world, final Collection<T> healables, final RandomDependencyGraph<?, T> scheduler) {
 		
-		final IScheduler<IBlockData> scheduler = new BlockScheduler(healables);
-		final ChunkDataProvider<DispatchedTimeline> dispatchedTimelines = this.scheduleHealables(scheduler);
+		final ChunkDataProvider<DispatchedTimeline<T>> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
-		final Map<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> result = new HashMap<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>>(dispatchedTimelines.size());
-		for(final Entry<ChunkCoordIntPair, DispatchedTimeline> entry : dispatchedTimelines.entrySet()) {
+		final Map<ChunkCoordIntPair, Collection<Node<T>>> result = new HashMap<ChunkCoordIntPair, Collection<Node<T>>>(dispatchedTimelines.size());
+		for(final Entry<ChunkCoordIntPair, DispatchedTimeline<T>> entry : dispatchedTimelines.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().timeline);
 		}
 		
 		return result;
 	}
 
-	private ChunkDataProvider<DispatchedTimeline> scheduleHealables(final IScheduler<IBlockData> scheduler) {
+	private <T extends IHealable & IChunked & IData<?>> ChunkDataProvider<DispatchedTimeline<T>> scheduleHealables(final RandomDependencyGraph<?, T> scheduler) {
 		
-		final ChunkDataProvider<DispatchedTimeline> dispatchedTimelines = new ChunkDataProvider<DispatchedTimeline>();
+		final ChunkDataProvider<DispatchedTimeline<T>> dispatchedTimelines = new ChunkDataProvider<DispatchedTimeline<T>>();
 		
 		int globalTickCounter = 0;
 		
 		while(scheduler.hasNext()) {
-			final IBlockData healable = scheduler.next();
+			final T healable = scheduler.poll();
 			
-			//Retrieve chunk for this block
-			final int xChunk = healable.getPos().getX() >> 4;
-			final int zChunk = healable.getPos().getZ() >> 4;
+			final int chunkX = healable.getChunkX();
+			final int chunkZ = healable.getChunkZ();
 			
 			//Retrieve or create DispatchedTimeline for a chunk
-			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk));
+			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
 			if(dispatchedTimeline == null) {
 				dispatchedTimeline = new DispatchedTimeline();
-				dispatchedTimelines.put(new ChunkCoordIntPair(xChunk, zChunk), dispatchedTimeline);
+				dispatchedTimelines.put(new ChunkCoordIntPair(chunkX, chunkZ), dispatchedTimeline);
 			}
 			
 			//Generate tick
@@ -68,7 +64,7 @@ public class HealerFactory {
 			dispatchedTimeline.tickCounter += providedTick;
 			
 			//Create TickContainer
-			final Node<ISerializableHealable> container = new Node<ISerializableHealable>();
+			final Node<T> container = new Node<T>();
 			container.setTick(tick);
 			container.setData(healable);
 			
@@ -78,16 +74,16 @@ public class HealerFactory {
 		
 		//Set minimal tick before heal
 		final int minTickBeforeHeal = tickProvider.getStartTick();
-		for(final DispatchedTimeline timeline : dispatchedTimelines.values()) {
-			final Node<? extends ISerializableHealable> firstNode = timeline.timeline.getFirst();
+		for(final DispatchedTimeline<T> timeline : dispatchedTimelines.values()) {
+			final Node<T> firstNode = timeline.timeline.getFirst();
 			firstNode.setTick(minTickBeforeHeal + firstNode.getTick());
 		}
 		
 		return dispatchedTimelines;
 	}
 
-	private static class DispatchedTimeline {
-		LinkedList<Node<? extends ISerializableHealable>> timeline = new LinkedList<Node<? extends ISerializableHealable>>();
+	private static class DispatchedTimeline<T> {
+		LinkedList<Node<T>> timeline = new LinkedList<Node<T>>();
 		int tickCounter;
 		
 		@Override

@@ -6,15 +6,16 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import fr.eyzox.dependencygraph.RandomDependencyGraph;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
+import fr.eyzox.forgecreeperheal.dependency.BlockDataDependencyProvider;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.healer.Healer;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.reflection.Reflect;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.ticktimeline.Node;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -58,11 +59,11 @@ public class ExplosionEventHandler implements IEventHandler{
 		//All filters applied, now begins the real stuff :P
 		
 		final Collection<IBlockData> healables = this.buildBlockDataCollection(world, event.getAffectedBlocks());
-		final Map<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables);
+		final Map<ChunkCoordIntPair, Collection<Node<IBlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables, new RandomDependencyGraph<BlockPos, IBlockData>(healables, BlockDataDependencyProvider.getInstance()));
 		
 		
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
-		for(final Entry<ChunkCoordIntPair, Collection<Node<? extends ISerializableHealable>>> entry : addToTimeline.entrySet()) {
+		for(final Entry<ChunkCoordIntPair, Collection<Node<IBlockData>>> entry : addToTimeline.entrySet()) {
 			Healer healer = manager.load(entry.getKey());
 			if(healer == null) {
 				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
