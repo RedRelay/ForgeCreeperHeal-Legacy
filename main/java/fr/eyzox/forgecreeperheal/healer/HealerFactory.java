@@ -89,6 +89,11 @@ public class HealerFactory {
 	private static class DispatchedTimeline {
 		LinkedList<Node<? extends ISerializableHealable>> timeline = new LinkedList<Node<? extends ISerializableHealable>>();
 		int tickCounter;
+		
+		@Override
+		public String toString() {
+			return timeline.toString();
+		}
 	}
 	
 }
