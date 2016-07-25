@@ -24,13 +24,9 @@ public class FastConfig implements IConfigListener {
 	
 	private boolean dropItems;
 	
-	private final Set<Block> removeException = new HashSet<Block>();
-	private final Set<Block> healException = new HashSet<Block>();
-	private final Set<Class<? extends Entity>> sourceException = new HashSet<Class<? extends Entity>>();
-	
-	private final Set<Block> protectedRemoveException = Collections.unmodifiableSet(removeException);
-	private final Set<Block> protectedHealException = Collections.unmodifiableSet(healException);
-	private final Set<Class<? extends Entity>> protectedSourceException = Collections.unmodifiableSet(sourceException);
+	private final Set<String> removeException = new HashSet<String>();
+	private final Set<String> healException = new HashSet<String>();
+	private final Set<String> sourceException = new HashSet<String>();
 	
 	public FastConfig() {}
 
@@ -61,38 +57,10 @@ public class FastConfig implements IConfigListener {
 		
 		group = config.getOptionGroup(ConfigProvider.GROUP_FILTERS);
 		
-		this.fillBlockSet(removeException, group, ConfigProvider.OPTION_REMOVE_EXCEPTION);
-		this.fillBlockSet(healException, group, ConfigProvider.OPTION_HEAL_EXCEPTION);
-		
-		Collection<String> allClazz = ((ConfigOptionList)group.getOption(ConfigProvider.OPTION_SOURCE_EXCEPTION)).getValues();
-		for(final String clazzName : allClazz) {
-			Class<? extends Entity> clazz = null;
-			try {
-				clazz = (Class<? extends Entity>) Class.forName(clazzName);
-			} catch (ClassNotFoundException e) {
-				ForgeCreeperHeal.getLogger().warn(group.getName()+" > "+ConfigProvider.OPTION_SOURCE_EXCEPTION+" > Unable to find class : "+clazzName);
-			} catch (ClassCastException e2) {
-				ForgeCreeperHeal.getLogger().error(group.getName()+" > "+ConfigProvider.OPTION_SOURCE_EXCEPTION+" > class : \""+clazzName+"\" must be an Entity");
-			}
-			
-			if(clazz != null) {
-				sourceException.add(clazz);
-			}
-		}
-		
+		this.removeException.addAll(((ConfigOptionList)group.getOption(ConfigProvider.OPTION_REMOVE_EXCEPTION)).getValues());
+		this.healException.addAll(((ConfigOptionList)group.getOption(ConfigProvider.OPTION_HEAL_EXCEPTION)).getValues());
+		this.sourceException.addAll(((ConfigOptionList)group.getOption(ConfigProvider.OPTION_SOURCE_EXCEPTION)).getValues());
 
-	}
-	
-	private void fillBlockSet(final Set<Block> set, final ConfigOptionGroup group, final String optionName) {
-		final Collection<String> allBlockNames = ((ConfigOptionList)group.getOption(optionName)).getValues();
-		for(final String blockName : allBlockNames) {
-			final Block block = Block.getBlockFromName(blockName);
-			if(block != null) {
-				set.add(block);
-			}else {
-				ForgeCreeperHeal.getLogger().warn(group.getName()+" > "+optionName+" > Unable to find block : "+blockName);
-			}
-		}
 	}
 
 	public int getMinTickStart() {
@@ -127,16 +95,16 @@ public class FastConfig implements IConfigListener {
 		return dropItems;
 	}
 
-	public Set<Block> getRemoveException() {
-		return protectedRemoveException;
+	public Set<String> getRemoveException() {
+		return removeException;
 	}
 
-	public Set<Block> getHealException() {
-		return protectedHealException;
+	public Set<String> getHealException() {
+		return healException;
 	}
 
-	public Set<Class<? extends Entity>> getSourceException() {
-		return protectedSourceException;
+	public Set<String> getSourceException() {
+		return sourceException;
 	}
 	
 	
