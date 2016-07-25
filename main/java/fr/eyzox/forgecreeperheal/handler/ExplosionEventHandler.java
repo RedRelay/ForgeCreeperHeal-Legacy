@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.eyzox.dependencygraph.RandomDependencyGraph;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
@@ -15,6 +14,7 @@ import fr.eyzox.forgecreeperheal.healer.Healer;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.reflection.Reflect;
+import fr.eyzox.forgecreeperheal.scheduler.custom.CustomRandomScheduler;
 import fr.eyzox.forgecreeperheal.scheduler.graph.dependency.provider.BlockDataDependencyProvider;
 import fr.eyzox.ticktimeline.Node;
 import net.minecraft.block.Block;
@@ -59,7 +59,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		//All filters applied, now begins the real stuff :P
 		
 		final Collection<IBlockData> healables = this.buildBlockDataCollection(world, event.getAffectedBlocks());
-		final Map<ChunkCoordIntPair, Collection<Node<IBlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables, new RandomDependencyGraph<BlockPos, IBlockData>(healables, BlockDataDependencyProvider.getInstance()));
+		final Map<ChunkCoordIntPair, Collection<Node<IBlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables, new CustomRandomScheduler<BlockPos, IBlockData>(healables, BlockDataDependencyProvider.getInstance()));
 		
 		
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
