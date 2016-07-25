@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.healable;
+package fr.eyzox.forgecreeperheal.healer;
 
 import net.minecraft.world.World;
 
