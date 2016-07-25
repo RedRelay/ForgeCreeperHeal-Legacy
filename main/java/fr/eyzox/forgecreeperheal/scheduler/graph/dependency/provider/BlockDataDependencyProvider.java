@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.dependency;
+package fr.eyzox.forgecreeperheal.scheduler.graph.dependency.provider;
 
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.interfaces.IDependencyProvider;

@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.healer;
+package fr.eyzox.forgecreeperheal.scheduler;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,18 +8,20 @@ import java.util.Map.Entry;
 
 import fr.eyzox.dependencygraph.RandomDependencyGraph;
 import fr.eyzox.dependencygraph.interfaces.IData;
-import fr.eyzox.forgecreeperheal.healer.tick.ITickProvider;
-import fr.eyzox.forgecreeperheal.healer.tick.TickProvider;
+import fr.eyzox.forgecreeperheal.healer.IChunked;
+import fr.eyzox.forgecreeperheal.healer.IHealable;
+import fr.eyzox.forgecreeperheal.scheduler.tick.ITickProvider;
+import fr.eyzox.forgecreeperheal.scheduler.tick.TickProvider;
 import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
 
-public class HealerFactory {
+public class TickTimelineFactory {
 	
 	private ITickProvider tickProvider = new TickProvider();
 	
-	public HealerFactory() {}
+	public TickTimelineFactory() {}
 	
 	/**
 	 * Create healers
