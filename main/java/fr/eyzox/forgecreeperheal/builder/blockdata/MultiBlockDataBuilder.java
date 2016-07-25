@@ -2,18 +2,17 @@ package fr.eyzox.forgecreeperheal.builder.blockdata;
 
 import java.util.ArrayList;
 
-import fr.eyzox.forgecreeperheal.blockdata.DefaultBlockData;
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.blockdata.MultiBlockData;
-import fr.eyzox.forgecreeperheal.blockdata.TileEntityBlockData;
 import fr.eyzox.forgecreeperheal.blockdata.multi.selector.IMultiSelector;
+import fr.eyzox.forgecreeperheal.builder.AbstractFactoryBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class MultiBlockDataBuilder extends TileEntityBlockDataBuilder {
+public class MultiBlockDataBuilder extends AbstractFactoryBuilder implements IBlockDataBuilder {
 
 	private final IMultiSelector sel;
 
@@ -23,29 +22,24 @@ public class MultiBlockDataBuilder extends TileEntityBlockDataBuilder {
 	}
 
 	@Override
-	public IBlockData create(World w, BlockPos pos, IBlockState state, NBTTagCompound tileEntity) {
+	public BlockData create(World w, BlockPos pos, IBlockState state) {
 
 		final BlockPos[] otherPosArray = sel.getBlockPos(w,pos,state);
 
-		final ArrayList<IBlockData> otherList = new ArrayList<IBlockData>(otherPosArray.length); 
+		final ArrayList<BlockData> otherList = new ArrayList<BlockData>(otherPosArray.length); 
 
 		for(final BlockPos otherPos : otherPosArray) {
 			final IBlockState otherState = w.getBlockState(otherPos);
-			IBlockData other = null;
-			if(otherState.getBlock().hasTileEntity(otherState)) {
-				other = new TileEntityBlockData(otherPos, otherState , BlockDataBuilderUtils.getTileEntityNBT(w, otherPos, otherState));
-			}else {
-				other = new DefaultBlockData(otherPos, otherState);
-			}
+			BlockData other = new BlockData(otherPos, otherState, BlockDataBuilderUtils.getTileEntityNBT(w, otherPos, otherState));
 			otherList.add(other);
 		}
 
-		return new MultiBlockData(pos, state, tileEntity, otherList);
+		return new MultiBlockData(pos, state, BlockDataBuilderUtils.getTileEntityNBT(w, pos, state), otherList);
 
 	}
 	
 	@Override
-	public IBlockData create(NBTTagCompound tag) {
+	public BlockData create(NBTTagCompound tag) {
 		return new MultiBlockData(tag);
 	}
 	

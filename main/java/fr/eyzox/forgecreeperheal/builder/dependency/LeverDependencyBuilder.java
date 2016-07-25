@@ -2,7 +2,7 @@ package fr.eyzox.forgecreeperheal.builder.dependency;
 
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.SingleDependency;
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;
@@ -16,9 +16,9 @@ public class LeverDependencyBuilder implements IDependencyBuilder{
 	}
 
 	@Override
-	public DependencyType<BlockPos, IBlockData> getDependencies(IBlockData data) {
+	public DependencyType<BlockPos, BlockData> getDependencies(BlockData data) {
 		final EnumOrientation orientation = (EnumOrientation)data.getState().getValue(BlockLever.FACING);
-		return new SingleDependency<BlockPos, IBlockData>(FacingDependencyUtils.getBlockPos(data.getPos(), orientation.getFacing()));
+		return new SingleDependency<BlockPos, BlockData>(FacingDependencyUtils.getBlockPos(data.getPos(), orientation.getFacing()));
 	}
 
 	

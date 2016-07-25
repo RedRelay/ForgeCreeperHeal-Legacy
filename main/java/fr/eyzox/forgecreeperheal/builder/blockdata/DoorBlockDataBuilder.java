@@ -1,6 +1,6 @@
 package fr.eyzox.forgecreeperheal.builder.blockdata;
 
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.blockdata.multi.selector.FacingMultiSelector;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
@@ -15,9 +15,9 @@ public class DoorBlockDataBuilder extends MultiBlockDataBuilder{
 	}
 
 	@Override
-	public IBlockData create(World w, BlockPos pos, IBlockState state, NBTTagCompound tileEntity) {
+	public BlockData create(World w, BlockPos pos, IBlockState state) {
 		if(state.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.LOWER) {
-			return super.create(w, pos, state, tileEntity);
+			return super.create(w, pos, state);
 		}
 		return null;
 	}

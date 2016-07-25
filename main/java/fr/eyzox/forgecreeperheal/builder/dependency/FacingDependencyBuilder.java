@@ -1,6 +1,6 @@
 package fr.eyzox.forgecreeperheal.builder.dependency;
 
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.IPropertySelector;
 import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
@@ -12,7 +12,7 @@ public class FacingDependencyBuilder extends AbstractFacingDependencyBuilder{
 	}
 
 	@Override
-	protected EnumFacing getEnumFacing(IBlockData data) {
+	protected EnumFacing getEnumFacing(BlockData data) {
 		return (EnumFacing) data.getState().getValue(getFacingProperty().getPropertyDirection());
 	}
 
