@@ -10,7 +10,6 @@ import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
-import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.healer.Healer;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
@@ -75,7 +74,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		//Remove future healed block from world to destroy drop appearing after the explosion and avoid item duplication
 		final WorldRemover remover = new WorldRemover(world);
 		for(IBlockData block : healables) {
-			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(BlockKeyBuilder.getInstance().convertToString(block.getState().getBlock()))) {
+			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(block.getState().getBlock().getRegistryName().toString())) {
 				block.remove(remover);
 			}
 		}
