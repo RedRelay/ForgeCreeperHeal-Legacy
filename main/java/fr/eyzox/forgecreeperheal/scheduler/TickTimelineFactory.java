@@ -28,7 +28,7 @@ public class TickTimelineFactory {
 	 * @param world - The world the healer must be created
 	 * @param healables - The block to be heal (no specified order)
 	 */
-	public <T extends IHealable & IChunked & IData<?>> Map<ChunkCoordIntPair, Collection<Node<T>>> create(final WorldServer world, final Collection<T> healables, final IScheduler<T> scheduler) {
+	public <T extends IHealable & IChunked & IData<?>> Map<ChunkCoordIntPair, Collection<Node<T>>> create(final WorldServer world, final IScheduler<T> scheduler) {
 		
 		final ChunkDataProvider<DispatchedTimeline<T>> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
