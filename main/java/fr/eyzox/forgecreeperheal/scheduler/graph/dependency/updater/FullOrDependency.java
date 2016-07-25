@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.dependency;
+package fr.eyzox.forgecreeperheal.scheduler.graph.dependency.updater;
 
 import java.util.Set;
 

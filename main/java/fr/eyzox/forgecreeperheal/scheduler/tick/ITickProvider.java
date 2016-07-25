@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.healer.tick;
+package fr.eyzox.forgecreeperheal.scheduler.tick;
 
 public interface ITickProvider {
 	public int getNextTick();
