@@ -59,7 +59,7 @@ public class TimelineSerializer {
 		
 		final NBTTagList contentListTag = new NBTTagList();
 		for(final T nodeData : node.getData()) {
-			contentListTag.appendTag(SerialUtils.serializeWrappedData(nodeData, nodeData));
+			contentListTag.appendTag(SerialUtils.serializeWrappedData(nodeData.getSerialWrapper(), nodeData));
 		}
 		nodeTag.setTag(TAG_NODE_CONTENTS, contentListTag);
 		return nodeTag;
