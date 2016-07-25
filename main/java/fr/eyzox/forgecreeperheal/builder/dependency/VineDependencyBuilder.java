@@ -6,7 +6,7 @@ import java.util.List;
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.MultipleDependency;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
-import fr.eyzox.forgecreeperheal.dependency.FullOrDependency;
+import fr.eyzox.forgecreeperheal.scheduler.graph.dependency.updater.FullOrDependency;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockVine;
 import net.minecraft.util.EnumFacing;
