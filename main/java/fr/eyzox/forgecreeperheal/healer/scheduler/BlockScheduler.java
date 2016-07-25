@@ -3,9 +3,10 @@ package fr.eyzox.forgecreeperheal.healer.scheduler;
 import java.util.Collection;
 
 import fr.eyzox.dependencygraph.DependencyGraph;
-import fr.eyzox.dependencygraph.IDependency;
-import fr.eyzox.dependencygraph.IDependencyProvider;
+import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.RandomDependencyGraph;
+import fr.eyzox.dependencygraph.interfaces.IDependencyProvider;
+import fr.eyzox.dependencygraph.interfaces.IDependencyUpdater;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +15,7 @@ public class BlockScheduler implements IScheduler<IBlockData> {
 
 	private static final IDependencyProvider<BlockPos, IBlockData> provider = new DependencyProvider();
 	
-	private final DependencyGraph<BlockPos, IBlockData> graph;
+	private final RandomDependencyGraph<BlockPos, IBlockData> graph;
 	
 	public BlockScheduler(final Collection<? extends IBlockData> blocks) {
 		this.graph = new RandomDependencyGraph<BlockPos, IBlockData>(blocks, provider);
@@ -22,7 +23,7 @@ public class BlockScheduler implements IScheduler<IBlockData> {
 
 	@Override
 	public IBlockData next() {
-		return this.graph.next();
+		return this.graph.poll();
 	}
 
 	@Override
@@ -33,7 +34,7 @@ public class BlockScheduler implements IScheduler<IBlockData> {
 	private static class DependencyProvider implements IDependencyProvider<BlockPos, IBlockData> {
 
 		@Override
-		public IDependency<BlockPos> provideDependency(IBlockData data) {
+		public DependencyType<BlockPos, IBlockData> provideDependency(IBlockData data) {
 			return ForgeCreeperHeal.getDependencyFactory().getData(data.getState().getBlock()).getDependencies(data);
 		}
 		
