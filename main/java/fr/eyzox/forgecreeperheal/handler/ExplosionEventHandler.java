@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.healer.Healer;
@@ -58,12 +58,12 @@ public class ExplosionEventHandler implements IEventHandler{
 		
 		//All filters applied, now begins the real stuff :P
 		
-		final Collection<IBlockData> healables = this.buildBlockDataCollection(world, event.getAffectedBlocks());
-		final Map<ChunkCoordIntPair, Collection<Node<IBlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables, new CustomRandomScheduler<BlockPos, IBlockData>(healables, BlockDataDependencyProvider.getInstance()));
+		final Collection<BlockData> healables = this.buildBlockDataCollection(world, event.getAffectedBlocks());
+		final Map<ChunkCoordIntPair, Collection<Node<BlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables, new CustomRandomScheduler<BlockPos, BlockData>(healables, BlockDataDependencyProvider.getInstance()));
 		
 		
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
-		for(final Entry<ChunkCoordIntPair, Collection<Node<IBlockData>>> entry : addToTimeline.entrySet()) {
+		for(final Entry<ChunkCoordIntPair, Collection<Node<BlockData>>> entry : addToTimeline.entrySet()) {
 			Healer healer = manager.load(entry.getKey());
 			if(healer == null) {
 				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
@@ -74,7 +74,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		
 		//Remove future healed block from world to destroy drop appearing after the explosion and avoid item duplication
 		final WorldRemover remover = new WorldRemover(world);
-		for(IBlockData block : healables) {
+		for(BlockData block : healables) {
 			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(block.getState().getBlock().getRegistryName().toString())) {
 				block.remove(remover);
 			}
@@ -84,16 +84,16 @@ public class ExplosionEventHandler implements IEventHandler{
 		
 	}
 	
-	private Collection<IBlockData> buildBlockDataCollection(WorldServer world, Collection<BlockPos> affectedBlocks) {
+	private Collection<BlockData> buildBlockDataCollection(WorldServer world, Collection<BlockPos> affectedBlocks) {
 		
 		final DefaultFactory<Block, IBlockDataBuilder> blockDataFactory = ForgeCreeperHeal.getBlockDataFactory();
 		
-		final Collection<IBlockData> healables = new LinkedList<IBlockData>();
+		final Collection<BlockData> healables = new LinkedList<BlockData>();
 		for(final BlockPos pos : affectedBlocks) {
 			final IBlockState blockstate = world.getBlockState(pos);
 			
 			final IBlockDataBuilder builder = blockDataFactory.getData(blockstate.getBlock());
-			final IBlockData data = builder.create(world, pos, blockstate);
+			final BlockData data = builder.create(world, pos, blockstate);
 			
 			if(data != null) {
 				healables.add(data);
