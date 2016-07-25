@@ -6,7 +6,6 @@ import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.forgecreeperheal.factory.Factory;
-import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.healer.HealerUtils;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapper;
@@ -92,7 +91,7 @@ public class DefaultBlockData implements IBlockData{
 	
 	protected static NBTTagCompound iBlockStateToNBT(final IBlockState blockstate) {
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setString(TAG_IBLOCKSTATE_BLOCK, BlockKeyBuilder.getInstance().convertToString(blockstate.getBlock()));
+		tag.setString(TAG_IBLOCKSTATE_BLOCK, blockstate.getBlock().getRegistryName().toString());
 		final int metadata = blockstate.getBlock().getMetaFromState(blockstate);
 		if(metadata != 0) {
 			tag.setInteger(TAG_IBLOCKSTATE_METADATA, metadata);
@@ -106,7 +105,7 @@ public class DefaultBlockData implements IBlockData{
 			throw new ForgeCreeperHealerSerialException("Missing Block's name");
 		}
 		
-		final Block block = BlockKeyBuilder.getInstance().convertToKey(tag.getString(TAG_IBLOCKSTATE_BLOCK));
+		final Block block = Block.getBlockFromName((tag.getString(TAG_IBLOCKSTATE_BLOCK)));
 		final IBlockState state = block.getStateFromMeta(tag.getInteger(TAG_IBLOCKSTATE_METADATA));
 		return state;
 	}
