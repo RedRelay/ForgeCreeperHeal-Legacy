@@ -90,8 +90,4 @@ public class WorldTransform {
 		}
 	}
 	
-	public void clearCache() {
-		cachedChunkTransform.clear();
-	}
-	
 }

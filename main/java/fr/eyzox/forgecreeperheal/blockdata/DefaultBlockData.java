@@ -8,6 +8,7 @@ import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.forgecreeperheal.factory.Factory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.healer.HealerUtils;
+import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -40,6 +41,11 @@ public class DefaultBlockData implements IBlockData{
 	public void heal(World world, int flags) {
 		HealerUtils.healBlock(world, pos, state, null, flags);
 	}
+	
+	@Override
+	public void remove(WorldRemover remover) {
+		remover.remove(pos);
+	}
 
 	@Override
 	public BlockPos getPos() {
@@ -49,11 +55,6 @@ public class DefaultBlockData implements IBlockData{
 	@Override
 	public DataKeyProvider<BlockPos> getDataKeyProvider() {
 		return new SingleDataKeyProvider<BlockPos>(pos);
-	}
-	
-	@Override
-	public BlockPos[] getAllPos() {
-		return new BlockPos[]{pos};
 	}
 
 	@Override
