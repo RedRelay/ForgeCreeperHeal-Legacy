@@ -12,10 +12,10 @@ public class SerialUtils {
 	
 	private SerialUtils() {}
 	
-	public static <T> NBTTagCompound serializeWrappedData(ISerialWrapperProvider<T> wrapper, T data) throws ForgeCreeperHealerSerialException {
+	public static <T> NBTTagCompound serializeWrappedData(ISerialWrapper<T> wrapper, T data) throws ForgeCreeperHealerSerialException {
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setString(TAG_WRAPPER, wrapper.getSerialWrapper().getClass().getName());
-		tag.setTag(TAG_WRAPPER_DATA, wrapper.getSerialWrapper().serialize(data));
+		tag.setString(TAG_WRAPPER, wrapper.getClass().getName());
+		tag.setTag(TAG_WRAPPER_DATA, wrapper.serialize(data));
 		return tag;
 	}
 	
