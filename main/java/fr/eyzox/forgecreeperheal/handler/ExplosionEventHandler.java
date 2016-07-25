@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.handler;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -53,13 +54,21 @@ public class ExplosionEventHandler implements IEventHandler{
 		//Entity Filter : Retrieve which entity make this explosion
 		Entity exploder = (Entity) Reflect.getDataFromField(this.exploder, event.explosion);
 		//TODO maybe better config
-		if(exploder == null || ForgeCreeperHeal.getConfig().getSourceException().contains(exploder.getClass()))
+		if(exploder == null || ForgeCreeperHeal.getConfig().getSourceException().contains(exploder.getClass().getName()))
 			return;
 		
 		//All filters applied, now begins the real stuff :P
 		
-		final Collection<BlockData> healables = this.buildBlockDataCollection(world, event.getAffectedBlocks());
-		final Map<ChunkCoordIntPair, Collection<Node<BlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, healables, new CustomRandomScheduler<BlockPos, BlockData>(healables, BlockDataDependencyProvider.getInstance()));
+		final Collection<BlockData> affectedBlockData = this.buildBlockDataCollection(world, event.getAffectedBlocks());
+		
+		final Collection<BlockData> toHeal = new ArrayList<BlockData>(affectedBlockData.size());
+		for(final BlockData data : affectedBlockData) {
+			if(!ForgeCreeperHeal.getConfig().getHealException().contains(data.getState().getBlock().getRegistryName().toString())) {
+				toHeal.add(data);
+			}
+		}
+		
+		final Map<ChunkCoordIntPair, Collection<Node<BlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, new CustomRandomScheduler<BlockPos, BlockData>(toHeal, BlockDataDependencyProvider.getInstance()));
 		
 		
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
@@ -74,7 +83,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		
 		//Remove future healed block from world to destroy drop appearing after the explosion and avoid item duplication
 		final WorldRemover remover = new WorldRemover(world);
-		for(BlockData block : healables) {
+		for(BlockData block : affectedBlockData) {
 			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(block.getState().getBlock().getRegistryName().toString())) {
 				block.remove(remover);
 			}
