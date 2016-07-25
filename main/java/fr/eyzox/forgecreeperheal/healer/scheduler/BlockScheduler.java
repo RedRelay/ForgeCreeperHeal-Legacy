@@ -2,11 +2,9 @@ package fr.eyzox.forgecreeperheal.healer.scheduler;
 
 import java.util.Collection;
 
-import fr.eyzox.dependencygraph.DependencyGraph;
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.RandomDependencyGraph;
 import fr.eyzox.dependencygraph.interfaces.IDependencyProvider;
-import fr.eyzox.dependencygraph.interfaces.IDependencyUpdater;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import net.minecraft.util.BlockPos;

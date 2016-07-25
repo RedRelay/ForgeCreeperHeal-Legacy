@@ -39,9 +39,7 @@ public final class MultipleDependency<KEY, DATA extends IData<KEY>> extends Depe
 	
 	@Override
 	protected void onElementPolled(final DependencyGraph<KEY, DATA> graph, final DependencyGraph<KEY, DATA>.Node polledNode, final DependencyGraph<KEY, DATA>.Node theNode){
-		for(final KEY key : polledNode.getData().getKeys()) {
-			dependencies.remove(key);
-		}
+		polledNode.getKeyProvider().removeKeyFrom(dependencies);
 		
 		if(dependencyUpdater.isAvailable(uneditableDependencies)) {
 			//Delete this node now available from other dependencies

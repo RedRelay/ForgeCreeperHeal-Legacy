@@ -5,7 +5,6 @@ import java.util.List;
 
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.MultipleDependency;
-import fr.eyzox.dependencygraph.interfaces.IDependencyUpdater;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.dependency.FullOrDependency;
 import net.minecraft.block.Block;

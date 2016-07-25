@@ -1,5 +1,7 @@
 package fr.eyzox.forgecreeperheal.blockdata;
 
+import fr.eyzox.dependencygraph.DataKeyProvider;
+import fr.eyzox.dependencygraph.SingleDataKeyProvider;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
@@ -38,15 +40,15 @@ public class DefaultBlockData implements IBlockData{
 	public void heal(World world, int flags) {
 		HealerUtils.healBlock(world, pos, state, null, flags);
 	}
-	
-	@Override
-	public BlockPos[] getKeys() {
-		return getAllPos();
-	}
 
 	@Override
 	public BlockPos getPos() {
 		return pos;
+	}
+	
+	@Override
+	public DataKeyProvider<BlockPos> getDataKeyProvider() {
+		return new SingleDataKeyProvider<BlockPos>(pos);
 	}
 	
 	@Override

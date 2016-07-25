@@ -2,7 +2,6 @@ package fr.eyzox.forgecreeperheal.builder.dependency;
 
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.NoDependency;
-import fr.eyzox.dependencygraph.interfaces.IDependencyUpdater;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
