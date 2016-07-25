@@ -6,10 +6,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.eyzox.dependencygraph.RandomDependencyGraph;
 import fr.eyzox.dependencygraph.interfaces.IData;
 import fr.eyzox.forgecreeperheal.healer.IChunked;
 import fr.eyzox.forgecreeperheal.healer.IHealable;
+import fr.eyzox.forgecreeperheal.scheduler.custom.IScheduler;
 import fr.eyzox.forgecreeperheal.scheduler.tick.ITickProvider;
 import fr.eyzox.forgecreeperheal.scheduler.tick.TickProvider;
 import fr.eyzox.minecraft.util.ChunkDataProvider;
@@ -28,7 +28,7 @@ public class TickTimelineFactory {
 	 * @param world - The world the healer must be created
 	 * @param healables - The block to be heal (no specified order)
 	 */
-	public <T extends IHealable & IChunked & IData<?>> Map<ChunkCoordIntPair, Collection<Node<T>>> create(final WorldServer world, final Collection<T> healables, final RandomDependencyGraph<?, T> scheduler) {
+	public <T extends IHealable & IChunked & IData<?>> Map<ChunkCoordIntPair, Collection<Node<T>>> create(final WorldServer world, final Collection<T> healables, final IScheduler<T> scheduler) {
 		
 		final ChunkDataProvider<DispatchedTimeline<T>> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
@@ -40,14 +40,14 @@ public class TickTimelineFactory {
 		return result;
 	}
 
-	private <T extends IHealable & IChunked & IData<?>> ChunkDataProvider<DispatchedTimeline<T>> scheduleHealables(final RandomDependencyGraph<?, T> scheduler) {
+	private <T extends IHealable & IChunked & IData<?>> ChunkDataProvider<DispatchedTimeline<T>> scheduleHealables(final IScheduler<T> scheduler) {
 		
 		final ChunkDataProvider<DispatchedTimeline<T>> dispatchedTimelines = new ChunkDataProvider<DispatchedTimeline<T>>();
 		
 		int globalTickCounter = 0;
 		
 		while(scheduler.hasNext()) {
-			final T healable = scheduler.poll();
+			final T healable = scheduler.next();
 			
 			final int chunkX = healable.getChunkX();
 			final int chunkZ = healable.getChunkZ();
