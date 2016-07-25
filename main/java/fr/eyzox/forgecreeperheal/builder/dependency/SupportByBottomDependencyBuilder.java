@@ -2,7 +2,7 @@ package fr.eyzox.forgecreeperheal.builder.dependency;
 
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.SingleDependency;
-import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import net.minecraft.util.EnumFacing;
 
 public class SupportByBottomDependencyBuilder extends AbstractGenericDependencyBuilder {
@@ -11,7 +11,7 @@ public class SupportByBottomDependencyBuilder extends AbstractGenericDependencyB
 	private SupportByBottomDependencyBuilder() {}
 
 	@Override
-	public DependencyType<BlockPos, IBlockData> getDependencies(IBlockData data) {
+	public DependencyType<BlockPos, BlockData> getDependencies(BlockData data) {
 		return new SingleDependency(FacingDependencyUtils.getBlockPos(data.getPos(), EnumFacing.DOWN));
 	}
 	
