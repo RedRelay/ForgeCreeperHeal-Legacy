@@ -11,9 +11,9 @@ import fr.eyzox.forgecreeperheal.builder.dependency.IDependencyBuilder;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
-import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
+import fr.eyzox.forgecreeperheal.scheduler.TickTimelineFactory;
 import net.minecraft.block.Block;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Mod;
@@ -108,7 +108,7 @@ public class ForgeCreeperHeal
     	return healerManagers.get(world);
     }
     
-    public static HealerFactory getHealerFactory() {
+    public static TickTimelineFactory getHealerFactory() {
     	return proxy.getHealerFactory();
     }
     

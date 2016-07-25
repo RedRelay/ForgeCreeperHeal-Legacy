@@ -38,8 +38,8 @@ import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
-import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
+import fr.eyzox.forgecreeperheal.scheduler.TickTimelineFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBanner.BlockBannerHanging;
 import net.minecraft.block.BlockBanner.BlockBannerStanding;
@@ -83,7 +83,7 @@ public class CommonProxy {
 	private FastConfig config;
 	//private SimpleNetworkWrapper channel;
 
-	private HealerFactory healerFactory;
+	private TickTimelineFactory healerFactory;
 	private Map<WorldServer, HealerManager> healerManagers;
 
 	private DefaultFactory<Block, IBlockDataBuilder> blockDataFactory;
@@ -99,7 +99,7 @@ public class CommonProxy {
 		this.logger = event.getModLog();
 		this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
 
-		this.healerFactory = new HealerFactory();
+		this.healerFactory = new TickTimelineFactory();
 		this.blockDataFactory = loadBlockDataFactory();
 		this.dependencyFactory = loadDependencyFactory();
 		
@@ -161,7 +161,7 @@ public class CommonProxy {
 		return healerManagers;
 	}
 
-	public HealerFactory getHealerFactory() {
+	public TickTimelineFactory getHealerFactory() {
 		return healerFactory;
 	}
 
