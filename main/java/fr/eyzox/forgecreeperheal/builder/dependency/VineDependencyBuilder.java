@@ -3,7 +3,9 @@ package fr.eyzox.forgecreeperheal.builder.dependency;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.eyzox.dependencygraph.IDependency;
+import fr.eyzox.dependencygraph.DependencyType;
+import fr.eyzox.dependencygraph.MultipleDependency;
+import fr.eyzox.dependencygraph.interfaces.IDependencyUpdater;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.dependency.FullOrDependency;
 import net.minecraft.block.Block;
@@ -19,7 +21,7 @@ public class VineDependencyBuilder implements IDependencyBuilder{
 	}
 
 	@Override
-	public IDependency<BlockPos> getDependencies(IBlockData data) {
+	public DependencyType<BlockPos, IBlockData> getDependencies(IBlockData data) {
 		final List<BlockPos> dependencies = new ArrayList<BlockPos>(2);
 		for(EnumFacing facing : EnumFacing.HORIZONTALS) {
 			if(((Boolean)data.getState().getValue(BlockVine.getPropertyFor(facing))).booleanValue()) {
@@ -31,9 +33,6 @@ public class VineDependencyBuilder implements IDependencyBuilder{
 			dependencies.add(FacingDependencyUtils.getBlockPos(data.getPos(), EnumFacing.UP));
 		}
 		
-		final BlockPos[] dependencyArray = new BlockPos[dependencies.size()];
-		dependencies.toArray(dependencyArray);
-		
-		return new FullOrDependency(dependencyArray);
+		return new MultipleDependency<BlockPos, IBlockData>(dependencies, new FullOrDependency(dependencies.size()));
 	}
 }
