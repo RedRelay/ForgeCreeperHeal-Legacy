@@ -73,6 +73,10 @@ public class HealerManager {
 	 * Called by {@link WorldEventHandler#onWorldTick(net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent)}
 	 */
 	public void tick() {
+		if(this.loadedHealers.isEmpty()) {
+			return;
+		}
+		
 		for(final Entry<ChunkCoordIntPair, Healer> entry : this.loadedHealers.entrySet()) {
 			
 			final Healer healer = entry.getValue();
