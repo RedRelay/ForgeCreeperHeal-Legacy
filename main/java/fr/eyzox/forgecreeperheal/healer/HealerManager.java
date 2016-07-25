@@ -3,8 +3,8 @@ package fr.eyzox.forgecreeperheal.healer;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -81,9 +81,9 @@ public class HealerManager {
 			
 			final Healer healer = entry.getValue();
 			
-			final Collection<ISerializableHealable> healables = healer.getTimeline().tick();
+			final Collection<IBlockData> healables = healer.getTimeline().tick();
 			if(healables != null) {
-				for(final ISerializableHealable healable : healables) {
+				for(final IBlockData healable : healables) {
 					healable.heal(world, 7);
 				}
 
@@ -102,8 +102,8 @@ public class HealerManager {
 	 */
 	private void healLoaded() {
 		for(final Entry<ChunkCoordIntPair, Healer> entry : loadedHealers.entrySet()) {
-			for(final Node<Collection<ISerializableHealable>> node : entry.getValue().getTimeline().getTimeline()) {
-				for(final ISerializableHealable healable : node.getData()) {
+			for(final Node<Collection<IBlockData>> node : entry.getValue().getTimeline().getTimeline()) {
+				for(final IBlockData healable : node.getData()) {
 					healable.heal(world, 7);
 				}
 			}

@@ -1,7 +1,7 @@
 package fr.eyzox.forgecreeperheal.healer;
 
+import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
 import fr.eyzox.forgecreeperheal.serial.TimelineSerializer;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,11 +15,11 @@ public class Healer implements INBTSerializable<NBTTagCompound>{
 	private final Chunk chunk;
 	private boolean loaded;
 	
-	private TickTimeline<ISerializableHealable> timeline;
+	private TickTimeline<IBlockData> timeline;
 	
 	public Healer(final Chunk chunk) {
 		this.chunk = chunk;
-		this.timeline = new TickTimeline<ISerializableHealable>();
+		this.timeline = new TickTimeline<IBlockData>();
 	}
 	
 	public Healer(final Chunk chunk, final NBTTagCompound tag) {
@@ -31,7 +31,7 @@ public class Healer implements INBTSerializable<NBTTagCompound>{
 		return chunk;
 	}
 	
-	public TickTimeline<ISerializableHealable> getTimeline() {
+	public TickTimeline<IBlockData> getTimeline() {
 		return timeline;
 	}
 	

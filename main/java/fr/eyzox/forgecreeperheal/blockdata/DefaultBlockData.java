@@ -62,6 +62,16 @@ public class DefaultBlockData implements IBlockData{
 	}
 	
 	@Override
+	public int getChunkX() {
+		return pos.getX() >> 4;
+	}
+	
+	@Override
+	public int getChunkZ() {
+		return pos.getZ() >> 4;
+	}
+	
+	@Override
 	public NBTTagCompound serializeNBT() {
 		final NBTTagCompound tag =  new NBTTagCompound();
 		tag.setLong(TAG_POS, this.pos.toLong());
