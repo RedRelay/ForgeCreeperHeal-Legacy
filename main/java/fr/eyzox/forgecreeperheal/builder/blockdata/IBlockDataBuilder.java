@@ -7,7 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface IBlockDataBuilder extends ISerializableHealableBuilder<Class<? extends Block>> {
+public interface IBlockDataBuilder extends ISerializableHealableBuilder<Block> {
 	public IBlockData create(final World w, final BlockPos pos, final IBlockState state);
 	
 }

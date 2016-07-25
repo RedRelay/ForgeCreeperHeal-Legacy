@@ -81,13 +81,13 @@ public class ExplosionEventHandler implements IEventHandler{
 	
 	private Collection<IBlockData> buildBlockDataCollection(WorldServer world, Collection<BlockPos> affectedBlocks) {
 		
-		final DefaultFactory<Class<? extends Block>, IBlockDataBuilder> blockDataFactory = ForgeCreeperHeal.getBlockDataFactory();
+		final DefaultFactory<Block, IBlockDataBuilder> blockDataFactory = ForgeCreeperHeal.getBlockDataFactory();
 		
 		final Collection<IBlockData> healables = new LinkedList<IBlockData>();
 		for(final BlockPos pos : affectedBlocks) {
 			final IBlockState blockstate = world.getBlockState(pos);
 			
-			final IBlockDataBuilder builder = blockDataFactory.getData(blockstate.getBlock().getClass());
+			final IBlockDataBuilder builder = blockDataFactory.getData(blockstate.getBlock());
 			final IBlockData data = builder.create(world, pos, blockstate);
 			
 			if(data != null) {

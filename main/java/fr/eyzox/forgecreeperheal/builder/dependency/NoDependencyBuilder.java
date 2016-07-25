@@ -1,24 +1,24 @@
 package fr.eyzox.forgecreeperheal.builder.dependency;
 
-import fr.eyzox.dependencygraph.IDependency;
+import fr.eyzox.dependencygraph.DependencyType;
+import fr.eyzox.dependencygraph.NoDependency;
 import fr.eyzox.forgecreeperheal.blockdata.IBlockData;
-import fr.eyzox.forgecreeperheal.dependency.NoDependency;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 
 public class NoDependencyBuilder implements IDependencyBuilder{
 
-	final NoDependency noDependency = new NoDependency();
+	private final NoDependency<BlockPos, IBlockData> noDependency = new NoDependency<BlockPos, IBlockData>();
 	
 	public NoDependencyBuilder() {}
 
 	@Override
-	public boolean accept(Class<? extends Block> in) {
+	public boolean accept(Block in) {
 		return true;
 	}
 
 	@Override
-	public IDependency<BlockPos> getDependencies(IBlockData data) {
+	public DependencyType<BlockPos, IBlockData> getDependencies(IBlockData data) {
 		return noDependency;
 	}
 
