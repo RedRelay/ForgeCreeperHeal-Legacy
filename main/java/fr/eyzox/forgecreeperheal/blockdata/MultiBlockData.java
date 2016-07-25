@@ -9,6 +9,7 @@ import fr.eyzox.dependencygraph.DataKeyProvider;
 import fr.eyzox.dependencygraph.MultipleDataKeyProvider;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
+import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.serial.SerialUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,15 +53,11 @@ public class MultiBlockData extends TileEntityBlockData {
 	}
 	
 	@Override
-	public BlockPos[] getAllPos() {
-		final BlockPos[] allPos = new BlockPos[1+others.size()];
-		allPos[0] = getPos();
-		int i = 1;
-		for(IBlockData data : others) {
-			allPos[i] = data.getPos();
-			i++;
+	public void remove(WorldRemover remover) {
+		super.remove(remover);
+		for(final BlockPos p : buildAllPos()) {
+			remover.remove(p);
 		}
-		return allPos;
 	}
 	
 	@Override

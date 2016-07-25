@@ -6,6 +6,5 @@ import net.minecraft.util.math.BlockPos;
 
 public interface IBlockData extends fr.eyzox.dependencygraph.interfaces.IData<BlockPos>, ISerializableHealable {
 	public BlockPos getPos();
-	public BlockPos[] getAllPos();
 	public IBlockState getState();
 }
