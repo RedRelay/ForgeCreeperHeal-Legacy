@@ -35,9 +35,9 @@ public class TickTimeline<DATA> {
 	 * D -> 7 ticks (A ticks + B ticks + C ticks + D ticks)
 	 * 
 	 */
-	public void add(final Collection<Node<? extends DATA>> dataCollection) {
+	public void add(final Collection<Node<DATA>> dataCollection) {
 		final ListIterator<Node<Collection<DATA>>> timelineIterator = timeline.listIterator();
-		for(final Node<? extends DATA> data : dataCollection) {
+		for(final Node<DATA> data : dataCollection) {
 			this.add(timelineIterator, data);
 		}
 	}
