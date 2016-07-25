@@ -2,13 +2,10 @@ package fr.eyzox.forgecreeperheal.dependency;
 
 import java.util.Set;
 
+import fr.eyzox.dependencygraph.interfaces.IDependencyUpdater;
 import net.minecraft.util.math.BlockPos;
 
-public class FullAndDependency extends DefaultDependency {
-
-	public FullAndDependency(BlockPos[] dependencies) {
-		super(dependencies);
-	}
+public class FullAndDependency implements IDependencyUpdater<BlockPos> {
 	
 	@Override
 	public boolean isAvailable(Set<BlockPos> dependenciesLeft) {
