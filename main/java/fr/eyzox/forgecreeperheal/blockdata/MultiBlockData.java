@@ -86,7 +86,7 @@ public class MultiBlockData extends TileEntityBlockData {
 		
 		final NBTTagList wrapperListTag = new NBTTagList();
 		for(IBlockData other : others){
-			wrapperListTag.appendTag(SerialUtils.serializeWrappedData(other, other));
+			wrapperListTag.appendTag(SerialUtils.serializeWrappedData(other.getSerialWrapper(), other));
 		}
 		
 		tag.setTag(TAG_OTHERS, wrapperListTag);
