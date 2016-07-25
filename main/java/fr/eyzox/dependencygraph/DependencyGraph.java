@@ -7,12 +7,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
+import fr.eyzox.dependencygraph.exceptions.DuplicateKeyException;
 import fr.eyzox.dependencygraph.interfaces.IData;
 import fr.eyzox.dependencygraph.interfaces.IDependencyProvider;
-
-import java.util.Set;
 
 public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 
@@ -22,19 +21,14 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 	protected final List<Node> availables = new ArrayList<Node>();
 	private final List<Node> unmodifiableAvailable = Collections.unmodifiableList(availables);
 
-	public DependencyGraph(final Collection<? extends DATA> data, final IDependencyProvider<KEY, DATA> dependencyProvider) {
+	public DependencyGraph(final Collection<? extends DATA> c, final IDependencyProvider<KEY, DATA> dependencyProvider) throws DuplicateKeyException{
 		//Building index and nodes set
-		this.index = new HashMap<KEY, Node>(data.size());
+		this.index = new HashMap<KEY, Node>(c.size());
 		this.nodes = new HashSet<DependencyGraph<KEY,DATA>.Node>();
-		for(final DATA d : data) {
-			final Node node = new Node(d);
+		for(final DATA data : c) {
+			final Node node = new Node(data);
 			nodes.add(node);
-			for(final KEY key : d.getKeys()) {
-				final Node oldValue = index.put(key, node);
-				if(oldValue != null) {
-					System.err.println(String.format("[WARN] Duplicated key for values {%s} {%s}", oldValue.data, d));
-				}
-			}
+			node.keyProvider.buildIndex(index, node);
 		}
 		
 		for(Node node : nodes) {
@@ -50,10 +44,7 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 
 		final Node node = availables.remove(nextIndex);
 		
-		// Remove from index
-		for(final KEY key : node.data.getKeys()) {
-			index.remove(key);
-		}
+		node.keyProvider.removeFromIndex(index, node);
 		
 		for(final Node next : node.requiredBySet) {
 			next.type.onElementPolled(this, node, next);
@@ -78,24 +69,34 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 		requiredNode.requiredBySet.add(node);
 	}
 	
-	protected class Node {
+	public class Node {
 		private final DATA data;
+		private final DataKeyProvider<KEY> keyProvider;
 		private DependencyType type;
 		private Set<Node> requiredBySet = new HashSet<Node>();
 
 		protected Node(final DATA data) {
 			this.data = data;
+			this.keyProvider = data.getDataKeyProvider();
+			
+			if(this.keyProvider == null) {
+				throw new NullPointerException();
+			}
 		}
 		
-		protected DATA getData() {
+		public DATA getData() {
 			return data;
 		}
 		
-		protected DependencyType getType() {
+		public DataKeyProvider<KEY> getKeyProvider() {
+			return keyProvider;
+		}
+		
+		public DependencyType getType() {
 			return type;
 		}
 		
-		protected Set<Node> getRequiredBySet() {
+		public Set<Node> getRequiredBySet() {
 			return requiredBySet;
 		}
 		

@@ -1,7 +1,12 @@
 package fr.eyzox.forgecreeperheal.blockdata;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
+import fr.eyzox.dependencygraph.DataKeyProvider;
+import fr.eyzox.dependencygraph.MultipleDataKeyProvider;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.forgecreeperheal.serial.SerialUtils;
@@ -32,6 +37,20 @@ public class MultiBlockData extends TileEntityBlockData {
 		super(tag);
 	}
 
+	private Collection<BlockPos> buildAllPos() {
+		final List<BlockPos> c = new LinkedList<BlockPos>();
+		c.add(getPos());
+		for(final IBlockData other : others) {
+			c.add(other.getPos());
+		}
+		return c;
+	}
+	
+	@Override
+	public DataKeyProvider<BlockPos> getDataKeyProvider() {
+		return new MultipleDataKeyProvider<BlockPos>(buildAllPos());
+	}
+	
 	@Override
 	public BlockPos[] getAllPos() {
 		final BlockPos[] allPos = new BlockPos[1+others.size()];
