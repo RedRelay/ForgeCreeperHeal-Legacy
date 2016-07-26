@@ -25,10 +25,9 @@ public class WorldTransform {
 		this.world = world;
 	}
 	
-	public boolean removeSilentBlockState(BlockPos pos) {
+	public void removeSilentBlockState(BlockPos pos, int flags) {
 		
 		final IBlockState newState = Blocks.air.getDefaultState();
-		final int flags = 2;
 		
 		if(!((Boolean)Reflect.call(world, isValidMethod, pos)).booleanValue())
 		{

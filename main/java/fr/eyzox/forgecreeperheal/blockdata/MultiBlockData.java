@@ -62,13 +62,18 @@ public class MultiBlockData extends BlockData {
 		return new MultipleDataKeyProvider<BlockPos>(allBlockPos);
 	}
 
-	@Override
-	public void heal(World world, int flags) {
-		//Building old blockstate index
+	private Map<BlockPos, IBlockState> buildOldStateMap(final World world) {
 		final Map<BlockPos, IBlockState> oldStateMap = new HashMap<BlockPos, IBlockState>(allBlockPos.size());
 		for(final BlockPos pos : allBlockPos) {
 			oldStateMap.put(pos, world.getBlockState(pos));
 		}
+		return oldStateMap;
+	}
+	
+	@Override
+	public void heal(World world, int flags) {
+		//Building old blockstate index
+		final Map<BlockPos, IBlockState> oldStateMap = buildOldStateMap(world);
 		
 		//Silent Heal
 		super.heal(world, 0);
@@ -89,9 +94,10 @@ public class MultiBlockData extends BlockData {
 	}
 
 	@Override
-	public void remove(WorldRemover remover) {
-		for(final BlockPos pos : allBlockPos) {
-			remover.remove(pos);
+	public void remove(final WorldRemover remover) {
+		super.remove(remover);
+		for(final BlockData other : others) {
+			other.remove(remover);
 		}
 	}
 	
