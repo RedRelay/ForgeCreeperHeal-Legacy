@@ -1,7 +1,5 @@
 package fr.eyzox.forgecreeperheal.config;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,9 +8,6 @@ import fr.eyzox.bsc.config.ConfigOptionGroup;
 import fr.eyzox.bsc.config.IConfigListener;
 import fr.eyzox.bsc.config.option.ConfigOption;
 import fr.eyzox.bsc.config.option.ConfigOptionList;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 
 public class FastConfig implements IConfigListener {
 

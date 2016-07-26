@@ -84,7 +84,7 @@ public class HealerManager {
 			final Collection<BlockData> healables = healer.getTimeline().tick();
 			if(healables != null) {
 				for(final BlockData healable : healables) {
-					healable.heal(world, 7);
+					healable.heal(world, 3);
 				}
 
 				if(healer.getTimeline().isEmpty()) {
@@ -104,7 +104,7 @@ public class HealerManager {
 		for(final Entry<ChunkCoordIntPair, Healer> entry : loadedHealers.entrySet()) {
 			for(final Node<Collection<BlockData>> node : entry.getValue().getTimeline().getTimeline()) {
 				for(final BlockData healable : node.getData()) {
-					healable.heal(world, 7);
+					healable.heal(world, 3);
 				}
 			}
 			this.worldHealerData.unhandleChunk(entry.getKey());

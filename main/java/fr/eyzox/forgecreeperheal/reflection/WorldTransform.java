@@ -32,10 +32,9 @@ public class WorldTransform {
 		this.worldInfo = this.world.getWorldInfo();
 	}
 	
-	public void removeSilentBlockState(BlockPos pos) {
+	public void removeSilentBlockState(BlockPos pos, int flags) {
 		
-		final IBlockState newState = Blocks.AIR.getDefaultState();
-		final int flags = 2;
+		final IBlockState newState = Blocks.air.getDefaultState();
 		
 		this.setBlockState(pos, newState, flags);
 	}
