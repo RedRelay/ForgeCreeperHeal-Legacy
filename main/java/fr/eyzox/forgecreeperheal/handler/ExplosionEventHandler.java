@@ -88,6 +88,7 @@ public class ExplosionEventHandler implements IEventHandler{
 				block.remove(remover);
 			}
 		}
+		remover.update(3);
 		
 		
 		

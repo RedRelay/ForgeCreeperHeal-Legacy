@@ -75,7 +75,7 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	}
 	
 	@Override
-	public void remove(WorldRemover remover) {
+	public void remove(final WorldRemover remover) {
 		remover.remove(pos);
 	}
 
