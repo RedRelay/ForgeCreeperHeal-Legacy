@@ -25,12 +25,11 @@ public class PistonBlockDataBuilder extends MultiBlockDataBuilder {
 
 	@Override
 	public BlockData create(World w, BlockPos pos, IBlockState state) {
-		final NBTTagCompound tileEntity = BlockDataBuilderUtils.getTileEntityNBT(w, pos, state);
 		if(BlockPistonBase.class.isAssignableFrom(state.getBlock().getClass())) {
 			if( ((Boolean)state.getValue(BlockPistonBase.EXTENDED)).booleanValue() ) {
 				return super.create(w, pos, state);
 			}
-			return new BlockData(pos, state, tileEntity);
+			return new BlockData(pos, state);
 		}
 		return null;
 	}

@@ -15,7 +15,9 @@ import fr.eyzox.forgecreeperheal.serial.ISerialWrapper;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapperProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -36,13 +38,8 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	private NBTTagCompound tileEntity;
 	
 	public BlockData(final BlockPos pos, final IBlockState state) {
-		this(pos, state, null); 
-	}
-	
-	public BlockData(final BlockPos pos, final IBlockState state, final NBTTagCompound tileEntity) {
 		this.pos = pos;
 		this.state = state;
-		this.tileEntity = tileEntity;
 	}
 	
 	public BlockData(final NBTTagCompound tag) {
@@ -55,6 +52,13 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	
 	public final IBlockState getState() {
 		return state;
+	}
+	
+	public void processTileEntity(TileEntity tileEntity) {
+		if(ForgeCreeperHeal.getConfig().isDropItems() && tileEntity instanceof IInventory) {
+			HealerUtils.dropInventory(tileEntity.getWorld(), tileEntity.getPos(), (IInventory) tileEntity);
+		}
+		this.tileEntity = tileEntity.serializeNBT();
 	}
 	
 	public final NBTTagCompound getTileEntity() {
@@ -71,7 +75,7 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	
 	@Override
 	public void heal(World world, int flags) {
-		HealerUtils.healBlock(world, pos, state, null, flags);
+		HealerUtils.healBlock(world, pos, state, tileEntity, flags);
 	}
 	
 	@Override
