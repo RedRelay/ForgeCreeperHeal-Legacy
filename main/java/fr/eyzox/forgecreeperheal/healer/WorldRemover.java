@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.reflection.WorldTransform;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,8 +26,19 @@ public class WorldRemover {
 	}
 	
 	public void remove(final BlockPos pos) {
-		this.oldStates.put(pos, world.getBlockState(pos));
+		
+		IBlockState oldState = world.getBlockState(pos);
+		
+		if(oldState.getBlock().hasTileEntity(oldState)) {
+			TileEntity te = world.getTileEntity(pos);
+			if(te != null) {
+				this.onTileEntityRemoved(te);
+			}
+		}
+		
+		this.oldStates.put(pos, oldState);
 		this.worldTransform.removeSilentBlockState(pos, 0);
+		world.removeTileEntity(pos);
 	}
 	
 	public void update(final int flags) {
@@ -33,4 +48,10 @@ public class WorldRemover {
 		oldStates.clear();
 	}
 
+	private void onTileEntityRemoved(TileEntity tileEntity) {
+		if(ForgeCreeperHeal.getConfig().isDropItems() && tileEntity instanceof IInventory) {
+			InventoryHelper.dropInventoryItems(tileEntity.getWorld(), tileEntity.getPos(), (IInventory) tileEntity);
+		}
+	}
+	
 }

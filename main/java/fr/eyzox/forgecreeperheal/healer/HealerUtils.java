@@ -7,6 +7,7 @@ import fr.eyzox.forgecreeperheal.reflection.Reflect;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -22,9 +23,9 @@ public class HealerUtils {
 	
 	public static void dropInventory(World world, BlockPos cp, IInventory inventory) {
 		
-		//InventoryHelper.dropInventoryItems(world, cp, inventory);
-		//inventory.clear();
-		
+		InventoryHelper.dropInventoryItems(world, cp, inventory);
+		inventory.clear();
+		/*
 		for (int inventoryIndex = 0; inventoryIndex < inventory.getSizeInventory(); ++inventoryIndex)
 		{
 			ItemStack itemstack = inventory.getStackInSlot(inventoryIndex);
@@ -64,6 +65,7 @@ public class HealerUtils {
 			}
 			
 		}
+		*/
 		
 	}
 	
