@@ -74,7 +74,7 @@ public class ExplosionEventHandler implements IEventHandler{
 			if(data.getState().getBlock().hasTileEntity(data.getState())) {
 				TileEntity te = world.getTileEntity(data.getPos());
 				if(te != null) {
-					data.processTileEntity(te);
+					data.setTileEntity(te);
 				}
 			}
 		}
