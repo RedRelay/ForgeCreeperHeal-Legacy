@@ -21,6 +21,10 @@ public class HealerUtils {
 	private static final Field extendedBlockStorageField = Reflect.getFieldForClass(Chunk.class, "storageArrays", "field_76652_q");
 	
 	public static void dropInventory(World world, BlockPos cp, IInventory inventory) {
+		
+		//InventoryHelper.dropInventoryItems(world, cp, inventory);
+		//inventory.clear();
+		
 		for (int inventoryIndex = 0; inventoryIndex < inventory.getSizeInventory(); ++inventoryIndex)
 		{
 			ItemStack itemstack = inventory.getStackInSlot(inventoryIndex);
@@ -58,7 +62,9 @@ public class HealerUtils {
 				//ADDED TO REMOVE ITEMSTACK FROM INVENTORY
 				inventory.setInventorySlotContents(inventoryIndex, null);
 			}
+			
 		}
+		
 	}
 	
 	public static EntityItem getEntityItem(World world, BlockPos cp, ItemStack itemStack, float deltaX, float deltaY, float deltaZ, float motion) {

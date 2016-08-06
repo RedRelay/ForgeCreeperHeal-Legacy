@@ -9,7 +9,8 @@ import fr.eyzox.forgecreeperheal.builder.AbstractFactoryBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class MultiBlockDataBuilder extends AbstractFactoryBuilder implements IBlockDataBuilder {
@@ -30,11 +31,18 @@ public class MultiBlockDataBuilder extends AbstractFactoryBuilder implements IBl
 
 		for(final BlockPos otherPos : otherPosArray) {
 			final IBlockState otherState = w.getBlockState(otherPos);
-			BlockData other = new BlockData(otherPos, otherState, BlockDataBuilderUtils.getTileEntityNBT(w, otherPos, otherState));
+			BlockData other = new BlockData(otherPos, otherState);
+			//TODO Rework MultiBlockData : make it recursive
+			if(otherState.getBlock().hasTileEntity(otherState)) {
+				TileEntity te = w.getTileEntity(otherPos);
+				if(te != null) {
+					other.processTileEntity(te);
+				}
+			}
 			otherList.add(other);
 		}
 
-		return new MultiBlockData(pos, state, BlockDataBuilderUtils.getTileEntityNBT(w, pos, state), otherList);
+		return new MultiBlockData(pos, state, otherList);
 
 	}
 	
