@@ -22,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<BlockPos>, ISerialWrapperProvider<BlockData>, IChunked, IHealable, IRemovable, INBTSerializable<NBTTagCompound>{
 
@@ -54,11 +55,14 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 		return state;
 	}
 	
-	public void processTileEntity(TileEntity tileEntity) {
+	public void setTileEntity(TileEntity tileEntity) {
+		NBTTagCompound tag = tileEntity.serializeNBT();
 		if(ForgeCreeperHeal.getConfig().isDropItems() && tileEntity instanceof IInventory) {
-			HealerUtils.dropInventory(tileEntity.getWorld(), tileEntity.getPos(), (IInventory) tileEntity);
+			TileEntity clone = TileEntity.createTileEntity(FMLServerHandler.instance().getServer(), tag);
+			((IInventory)clone).clear();
+			tag = clone.serializeNBT();
 		}
-		this.tileEntity = tileEntity.serializeNBT();
+		this.tileEntity = tag;
 	}
 	
 	public final NBTTagCompound getTileEntity() {
