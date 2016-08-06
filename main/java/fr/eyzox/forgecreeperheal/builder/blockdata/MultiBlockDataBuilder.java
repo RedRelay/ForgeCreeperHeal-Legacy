@@ -36,7 +36,7 @@ public class MultiBlockDataBuilder extends AbstractFactoryBuilder implements IBl
 			if(otherState.getBlock().hasTileEntity(otherState)) {
 				TileEntity te = w.getTileEntity(otherPos);
 				if(te != null) {
-					other.processTileEntity(te);
+					other.setTileEntity(te);
 				}
 			}
 			otherList.add(other);
