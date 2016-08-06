@@ -30,11 +30,7 @@ public class MultiBlockData extends BlockData {
 	private Set<BlockPos> allBlockPos;
 	
 	public MultiBlockData(final BlockPos pos, final IBlockState state, final Collection<? extends BlockData> others) {
-		this(pos, state, null, others);
-	}
-	
-	public MultiBlockData(final BlockPos pos, final IBlockState state, final NBTTagCompound tileEntity, final Collection<? extends BlockData> others) {
-		super(pos, state, tileEntity);
+		super(pos, state);
 		
 		this.allBlockPos = new HashSet<BlockPos>(1+others.size());
 		this.allBlockPos.add(this.getPos());

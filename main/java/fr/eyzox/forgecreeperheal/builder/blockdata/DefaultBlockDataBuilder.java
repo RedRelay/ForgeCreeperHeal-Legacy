@@ -14,7 +14,7 @@ public class DefaultBlockDataBuilder implements IBlockDataBuilder {
 	@Override
 	public BlockData create(World world, BlockPos pos, IBlockState state) {
 		if(state.getBlock().isAir(state, world, pos)) return null;
-		return new BlockData(pos, state, BlockDataBuilderUtils.getTileEntityNBT(world, pos, state));
+		return new BlockData(pos, state);
 	}
 
 	@Override

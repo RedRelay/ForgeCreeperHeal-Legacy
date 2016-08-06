@@ -22,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.Explosion;
@@ -65,6 +66,16 @@ public class ExplosionEventHandler implements IEventHandler{
 		for(final BlockData data : affectedBlockData) {
 			if(!ForgeCreeperHeal.getConfig().getHealException().contains(data.getState().getBlock().getRegistryName().toString())) {
 				toHeal.add(data);
+			}
+		}
+		
+		//Process TileEntity
+		for(final BlockData data : toHeal) {
+			if(data.getState().getBlock().hasTileEntity(data.getState())) {
+				TileEntity te = world.getTileEntity(data.getPos());
+				if(te != null) {
+					data.processTileEntity(te);
+				}
 			}
 		}
 		
