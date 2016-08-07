@@ -29,10 +29,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * Planned feature :
  * - GUI to configure options
  * - Better config for Entity Filter : idea : use EntityRegistry to get <ModContainer.getModId()>:<EntityRegistration.entityName>
- * - Create a class using LongHashMap from minecraft optimisation classes
  * 
  * Known Bugs/Issues :
- * - Banner don't keep original color, they become black when healed
+ * - See https://github.com/RedRelay/ForgeCreeperHeal/issues
  */
 
 @Mod(
