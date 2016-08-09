@@ -15,7 +15,7 @@ public final class SingleDataKeyProvider<K> extends DataKeyProvider<K> {
 	}
 	
 	@Override
-	protected void buildIndex(final Map<K, DependencyGraph<K, ? extends IData<K>>.Node> index, final DependencyGraph<K, ? extends IData<K>>.Node theNode) throws DuplicateKeyException{
+	protected <D extends IData<K>> void buildIndex(final Map<K, DependencyGraph<K, D>.Node> index, final DependencyGraph<K, D>.Node theNode) throws DuplicateKeyException{
 		final DependencyGraph<K, ? extends IData<K>>.Node oldValue = index.put(key, theNode);
 		if(oldValue != null) {
 			throw new DuplicateKeyException(index, oldValue, theNode);
@@ -24,7 +24,7 @@ public final class SingleDataKeyProvider<K> extends DataKeyProvider<K> {
 	}
 
 	@Override
-	protected void removeFromIndex(Map<K, DependencyGraph<K, ? extends IData<K>>.Node> index, DependencyGraph<K, ? extends IData<K>>.Node theNode) {
+	protected <D extends IData<K>> void removeFromIndex(Map<K, DependencyGraph<K, D>.Node> index, DependencyGraph<K, D>.Node theNode) {
 		index.remove(key);
 	}
 
