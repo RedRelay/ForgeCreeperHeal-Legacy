@@ -18,7 +18,7 @@ public final class MultipleDataKeyProvider<K> extends DataKeyProvider<K> {
 	}
 	
 	@Override
-	protected void buildIndex(Map<K, DependencyGraph<K, ? extends IData<K>>.Node> index, DependencyGraph<K, ? extends IData<K>>.Node theNode) throws DuplicateKeyException {
+	protected <D extends IData<K>> void buildIndex(Map<K, DependencyGraph<K, D>.Node> index, DependencyGraph<K, D>.Node theNode) throws DuplicateKeyException {
 		for(final K key : keys) {
 			final Node oldValue = index.put(key, theNode);
 			if(oldValue != null) {
@@ -28,7 +28,7 @@ public final class MultipleDataKeyProvider<K> extends DataKeyProvider<K> {
 	}
 
 	@Override
-	protected void removeFromIndex(Map<K, DependencyGraph<K, ? extends IData<K>>.Node> index, DependencyGraph<K, ? extends IData<K>>.Node theNode) {
+	protected <D extends IData<K>> void removeFromIndex(Map<K, DependencyGraph<K, D>.Node> index, DependencyGraph<K, D>.Node theNode) {
 		for(K key : keys) {
 			index.remove(key);
 		}
