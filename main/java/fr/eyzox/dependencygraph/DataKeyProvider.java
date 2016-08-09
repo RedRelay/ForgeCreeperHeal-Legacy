@@ -11,7 +11,7 @@ public abstract class DataKeyProvider<K> {
 	DataKeyProvider() {
 	}
 	
-	protected abstract void buildIndex(final Map<K, DependencyGraph<K, ? extends IData<K>>.Node> index, final DependencyGraph<K, ? extends IData<K>>.Node theNode) throws DuplicateKeyException;
-	protected abstract void removeFromIndex(final Map<K, DependencyGraph<K, ? extends IData<K>>.Node> index, final DependencyGraph<K, ? extends IData<K>>.Node theNode);
+	protected abstract <D extends IData<K>> void buildIndex(final Map<K, DependencyGraph<K, D>.Node> index, final DependencyGraph<K, D>.Node theNode) throws DuplicateKeyException;
+	protected abstract <D extends IData<K>> void removeFromIndex(final Map<K, DependencyGraph<K, D>.Node> index, final DependencyGraph<K, D>.Node theNode);
 	protected abstract void removeKeyFrom(final Collection<? extends K> c);
 }
