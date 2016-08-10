@@ -138,6 +138,7 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 		return tag;
 	}
 	
+	@SuppressWarnings("deprecation") // "Mojang appears to be using @Deprecated as a mark of vanilla MC methods that should be used by internals and subclasses of Block" (Mojang bad practices ... deal with it)
 	private IBlockState iBlockStateFromNBT(final NBTTagCompound tag) {
 		final Block block = Block.getBlockFromName((tag.getString(TAG_IBLOCKSTATE_BLOCK)));
 		final IBlockState state = block.getStateFromMeta(tag.getInteger(TAG_IBLOCKSTATE_METADATA));
