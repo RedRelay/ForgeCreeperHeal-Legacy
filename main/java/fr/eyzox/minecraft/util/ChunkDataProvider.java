@@ -8,23 +8,24 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 
-//TODO : Maybe @Deprecated in 1.9.4 because Long2ObjectMap seems to do the stuff
+
 public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkPos, E>{
 	private static final String NULL_KEY = "Null key is not allowed";
 	private static final String CLASS_KEYS = "Key should be a "+ChunkPos.class.getCanonicalName();
 	
-	private Long2ObjectMap<E> map = new Long2ObjectOpenHashMap<E>();
+	private Long2ObjectOpenHashMap<E> map = new Long2ObjectOpenHashMap<E>();
 
 	@Override
 	public void clear() {
 		super.clear();
 		map.clear();
+		map.trim();
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final ChunkDataProvider<E> clone = (ChunkDataProvider<E>) super.clone();
-		final Long2ObjectMap<E> map = new Long2ObjectOpenHashMap<E>();
+		final Long2ObjectOpenHashMap<E> map = new Long2ObjectOpenHashMap<E>();
 		for(final Map.Entry<ChunkPos, E> entry : this.entrySet()) {
 			map.put(this.getMapKey(entry.getKey()), entry.getValue());
 		}
@@ -102,7 +103,9 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkPos, E>{
 		return this.get(this.getMapKey(chunk));
 	}
 	
-	
+	public Long2ObjectMap<E> getLong2ObjectMap() {
+		return map;
+	}
 	
 	private long getMapKey(final ChunkPos chunk) {
 		return ChunkPos.chunkXZ2Int(chunk.chunkXPos, chunk.chunkZPos);

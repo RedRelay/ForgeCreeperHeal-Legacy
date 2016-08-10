@@ -4,6 +4,7 @@ import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.healer.Healer;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -29,7 +30,7 @@ public class ChunkEventHandler implements IEventHandler{
 				
 				healer.setLoaded(true);
 				
-				ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld()).getLoadedHealers().put(event.getChunk(), healer);
+				ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld()).getLoadedHealers().put(ChunkPos.chunkXZ2Int(event.getChunk().xPosition, event.getChunk().zPosition), healer);
 			}
 		}
 	}
@@ -41,7 +42,7 @@ public class ChunkEventHandler implements IEventHandler{
 
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
 		
-		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
+		final Healer healer = manager.getLoadedHealers().get(ChunkPos.chunkXZ2Int(event.getChunk().xPosition, event.getChunk().zPosition));
 		
 		if(healer != null) {
 			
@@ -53,7 +54,7 @@ public class ChunkEventHandler implements IEventHandler{
 			
 			//If chunk is unloaded, unhandle its healer
 			if(!healer.isLoaded()) {
-				manager.getLoadedHealers().remove(event.getChunk());
+				manager.getLoadedHealers().remove(ChunkPos.chunkXZ2Int(event.getChunk().xPosition, event.getChunk().zPosition));
 			}
 		}
 	}
@@ -63,7 +64,7 @@ public class ChunkEventHandler implements IEventHandler{
 		if(event.getWorld().isRemote) return;
 		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer)event.getWorld());
 		
-		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
+		final Healer healer = manager.getLoadedHealers().get(ChunkPos.chunkXZ2Int(event.getChunk().xPosition, event.getChunk().zPosition));
 		if(healer != null) {
 			healer.setLoaded(false);
 		}

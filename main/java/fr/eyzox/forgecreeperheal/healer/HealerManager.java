@@ -1,12 +1,11 @@
 package fr.eyzox.forgecreeperheal.healer;
 
 import java.util.Collection;
-import java.util.Map.Entry;
 
 import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
-import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -14,7 +13,7 @@ import net.minecraft.world.chunk.Chunk;
 public class HealerManager {
 	
 	private final WorldServer world;
-	private final ChunkDataProvider<Healer> loadedHealers = new ChunkDataProvider<Healer>();
+	private final Long2ObjectOpenHashMap<Healer> loadedHealers = new Long2ObjectOpenHashMap<Healer>();
 	private final WorldHealerData worldHealerData;
 	private final WorldHealer worldHealer;
 	
@@ -35,7 +34,7 @@ public class HealerManager {
 		
 		healer.setLoaded(true);
 		
-		this.loadedHealers.put(chunkKey, healer);
+		this.loadedHealers.put(ChunkPos.chunkXZ2Int(chunkKey.chunkXPos, chunkKey.chunkZPos), healer);
 		chunk.setChunkModified();
 		this.worldHealerData.handleChunk(chunkKey);
 	}
@@ -46,7 +45,7 @@ public class HealerManager {
 	 */
 	public void unhook(final ChunkPos chunkKey) {
 		final Chunk chunk = world.getChunkFromChunkCoords(chunkKey.chunkXPos, chunkKey.chunkZPos);
-		this.loadedHealers.remove(chunkKey);
+		this.loadedHealers.remove(ChunkPos.chunkXZ2Int(chunk.xPosition, chunk.zPosition));
 		chunk.setChunkModified();
 		this.worldHealerData.unhandleChunk(chunkKey);
 	}
@@ -56,8 +55,9 @@ public class HealerManager {
 	 * @param chunk
 	 * @return
 	 */
-	public Healer load(final ChunkPos chunk) {
-		return loadedHealers.get(world.getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos));
+	public Healer load(final ChunkPos chunkKey) {
+		final Chunk chunk = world.getChunkFromChunkCoords(chunkKey.chunkXPos, chunkKey.chunkZPos);
+		return loadedHealers.get(ChunkPos.chunkXZ2Int(chunk.xPosition, chunk.zPosition));
 	}
 	
 	/**
@@ -80,9 +80,7 @@ public class HealerManager {
 		}
 		
 		synchronized(worldHealer) {
-			for(final Entry<ChunkPos, Healer> entry : this.loadedHealers.entrySet()) {
-				
-				final Healer healer = entry.getValue();
+			for(final Healer healer : loadedHealers.values()) {
 				
 				final Collection<BlockData> healables = healer.getTimeline().tick();
 				if(healables != null) {
@@ -91,7 +89,7 @@ public class HealerManager {
 					}
 	
 					if(healer.getTimeline().isEmpty()) {
-						this.unhook(entry.getKey());
+						this.unhook(healer.getChunk().getChunkCoordIntPair());
 					}
 				}
 				
@@ -108,24 +106,25 @@ public class HealerManager {
 	 */
 	private void healLoaded() {
 		synchronized (worldHealer) {
-			for(final Entry<ChunkPos, Healer> entry : loadedHealers.entrySet()) {
-				for(final Node<Collection<BlockData>> node : entry.getValue().getTimeline().getTimeline()) {
+			for(final Healer healer : loadedHealers.values()) {
+				for(final Node<Collection<BlockData>> node : healer.getTimeline().getTimeline()) {
 					for(BlockData data : node.getData()) {
 						data.heal(worldHealer);
 					}
 				}
-				this.worldHealerData.unhandleChunk(entry.getKey());
+				this.worldHealerData.unhandleChunk(healer.getChunk().getChunkCoordIntPair());
 			}
 			worldHealer.update(3);
 		}
 		this.loadedHealers.clear();
+		this.loadedHealers.trim();
 	}
 	
 	public WorldServer getWorld() {
 		return world;
 	}
 	
-	public ChunkDataProvider<Healer> getLoadedHealers() {
+	public Long2ObjectOpenHashMap<Healer> getLoadedHealers() {
 		return loadedHealers;
 	}
 
