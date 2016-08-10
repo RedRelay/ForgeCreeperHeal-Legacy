@@ -43,7 +43,7 @@ public class WorldRemover {
 	
 	public void update(final int flags) {
 		for(final Entry<BlockPos, IBlockState> entry : oldStates.entrySet()) {
-			this.world.markAndNotifyBlock(entry.getKey(), world.getChunkFromBlockCoords(entry.getKey()), entry.getValue(), Blocks.air.getDefaultState(), flags);
+			this.world.markAndNotifyBlock(entry.getKey(), world.getChunkFromBlockCoords(entry.getKey()), entry.getValue(), Blocks.AIR.getDefaultState(), flags);
 		}
 		oldStates.clear();
 	}

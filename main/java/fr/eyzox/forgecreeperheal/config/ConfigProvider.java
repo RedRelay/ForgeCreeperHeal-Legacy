@@ -185,10 +185,10 @@ public class ConfigProvider implements IConfigProvider{
 		dropItemsFromContainers.setValue("false");
 
 		final List<String> removeExceptionValues = new ArrayList<String>(1);
-		removeExceptionValues.add(Blocks.tnt.getRegistryName().toString());
+		removeExceptionValues.add(Blocks.TNT.getRegistryName().toString());
 		removeException.setValues(removeExceptionValues);
 		final List<String> healExceptionValues = new ArrayList<String>(1);
-		healExceptionValues.add(Blocks.tnt.getRegistryName().toString());
+		healExceptionValues.add(Blocks.TNT.getRegistryName().toString());
 		healException.setValues(healExceptionValues);
 		final List<String> fromEntityExceptionValues = new ArrayList<String>();
 		fromEntityException.setValues(fromEntityExceptionValues);

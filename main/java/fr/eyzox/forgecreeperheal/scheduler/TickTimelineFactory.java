@@ -14,7 +14,7 @@ import fr.eyzox.forgecreeperheal.scheduler.tick.ITickProvider;
 import fr.eyzox.forgecreeperheal.scheduler.tick.TickProvider;
 import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 
 public class TickTimelineFactory {
@@ -28,12 +28,12 @@ public class TickTimelineFactory {
 	 * @param world - The world the healer must be created
 	 * @param healables - The block to be heal (no specified order)
 	 */
-	public <T extends IHealable & IChunked & IData<?>> Map<ChunkCoordIntPair, Collection<Node<T>>> create(final WorldServer world, final IScheduler<T> scheduler) {
+	public <T extends IHealable & IChunked & IData<?>> Map<ChunkPos, Collection<Node<T>>> create(final WorldServer world, final IScheduler<T> scheduler) {
 		
 		final ChunkDataProvider<DispatchedTimeline<T>> dispatchedTimelines = this.scheduleHealables(scheduler);
 		
-		final Map<ChunkCoordIntPair, Collection<Node<T>>> result = new HashMap<ChunkCoordIntPair, Collection<Node<T>>>(dispatchedTimelines.size());
-		for(final Entry<ChunkCoordIntPair, DispatchedTimeline<T>> entry : dispatchedTimelines.entrySet()) {
+		final Map<ChunkPos, Collection<Node<T>>> result = new HashMap<ChunkPos, Collection<Node<T>>>(dispatchedTimelines.size());
+		for(final Entry<ChunkPos, DispatchedTimeline<T>> entry : dispatchedTimelines.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().timeline);
 		}
 		
@@ -53,10 +53,10 @@ public class TickTimelineFactory {
 			final int chunkZ = healable.getChunkZ();
 			
 			//Retrieve or create DispatchedTimeline for a chunk
-			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+			DispatchedTimeline dispatchedTimeline = dispatchedTimelines.get(ChunkPos.chunkXZ2Int(chunkX, chunkZ));
 			if(dispatchedTimeline == null) {
 				dispatchedTimeline = new DispatchedTimeline();
-				dispatchedTimelines.put(new ChunkCoordIntPair(chunkX, chunkZ), dispatchedTimeline);
+				dispatchedTimelines.put(new ChunkPos(chunkX, chunkZ), dispatchedTimeline);
 			}
 			
 			//Generate tick

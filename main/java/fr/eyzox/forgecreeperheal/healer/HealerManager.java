@@ -7,7 +7,7 @@ import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
@@ -31,7 +31,7 @@ public class HealerManager {
 	 */
 	public void hook(final Healer healer) {
 		final Chunk chunk = world.getChunkFromChunkCoords(healer.getChunk().xPosition, healer.getChunk().zPosition);
-		final ChunkCoordIntPair chunkKey = chunk.getChunkCoordIntPair();
+		final ChunkPos chunkKey = chunk.getChunkCoordIntPair();
 		
 		healer.setLoaded(true);
 		
@@ -44,7 +44,7 @@ public class HealerManager {
 	 * Loads and removes the healer for a chunk
 	 * @param chunkKey
 	 */
-	public void unhook(final ChunkCoordIntPair chunkKey) {
+	public void unhook(final ChunkPos chunkKey) {
 		final Chunk chunk = world.getChunkFromChunkCoords(chunkKey.chunkXPos, chunkKey.chunkZPos);
 		this.loadedHealers.remove(chunkKey);
 		chunk.setChunkModified();
@@ -56,7 +56,7 @@ public class HealerManager {
 	 * @param chunk
 	 * @return
 	 */
-	public Healer load(final ChunkCoordIntPair chunk) {
+	public Healer load(final ChunkPos chunk) {
 		return loadedHealers.get(world.getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos));
 	}
 	
@@ -80,7 +80,7 @@ public class HealerManager {
 		}
 		
 		synchronized(worldHealer) {
-			for(final Entry<ChunkCoordIntPair, Healer> entry : this.loadedHealers.entrySet()) {
+			for(final Entry<ChunkPos, Healer> entry : this.loadedHealers.entrySet()) {
 				
 				final Healer healer = entry.getValue();
 				
@@ -108,7 +108,7 @@ public class HealerManager {
 	 */
 	private void healLoaded() {
 		synchronized (worldHealer) {
-			for(final Entry<ChunkCoordIntPair, Healer> entry : loadedHealers.entrySet()) {
+			for(final Entry<ChunkPos, Healer> entry : loadedHealers.entrySet()) {
 				for(final Node<Collection<BlockData>> node : entry.getValue().getTimeline().getTimeline()) {
 					for(BlockData data : node.getData()) {
 						data.heal(worldHealer);

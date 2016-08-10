@@ -3,39 +3,41 @@ package fr.eyzox.minecraft.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.util.LongHashMap;
-import net.minecraft.world.ChunkCoordIntPair;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 
-public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E>{
+//TODO : Maybe @Deprecated in 1.9.4 because Long2ObjectMap seems to do the stuff
+public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkPos, E>{
 	private static final String NULL_KEY = "Null key is not allowed";
-	private static final String CLASS_KEYS = "Key should be a "+ChunkCoordIntPair.class.getCanonicalName();
+	private static final String CLASS_KEYS = "Key should be a "+ChunkPos.class.getCanonicalName();
 	
-	private LongHashMap<E> map = new LongHashMap<E>();
+	private Long2ObjectMap<E> map = new Long2ObjectOpenHashMap<E>();
 
 	@Override
 	public void clear() {
 		super.clear();
-		map = new LongHashMap<E>();
+		map.clear();
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final ChunkDataProvider<E> clone = (ChunkDataProvider<E>) super.clone();
-		final LongHashMap<E> map = new LongHashMap<E>();
-		for(final Map.Entry<ChunkCoordIntPair, E> entry : this.entrySet()) {
-			map.add(this.getMapKey(entry.getKey()), entry.getValue());
+		final Long2ObjectMap<E> map = new Long2ObjectOpenHashMap<E>();
+		for(final Map.Entry<ChunkPos, E> entry : this.entrySet()) {
+			map.put(this.getMapKey(entry.getKey()), entry.getValue());
 		}
 		clone.map = map;
 		return clone;
 	}
 
 	@Override
-	public E put(ChunkCoordIntPair key, E value) {
+	public E put(ChunkPos key, E value) {
 		if(key == null) {
 			throw new NullPointerException(NULL_KEY);
 		}
-		map.add(this.getMapKey(key), value);
+		map.put(this.getMapKey(key), value);
 		return super.put(key, value);
 	}
 	
@@ -52,8 +54,8 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 			throw new NullPointerException(NULL_KEY);
 		}
 		
-		if(key instanceof ChunkCoordIntPair) {
-			return this.remove((ChunkCoordIntPair)key);
+		if(key instanceof ChunkPos) {
+			return this.remove((ChunkPos)key);
 		}
 		
 		if(key instanceof Chunk) {
@@ -64,11 +66,11 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 		
 	}
 	
-	public E remove(ChunkCoordIntPair chunk) {
+	public E remove(ChunkPos chunk) {
 		if(chunk == null) {
 			throw new NullPointerException(NULL_KEY);
 		}
-		map.remove(this.getMapKey((ChunkCoordIntPair)chunk));
+		map.remove(this.getMapKey((ChunkPos)chunk));
 		return super.remove(chunk);
 	}
 	
@@ -85,7 +87,7 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 	}
 	
 	public boolean containsKey(final long key) {
-		return map.containsItem(key);
+		return map.containsKey(key);
 	}
 	
 	public boolean containsKey(final Chunk chunk) {
@@ -93,7 +95,7 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 	}
 	
 	public E get(final long key) {
-		return map.getValueByKey(key);
+		return map.get(key);
 	}
 	
 	public E get(final Chunk chunk) {
@@ -102,11 +104,11 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 	
 	
 	
-	private long getMapKey(final ChunkCoordIntPair chunk) {
-		return ChunkCoordIntPair.chunkXZ2Int(chunk.chunkXPos, chunk.chunkZPos);
+	private long getMapKey(final ChunkPos chunk) {
+		return ChunkPos.chunkXZ2Int(chunk.chunkXPos, chunk.chunkZPos);
 	}
 	
 	private long getMapKey(final Chunk chunk) {
-		return ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition);
+		return ChunkPos.chunkXZ2Int(chunk.xPosition, chunk.zPosition);
 	}
 }
