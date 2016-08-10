@@ -4,7 +4,7 @@ import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.interfaces.IDependencyProvider;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.blockdata.BlockData;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 
 public class BlockDataDependencyProvider implements IDependencyProvider<BlockPos, BlockData> {
 

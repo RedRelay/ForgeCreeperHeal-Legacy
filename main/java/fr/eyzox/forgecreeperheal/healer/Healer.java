@@ -6,9 +6,8 @@ import fr.eyzox.forgecreeperheal.serial.TimelineSerializer;
 import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.INBTSerializable;
 
-public class Healer implements INBTSerializable<NBTTagCompound>{
+public class Healer {
 	
 	private final static String TAG_TIMELINE = "TIMELINE";
 	
@@ -48,7 +47,6 @@ public class Healer implements INBTSerializable<NBTTagCompound>{
 		return new StringBuilder().append("{[").append(chunk.xPosition).append(", ").append(chunk.zPosition).append("], ").append(timeline.toString()).append(']').toString();
 	}
 
-	@Override
 	public NBTTagCompound serializeNBT() {
 		
 		if(timeline == null) {
@@ -63,7 +61,6 @@ public class Healer implements INBTSerializable<NBTTagCompound>{
 		return tag;
 	}
 
-	@Override
 	public void deserializeNBT(NBTTagCompound tag) {
 		final TimelineSerializer timelineSerializer = TimelineSerializer.getInstance();
 		this.timeline = timelineSerializer.deserializeNBT(tag.getCompoundTag(TAG_TIMELINE));

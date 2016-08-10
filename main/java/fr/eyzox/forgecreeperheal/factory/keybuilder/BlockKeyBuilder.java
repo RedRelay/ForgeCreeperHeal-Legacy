@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.factory.keybuilder;
 
 import net.minecraft.block.Block;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class BlockKeyBuilder implements IKeyBuilder<Block> {
 
@@ -11,7 +12,7 @@ public class BlockKeyBuilder implements IKeyBuilder<Block> {
 	
 	@Override
 	public String convertToString(Block key) {
-		return key.getRegistryName().toString();
+		return GameData.getBlockRegistry().getNameForObject(key).toString();
 	}
 
 	@Override

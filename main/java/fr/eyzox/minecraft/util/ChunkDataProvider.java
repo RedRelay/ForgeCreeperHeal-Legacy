@@ -11,18 +11,18 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 	private static final String NULL_KEY = "Null key is not allowed";
 	private static final String CLASS_KEYS = "Key should be a "+ChunkCoordIntPair.class.getCanonicalName();
 	
-	private LongHashMap<E> map = new LongHashMap<E>();
+	private LongHashMap map = new LongHashMap();
 
 	@Override
 	public void clear() {
 		super.clear();
-		map = new LongHashMap<E>();
+		map = new LongHashMap();
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final ChunkDataProvider<E> clone = (ChunkDataProvider<E>) super.clone();
-		final LongHashMap<E> map = new LongHashMap<E>();
+		final LongHashMap map = new LongHashMap();
 		for(final Map.Entry<ChunkCoordIntPair, E> entry : this.entrySet()) {
 			map.add(this.getMapKey(entry.getKey()), entry.getValue());
 		}
@@ -93,7 +93,7 @@ public class ChunkDataProvider<E> extends ConcurrentHashMap<ChunkCoordIntPair, E
 	}
 	
 	public E get(final long key) {
-		return map.getValueByKey(key);
+		return (E) map.getValueByKey(key);
 	}
 	
 	public E get(final Chunk chunk) {

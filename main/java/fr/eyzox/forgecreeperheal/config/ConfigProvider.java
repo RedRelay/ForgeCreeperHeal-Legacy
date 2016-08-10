@@ -23,6 +23,7 @@ import fr.eyzox.bsc.exception.ConfigException;
 import fr.eyzox.bsc.exception.InvalidValueException;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import net.minecraft.init.Blocks;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class ConfigProvider implements IConfigProvider{
 
@@ -185,10 +186,10 @@ public class ConfigProvider implements IConfigProvider{
 		dropItemsFromContainers.setValue("false");
 
 		final List<String> removeExceptionValues = new ArrayList<String>(1);
-		removeExceptionValues.add(Blocks.tnt.getRegistryName().toString());
+		removeExceptionValues.add(GameData.getBlockRegistry().getNameForObject(Blocks.tnt).toString());
 		removeException.setValues(removeExceptionValues);
 		final List<String> healExceptionValues = new ArrayList<String>(1);
-		healExceptionValues.add(Blocks.tnt.getRegistryName().toString());
+		healExceptionValues.add(GameData.getBlockRegistry().getNameForObject(Blocks.tnt).toString());
 		healException.setValues(healExceptionValues);
 		final List<String> fromEntityExceptionValues = new ArrayList<String>();
 		fromEntityException.setValues(fromEntityExceptionValues);

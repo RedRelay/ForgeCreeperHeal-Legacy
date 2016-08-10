@@ -23,7 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
@@ -32,6 +32,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class ExplosionEventHandler implements IEventHandler{
 
@@ -64,7 +65,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		
 		final Collection<BlockData> toHeal = new ArrayList<BlockData>(affectedBlockData.size());
 		for(final BlockData data : affectedBlockData) {
-			if(!ForgeCreeperHeal.getConfig().getHealException().contains(data.getState().getBlock().getRegistryName().toString())) {
+			if(!ForgeCreeperHeal.getConfig().getHealException().contains(GameData.getBlockRegistry().getNameForObject(data.getState().getBlock()).toString())) {
 				toHeal.add(data);
 			}
 		}
@@ -82,11 +83,11 @@ public class ExplosionEventHandler implements IEventHandler{
 		final Map<ChunkCoordIntPair, Collection<Node<BlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, new CustomRandomScheduler<BlockPos, BlockData>(toHeal, BlockDataDependencyProvider.getInstance()));
 		
 		
-		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager(world);
 		for(final Entry<ChunkCoordIntPair, Collection<Node<BlockData>>> entry : addToTimeline.entrySet()) {
 			Healer healer = manager.load(entry.getKey());
 			if(healer == null) {
-				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
+				healer = new Healer(world.getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
 			}
 			healer.getTimeline().add(entry.getValue());
 			manager.hook(healer);
@@ -95,7 +96,7 @@ public class ExplosionEventHandler implements IEventHandler{
 		//Remove future healed block from world to destroy drop appearing after the explosion and avoid item duplication
 		final WorldRemover remover = new WorldRemover(world);
 		for(BlockData block : affectedBlockData) {
-			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(block.getState().getBlock().getRegistryName().toString())) {
+			if(!ForgeCreeperHeal.getConfig().getRemoveException().contains(GameData.getBlockRegistry().getNameForObject(block.getState().getBlock()).toString())) {
 				block.remove(remover);
 			}
 		}

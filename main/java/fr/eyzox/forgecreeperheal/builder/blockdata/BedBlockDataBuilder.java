@@ -4,7 +4,7 @@ import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.blockdata.multi.selector.BedMultiSelector;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class BedBlockDataBuilder extends MultiBlockDataBuilder {

@@ -18,11 +18,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.registry.GameData;
 
-public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<BlockPos>, ISerialWrapperProvider<BlockData>, IChunked, IHealable, IRemovable, INBTSerializable<NBTTagCompound>{
+public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<BlockPos>, ISerialWrapperProvider<BlockData>, IChunked, IHealable, IRemovable {
 
 	protected static final String TAG_POS = "pos";
 	protected static final String TAG_STATE = "state";
@@ -54,12 +54,14 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	}
 	
 	public void setTileEntity(TileEntity tileEntity) {
-		NBTTagCompound tag = tileEntity.serializeNBT();
+		NBTTagCompound tag = new NBTTagCompound();
+		tileEntity.writeToNBT(tag);
 		if(ForgeCreeperHeal.getConfig().isDropItems() && tileEntity instanceof IInventory) {
 			TileEntity clone = this.state.getBlock().createTileEntity(tileEntity.getWorld(), this.state);
 			clone.readFromNBT(tag);
 			((IInventory)clone).clear();
-			tag = clone.serializeNBT();
+			tag = new NBTTagCompound();
+			clone.writeToNBT(tag);
 		}
 		this.tileEntity = tag;
 	}
@@ -101,7 +103,6 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 		return pos.getZ() >> 4;
 	}
 	
-	@Override
 	public NBTTagCompound serializeNBT() {
 		final NBTTagCompound tag =  new NBTTagCompound();
 		tag.setLong(TAG_POS, this.pos.toLong());
@@ -114,7 +115,6 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 		return tag;
 	}
 
-	@Override
 	public void deserializeNBT(NBTTagCompound tag) {
 		this.pos = BlockPos.fromLong(tag.getLong(TAG_POS));
 		this.state = iBlockStateFromNBT(tag.getCompoundTag(TAG_STATE));
@@ -130,7 +130,7 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	
 	private NBTTagCompound iBlockStateToNBT(final IBlockState blockstate) {
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setString(TAG_IBLOCKSTATE_BLOCK, blockstate.getBlock().getRegistryName().toString());
+		tag.setString(TAG_IBLOCKSTATE_BLOCK, GameData.getBlockRegistry().getNameForObject(blockstate.getBlock()).toString());
 		final int metadata = blockstate.getBlock().getMetaFromState(blockstate);
 		if(metadata != 0) {
 			tag.setInteger(TAG_IBLOCKSTATE_METADATA, metadata);

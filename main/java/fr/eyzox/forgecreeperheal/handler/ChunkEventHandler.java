@@ -29,7 +29,7 @@ public class ChunkEventHandler implements IEventHandler{
 				
 				healer.setLoaded(true);
 				
-				ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld()).getLoadedHealers().put(event.getChunk(), healer);
+				ForgeCreeperHeal.getHealerManager((WorldServer) event.world).getLoadedHealers().put(event.getChunk(), healer);
 			}
 		}
 	}
@@ -39,7 +39,7 @@ public class ChunkEventHandler implements IEventHandler{
 	public void onChunkDataSave(final ChunkDataEvent.Save event) {
 		if(event.world.isRemote) return;
 
-		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.world);
 		
 		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
 		
@@ -60,8 +60,8 @@ public class ChunkEventHandler implements IEventHandler{
 	
 	@SubscribeEvent
 	public void onChunkUnload(ChunkEvent.Unload event) {
-		if(event.getWorld().isRemote) return;
-		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer)event.getWorld());
+		if(event.world.isRemote) return;
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer)event.world);
 		
 		final Healer healer = manager.getLoadedHealers().get(event.getChunk());
 		if(healer != null) {
