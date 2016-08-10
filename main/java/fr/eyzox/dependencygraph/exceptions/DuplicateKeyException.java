@@ -14,26 +14,32 @@ import fr.eyzox.dependencygraph.interfaces.IData;
  */
 public class DuplicateKeyException extends DependencyGraphException {
 
-	private final Map<?, DependencyGraph<?, ? extends IData<?>>.Node> index;
-	private final DependencyGraph<?, IData<?>>.Node oldValue, newValue;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1859970829143171467L;
+	private final Map<?, ?> index;
+	private final DependencyGraph<?, ?>.Node oldValue, newValue;
 	
-	public DuplicateKeyException(final Map index, final DependencyGraph.Node oldValue, final DependencyGraph.Node newValue) {
+	public <K, D extends IData<K>> DuplicateKeyException(final Map<K, DependencyGraph<K, D>.Node> index, final DependencyGraph<K, D>.Node oldValue, final DependencyGraph<K, D>.Node newValue) {
 		super("Some DependencyData have the same key");
 		this.index = index;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
 
-	public Map<?, DependencyGraph<?, ? extends IData<?>>.Node> getIndex() {
-		return index;
+	public <K, D extends IData<K>> Map<K, DependencyGraph<K, D>.Node> getIndex() {
+		return (Map<K, DependencyGraph<K, D>.Node>) index;
 	}
 
-	public DependencyGraph<?, IData<?>>.Node getOldValue() {
-		return oldValue;
+	@SuppressWarnings("unchecked")
+	public <K, D extends IData<K>> DependencyGraph<K, D>.Node getOldValue() {
+		return (DependencyGraph<K, D>.Node) oldValue;
 	}
 
-	public DependencyGraph<?, IData<?>>.Node getNewValue() {
-		return newValue;
+	@SuppressWarnings("unchecked")
+	public <K, D extends IData<K>> DependencyGraph<K, D>.Node getNewValue() {
+		return (DependencyGraph<K, D>.Node) newValue;
 	}
 	
 }
