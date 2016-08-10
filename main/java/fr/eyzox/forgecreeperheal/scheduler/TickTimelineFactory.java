@@ -66,10 +66,7 @@ public class TickTimelineFactory {
 			dispatchedTimeline.tickCounter += providedTick;
 			
 			//Create TickContainer
-			final Node<T> container = new Node<T>();
-			container.setTick(tick);
-			container.setData(healable);
-			
+			final Node<T> container = new Node<T>(tick, healable);
 			
 			dispatchedTimeline.timeline.add(container);
 		}

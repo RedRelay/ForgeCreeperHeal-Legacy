@@ -6,25 +6,21 @@ import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.builder.blockdata.IBlockDataBuilder;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
 import fr.eyzox.forgecreeperheal.factory.Factory;
-import fr.eyzox.forgecreeperheal.healer.HealerUtils;
 import fr.eyzox.forgecreeperheal.healer.IChunked;
 import fr.eyzox.forgecreeperheal.healer.IHealable;
 import fr.eyzox.forgecreeperheal.healer.IRemovable;
+import fr.eyzox.forgecreeperheal.healer.WorldHealer;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapper;
 import fr.eyzox.forgecreeperheal.serial.ISerialWrapperProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidRegistry;
 
 public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<BlockPos>, ISerialWrapperProvider<BlockData>, IChunked, IHealable, IRemovable, INBTSerializable<NBTTagCompound>{
 
@@ -81,48 +77,8 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 	}
 	
 	@Override
-	public void heal(World world, int flags) {
-		final IBlockState currentBlockState = world.getBlockState(pos);
-		final boolean isAir = currentBlockState.getBlock().isAir(currentBlockState, world, pos);
-
-		//If current block = air or overriding
-		if(ForgeCreeperHeal.getConfig().isOverrideBlock() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlockState.getBlock()) != null)) {
-			
-			//IF overriding a block : Drop current block & if this block's TileEntity is an IInventory, drop all Items contained
-			if(ForgeCreeperHeal.getConfig().isDropIfCollision() && !isAir) {
-				HealerUtils.spawnItemStack(world, pos, new ItemStack(currentBlockState.getBlock()));
-				TileEntity te = world.getTileEntity(pos);
-				if(te instanceof IInventory) {
-					InventoryHelper.dropInventoryItems(world, pos, (IInventory) te);
-				}
-			}
-
-			//Restore Block, then its TileEntity
-			world.setBlockState(pos, state, flags);
-			if(tileEntity != null) {
-				TileEntity te = world.getTileEntity(pos);
-				if(te != null) {
-					te.readFromNBT(tileEntity);
-					world.setTileEntity(pos, te);
-				}else {
-					ForgeCreeperHeal.getLogger().warn(String.format("Unable to restore a TileEntity \"%s\" because restored blockstate \"%s\", doesn't have TileEntity", tileEntity, state));
-				}
-			}
-
-		}
-		// (( If current block != air and no overriding )) & drop if collision
-		else if(ForgeCreeperHeal.getConfig().isDropIfCollision()){
-			//Drop the block which should have been restored & if its TileEntity = IInventory, drop items contained
-			HealerUtils.spawnItemStack(world, pos, new ItemStack(state.getBlock()));
-			if(tileEntity != null) {
-				TileEntity te = state.getBlock().createTileEntity(world, state);
-				if(te instanceof IInventory) {
-					te.readFromNBT(tileEntity);
-					InventoryHelper.dropInventoryItems(world, pos, (IInventory) te);
-				}
-			}
-
-		}
+	public void heal(WorldHealer worldHealer) {
+		worldHealer.heal(pos, state, tileEntity);
 	}
 	
 	@Override

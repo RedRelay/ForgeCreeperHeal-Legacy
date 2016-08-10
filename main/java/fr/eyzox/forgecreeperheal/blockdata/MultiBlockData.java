@@ -12,6 +12,7 @@ import fr.eyzox.dependencygraph.MultipleDataKeyProvider;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
+import fr.eyzox.forgecreeperheal.healer.WorldHealer;
 import fr.eyzox.forgecreeperheal.healer.WorldRemover;
 import fr.eyzox.forgecreeperheal.serial.SerialUtils;
 import net.minecraft.block.state.IBlockState;
@@ -67,26 +68,12 @@ public class MultiBlockData extends BlockData {
 	}
 	
 	@Override
-	public void heal(World world, int flags) {
-		//Building old blockstate index
-		final Map<BlockPos, IBlockState> oldStateMap = buildOldStateMap(world);
-		
-		//Silent Heal
-		super.heal(world, 0);
+	public void heal(WorldHealer worldHealer) {
+		super.heal(worldHealer);
 		for(BlockData other : others) {
-			other.heal(world, 0);
+			other.heal(worldHealer);
 		}
 		
-		//Update
-		updateWorld(world, this, oldStateMap.get(this.getPos()), flags);
-		for(final BlockData other : others) {
-			updateWorld(world, other, oldStateMap.get(other.getPos()), flags);
-		}
-
-	}
-	
-	private void updateWorld(final World w, final BlockData data, final IBlockState oldState, int flags) {
-		w.markAndNotifyBlock(data.getPos(), w.getChunkFromBlockCoords(data.getPos()), oldState, data.getState(), flags);
 	}
 
 	@Override

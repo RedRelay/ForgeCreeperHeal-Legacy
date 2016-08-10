@@ -47,16 +47,14 @@ public class TickTimeline<DATA> {
 		int tick = toAdd.getTick() < 1 ? 0 : toAdd.getTick();
 		final DATA data = toAdd.getData();
 		
-		//Find the TickContainer to fill
+		//Find Node
 		Node<Collection<DATA>> container = null;
 		
 		if(tick == 0 && timelineIterator.hasPrevious()) {
 			container = timelineIterator.previous();
-		}else if(tick == 0 || !timelineIterator.hasNext()) {
-			container = new Node<Collection<DATA>>();
-			timelineIterator.add(container);
-			//timelineIterator.next();
+			timelineIterator.next();
 		}else {
+			
 			while(container == null && timelineIterator.hasNext()){
 				Node<Collection<DATA>> current = timelineIterator.next();
 				
@@ -67,7 +65,7 @@ public class TickTimeline<DATA> {
 				}else if(diff == 0) {
 					container = current;
 				}else {
-					container = new Node<Collection<DATA>>();
+					container = new Node<Collection<DATA>>(tick, new LinkedList<DATA>());
 					timelineIterator.set(container);
 					current.setTick(current.getTick()-tick);
 					timelineIterator.add(current);
@@ -75,16 +73,13 @@ public class TickTimeline<DATA> {
 			}
 			
 			if(container == null) {
-				container = new Node<Collection<DATA>>();
+				container = new Node<Collection<DATA>>(tick, new LinkedList<DATA>());
 				timelineIterator.add(container);
 				//timelineIterator.next();
 			}
+			
 		}
 		
-		container.setTick(tick);
-		if(container.getData() == null) {
-			container.setData(new LinkedList<DATA>());
-		}
 		container.getData().add(data);
 	}
 	

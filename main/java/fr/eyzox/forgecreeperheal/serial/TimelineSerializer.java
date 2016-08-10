@@ -2,7 +2,6 @@ package fr.eyzox.forgecreeperheal.serial;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
@@ -66,21 +65,17 @@ public class TimelineSerializer {
 	}
 	
 	private <T extends ISerialWrapperProvider<T>> Node<Collection<T>> unserializeNode(final NBTTagCompound tag) {
-		final Node<Collection<T>> node = new Node<Collection<T>>();
-		node.setTick(tag.getInteger(TAG_NODE_TICK));
+		final Node<Collection<T>> node = new Node<Collection<T>>(tag.getInteger(TAG_NODE_TICK), new LinkedList<T>());
 		
-		final List<T> dataList = new LinkedList<T>();
 		final NBTTagList contentListTag = tag.getTagList(TAG_NODE_CONTENTS, NBT.TAG_COMPOUND);
 		for(int i = 0; i<contentListTag.tagCount(); i++) {
 			try {
 				final T data = SerialUtils.unserializeWrappedData(contentListTag.getCompoundTagAt(i));
-				dataList.add(data);
+				node.getData().add(data);
 			} catch (ForgeCreeperHealerSerialException e) {
 				ForgeCreeperHeal.getLogger().error("Error while unserialize data : "+e.getMessage());
 			}
 		}
-		
-		node.setData(dataList);
 		
 		return node;
 	}
