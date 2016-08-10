@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import fr.eyzox.dependencygraph.DependencyGraph.Node;
 import fr.eyzox.dependencygraph.exceptions.DuplicateKeyException;
 import fr.eyzox.dependencygraph.interfaces.IData;
 
@@ -20,7 +19,7 @@ public final class MultipleDataKeyProvider<K> extends DataKeyProvider<K> {
 	@Override
 	protected <D extends IData<K>> void buildIndex(Map<K, DependencyGraph<K, D>.Node> index, DependencyGraph<K, D>.Node theNode) throws DuplicateKeyException {
 		for(final K key : keys) {
-			final Node oldValue = index.put(key, theNode);
+			final DependencyGraph<K, D>.Node oldValue = index.put(key, theNode);
 			if(oldValue != null) {
 				throw new DuplicateKeyException(index, oldValue, theNode);
 			}
