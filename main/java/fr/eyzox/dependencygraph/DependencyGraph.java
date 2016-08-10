@@ -31,7 +31,7 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 			node.keyProvider.buildIndex(index, node);
 		}
 		
-		for(Node node : nodes) {
+		for(DependencyGraph<KEY, DATA>.Node node : nodes) {
 			node.type = dependencyProvider.provideDependency(node.data);
 			node.type.build(this, node);
 		}
@@ -42,11 +42,11 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 	
 	public DATA poll(final int nextIndex) {
 
-		final Node node = availables.remove(nextIndex);
+		final DependencyGraph<KEY, DATA>.Node node = availables.remove(nextIndex);
 		
 		node.keyProvider.removeFromIndex(index, node);
 		
-		for(final Node next : node.requiredBySet) {
+		for(final DependencyGraph<KEY, DATA>.Node next : node.requiredBySet) {
 			next.type.onElementPolled(this, node, next);
 		}
 		
@@ -57,11 +57,11 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 		return !availables.isEmpty();
 	}
 	
-	public List<Node> getAvailables() {
+	public List<DependencyGraph<KEY, DATA>.Node> getAvailables() {
 		return unmodifiableAvailable;
 	}
 	
-	protected void buildEdge(final Node node, final KEY dependency) {
+	protected void buildEdge(final DependencyGraph<KEY, DATA>.Node node, final KEY dependency) {
 		final Node requiredNode = index.get(dependency);
 		if(requiredNode == null) {
 			throw new RuntimeException("Unable to build edge : the dependency "+dependency+" is not indexed");
@@ -72,7 +72,7 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 	public class Node {
 		private final DATA data;
 		private final DataKeyProvider<KEY> keyProvider;
-		private DependencyType type;
+		private DependencyType<KEY,DATA> type;
 		private Set<Node> requiredBySet = new HashSet<Node>();
 
 		protected Node(final DATA data) {
@@ -92,7 +92,7 @@ public class DependencyGraph<KEY, DATA extends IData<KEY>>{
 			return keyProvider;
 		}
 		
-		public DependencyType getType() {
+		public DependencyType<KEY,DATA> getType() {
 			return type;
 		}
 		

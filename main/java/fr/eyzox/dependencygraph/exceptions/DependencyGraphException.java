@@ -2,6 +2,11 @@ package fr.eyzox.dependencygraph.exceptions;
 
 public class DependencyGraphException extends RuntimeException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4337395305520296735L;
+
 	public DependencyGraphException() {
 		super();
 	}
