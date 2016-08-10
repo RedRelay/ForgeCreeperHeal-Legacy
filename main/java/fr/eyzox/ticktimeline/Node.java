@@ -3,9 +3,16 @@ package fr.eyzox.ticktimeline;
 public class Node<W> {
 	
 	private int tick;
-	private W data;
+	private final W data;
 	
-	public Node() {}
+	public Node(W data) {
+		this(0, data);
+	}
+	
+	public Node(int tick, W data) {
+		this.tick = tick;
+		this.data = data;
+	}
 	
 	public int getTick() {
 		return tick;
@@ -15,9 +22,6 @@ public class Node<W> {
 	}
 	public W getData() {
 		return data;
-	}
-	public void setData(final W data) {
-		this.data = data;
 	}
 
 	@Override
@@ -37,7 +41,7 @@ public class Node<W> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Node other = (Node) obj;
+		Node<?> other = (Node<?>) obj;
 		if (data == null) {
 			if (other.data != null)
 				return false;
