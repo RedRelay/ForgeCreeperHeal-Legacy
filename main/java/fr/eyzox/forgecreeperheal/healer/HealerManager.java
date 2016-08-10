@@ -16,10 +16,12 @@ public class HealerManager {
 	private final WorldServer world;
 	private final ChunkDataProvider<Healer> loadedHealers = new ChunkDataProvider<Healer>();
 	private final WorldHealerData worldHealerData;
+	private final WorldHealer worldHealer;
 	
 	public HealerManager(final WorldServer world) {
 		this.world = world;
 		this.worldHealerData = WorldHealerData.load(world);
+		this.worldHealer = new WorldHealer(world);
 	}
 	
 	/**
@@ -77,23 +79,27 @@ public class HealerManager {
 			return;
 		}
 		
-		for(final Entry<ChunkCoordIntPair, Healer> entry : this.loadedHealers.entrySet()) {
-			
-			final Healer healer = entry.getValue();
-			
-			final Collection<BlockData> healables = healer.getTimeline().tick();
-			if(healables != null) {
-				for(final BlockData healable : healables) {
-					healable.heal(world, 3);
+		synchronized(worldHealer) {
+			for(final Entry<ChunkCoordIntPair, Healer> entry : this.loadedHealers.entrySet()) {
+				
+				final Healer healer = entry.getValue();
+				
+				final Collection<BlockData> healables = healer.getTimeline().tick();
+				if(healables != null) {
+					for(BlockData data : healables) {
+						data.heal(worldHealer);
+					}
+	
+					if(healer.getTimeline().isEmpty()) {
+						this.unhook(entry.getKey());
+					}
 				}
-
-				if(healer.getTimeline().isEmpty()) {
-					this.unhook(entry.getKey());
-				}
+				
+				healer.getChunk().setChunkModified();
+				
 			}
 			
-			healer.getChunk().setChunkModified();
-			
+			worldHealer.update(3);
 		}
 	}
 	
@@ -101,13 +107,16 @@ public class HealerManager {
 	 * Heals only loaded healers
 	 */
 	private void healLoaded() {
-		for(final Entry<ChunkCoordIntPair, Healer> entry : loadedHealers.entrySet()) {
-			for(final Node<Collection<BlockData>> node : entry.getValue().getTimeline().getTimeline()) {
-				for(final BlockData healable : node.getData()) {
-					healable.heal(world, 3);
+		synchronized (worldHealer) {
+			for(final Entry<ChunkCoordIntPair, Healer> entry : loadedHealers.entrySet()) {
+				for(final Node<Collection<BlockData>> node : entry.getValue().getTimeline().getTimeline()) {
+					for(BlockData data : node.getData()) {
+						data.heal(worldHealer);
+					}
 				}
+				this.worldHealerData.unhandleChunk(entry.getKey());
 			}
-			this.worldHealerData.unhandleChunk(entry.getKey());
+			worldHealer.update(3);
 		}
 		this.loadedHealers.clear();
 	}
