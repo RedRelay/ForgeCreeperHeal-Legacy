@@ -33,7 +33,6 @@ public class WorldEventHandler implements IEventHandler{
 
 	@Override
 	public void register() {
-		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 }

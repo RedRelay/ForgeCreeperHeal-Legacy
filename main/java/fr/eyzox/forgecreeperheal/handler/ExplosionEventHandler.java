@@ -23,7 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
@@ -82,11 +82,11 @@ public class ExplosionEventHandler implements IEventHandler{
 		final Map<ChunkCoordIntPair, Collection<Node<BlockData>>> addToTimeline = ForgeCreeperHeal.getHealerFactory().create(world, new CustomRandomScheduler<BlockPos, BlockData>(toHeal, BlockDataDependencyProvider.getInstance()));
 		
 		
-		final HealerManager manager = ForgeCreeperHeal.getHealerManager((WorldServer) event.getWorld());
+		final HealerManager manager = ForgeCreeperHeal.getHealerManager(world);
 		for(final Entry<ChunkCoordIntPair, Collection<Node<BlockData>>> entry : addToTimeline.entrySet()) {
 			Healer healer = manager.load(entry.getKey());
 			if(healer == null) {
-				healer = new Healer(event.getWorld().getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
+				healer = new Healer(world.getChunkFromChunkCoords(entry.getKey().chunkXPos, entry.getKey().chunkZPos));
 			}
 			healer.getTimeline().add(entry.getValue());
 			manager.hook(healer);

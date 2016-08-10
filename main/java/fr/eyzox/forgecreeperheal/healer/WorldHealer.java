@@ -11,7 +11,7 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -26,7 +26,7 @@ public class WorldHealer {
 	
 	public void heal(BlockPos pos, IBlockState newState, NBTTagCompound tileEntity) {
 		final IBlockState currentBlockState = world.getBlockState(pos);
-		final boolean isAir = currentBlockState.getBlock().isAir(currentBlockState, world, pos);
+		final boolean isAir = currentBlockState.getBlock().isAir(world, pos);
 
 		//If current block = air or overriding
 		if(ForgeCreeperHeal.getConfig().isOverrideBlock() || isAir || (ForgeCreeperHeal.getConfig().isOverrideFluid() && FluidRegistry.lookupFluidForBlock(currentBlockState.getBlock()) != null)) {

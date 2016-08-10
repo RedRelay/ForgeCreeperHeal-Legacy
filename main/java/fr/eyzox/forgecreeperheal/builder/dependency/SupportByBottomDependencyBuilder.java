@@ -3,6 +3,7 @@ package fr.eyzox.forgecreeperheal.builder.dependency;
 import fr.eyzox.dependencygraph.DependencyType;
 import fr.eyzox.dependencygraph.SingleDependency;
 import fr.eyzox.forgecreeperheal.blockdata.BlockData;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 public class SupportByBottomDependencyBuilder extends AbstractGenericDependencyBuilder {

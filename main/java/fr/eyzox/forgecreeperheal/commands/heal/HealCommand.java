@@ -1,6 +1,7 @@
 package fr.eyzox.forgecreeperheal.commands.heal;
 
 import fr.eyzox.forgecreeperheal.commands.CommandsContainer;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import net.minecraft.command.ICommandSender;
 
 public class HealCommand extends CommandsContainer {
