@@ -11,9 +11,9 @@ import fr.eyzox.forgecreeperheal.builder.dependency.IDependencyBuilder;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
-import fr.eyzox.forgecreeperheal.healer.HealerFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
+import fr.eyzox.forgecreeperheal.scheduler.TickTimelineFactory;
 import net.minecraft.block.Block;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Mod;
@@ -29,10 +29,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * Planned feature :
  * - GUI to configure options
  * - Better config for Entity Filter : idea : use EntityRegistry to get <ModContainer.getModId()>:<EntityRegistration.entityName>
- * - Create a class using LongHashMap from minecraft optimisation classes
  * 
  * Known Bugs/Issues :
- * - Banner don't keep original color, they become black when healed
+ * - See https://github.com/RedRelay/ForgeCreeperHeal/issues
  */
 
 @Mod(
@@ -108,15 +107,15 @@ public class ForgeCreeperHeal
     	return healerManagers.get(world);
     }
     
-    public static HealerFactory getHealerFactory() {
+    public static TickTimelineFactory getHealerFactory() {
     	return proxy.getHealerFactory();
     }
     
-    public static DefaultFactory<Class<? extends Block>, IBlockDataBuilder> getBlockDataFactory() {
+    public static DefaultFactory<Block, IBlockDataBuilder> getBlockDataFactory() {
     	return proxy.getBlockDataFactory();
     }
     
-    public static DefaultFactory<Class<? extends Block>, IDependencyBuilder> getDependencyFactory() {
+    public static DefaultFactory<Block, IDependencyBuilder> getDependencyFactory() {
     	return proxy.getDependencyFactory();
     }
 }

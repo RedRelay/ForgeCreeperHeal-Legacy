@@ -5,7 +5,6 @@ import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -34,7 +33,6 @@ public class WorldEventHandler implements IEventHandler{
 
 	@Override
 	public void register() {
-		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 }

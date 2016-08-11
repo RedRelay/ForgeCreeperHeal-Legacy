@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.serial.INBTSerializable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -14,7 +13,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class WorldHealerData extends WorldSavedData implements INBTSerializable {
+public class WorldHealerData extends WorldSavedData {
 
 	public static final String KEY = ForgeCreeperHeal.MODID+":WHD";
 	
@@ -50,7 +49,7 @@ public class WorldHealerData extends WorldSavedData implements INBTSerializable 
 			if(array.length >= 2) {
 				chunksWithHealer.add(new ChunkCoordIntPair(array[0], array[1]));
 			}else {
-				//TODO serial exception
+				ForgeCreeperHeal.getLogger().error("Ignoring a chunk with healer (array length < 2)");
 			}
 		}
 		

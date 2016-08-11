@@ -1,84 +1,63 @@
 package fr.eyzox.forgecreeperheal.healer;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
-import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
+import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
-import fr.eyzox.forgecreeperheal.serial.ISerializableHealable;
+import fr.eyzox.minecraft.util.ChunkDataProvider;
 import fr.eyzox.ticktimeline.Node;
-import fr.eyzox.ticktimeline.TickTimeline;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 
 public class HealerManager {
 	
 	private final WorldServer world;
-	private final Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> healers = new ConcurrentHashMap<ChunkCoordIntPair, TickTimeline<ISerializableHealable>>();
+	private final ChunkDataProvider<Healer> loadedHealers = new ChunkDataProvider<Healer>();
 	private final WorldHealerData worldHealerData;
+	private final WorldHealer worldHealer;
 	
 	public HealerManager(final WorldServer world) {
 		this.world = world;
 		this.worldHealerData = WorldHealerData.load(world);
+		this.worldHealer = new WorldHealer(world);
 	}
 	
 	/**
-	 * Fired when a chunk with a previously saved healer is loaded by {@link ChunkEventHandler#onChunkDataLoad(net.minecraftforge.event.world.ChunkDataEvent.Load)}
-	 * @param chunk
+	 * Loads and puts a new healer for a chunk
+	 * @param chunkKey
 	 * @param timeline
 	 */
-	public void load(final ChunkCoordIntPair chunk, final TickTimeline<ISerializableHealable> timeline) {
-		healers.put(chunk, timeline);
+	public void hook(final Healer healer) {
+		final Chunk chunk = world.getChunkFromChunkCoords(healer.getChunk().xPosition, healer.getChunk().zPosition);
+		final ChunkCoordIntPair chunkKey = chunk.getChunkCoordIntPair();
+		
+		healer.setLoaded(true);
+		
+		this.loadedHealers.put(chunkKey, healer);
+		chunk.setChunkModified();
+		this.worldHealerData.handleChunk(chunkKey);
 	}
 	
 	/**
-	 * Fired when a chunk is unloaded by {@link ChunkEventHandler#onChunkUnload(net.minecraftforge.event.world.ChunkEvent.Unload)}
-	 * @param chunk
+	 * Loads and removes the healer for a chunk
+	 * @param chunkKey
 	 */
-	public void unload(final ChunkCoordIntPair chunk) {
-		healers.remove(chunk);
+	public void unhook(final ChunkCoordIntPair chunkKey) {
+		final Chunk chunk = world.getChunkFromChunkCoords(chunkKey.chunkXPos, chunkKey.chunkZPos);
+		this.loadedHealers.remove(chunkKey);
+		chunk.setChunkModified();
+		this.worldHealerData.unhandleChunk(chunkKey);
 	}
 	
 	/**
-	 * Puts a new healer for a chunk
-	 * @param chunk
-	 * @param timeline
-	 */
-	public void put(final ChunkCoordIntPair chunk, final TickTimeline<ISerializableHealable> timeline) {
-		if(!world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos)) {
-			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
-		}
-		this.load(chunk, timeline);
-		this.setChunkDirty(chunk);
-		this.worldHealerData.handleChunk(chunk);
-	}
-	
-	/**
-	 * Removes the healer for a chunk
-	 * @param chunk
-	 */
-	public void remove(final ChunkCoordIntPair chunk) {
-		this.unload(chunk);
-		this.setChunkDirty(chunk);
-		this.worldHealerData.unhandleChunk(chunk);
-	}
-	
-	/**
-	 * Gets the healer for a chunk 
+	 * Loads and gets the healer for a chunk 
 	 * @param chunk
 	 * @return
 	 */
-	public TickTimeline<ISerializableHealable> get(final ChunkCoordIntPair chunk) {
-		TickTimeline<ISerializableHealable> timeline = healers.get(chunk);
-		if(timeline == null) {
-			//Maybe timeline is not loaded yet, so we load the chunk
-			world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
-			timeline = healers.get(chunk);
-			//If timeline = null, it means there are no timeline currently for this chunk 
-		}
-		return timeline;
+	public Healer load(final ChunkCoordIntPair chunk) {
+		return loadedHealers.get(world.getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos));
 	}
 	
 	/**
@@ -96,47 +75,58 @@ public class HealerManager {
 	 * Called by {@link WorldEventHandler#onWorldTick(net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent)}
 	 */
 	public void tick() {
-		for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : this.healers.entrySet()) {
-			final Collection<ISerializableHealable> healables = entry.getValue().tick();
-			if(healables != null) {
-				for(final ISerializableHealable healable : healables) {
-					healable.heal(world, 7);
-				}
-
-				if(entry.getValue().isEmpty()) {
-					this.remove(entry.getKey());
-				}
-			}
-			this.setChunkDirty(entry.getKey());
+		if(this.loadedHealers.isEmpty()) {
+			return;
 		}
-	}
+		
+		synchronized(worldHealer) {
+			for(final Entry<ChunkCoordIntPair, Healer> entry : this.loadedHealers.entrySet()) {
+				
+				final Healer healer = entry.getValue();
+				
+				final Collection<BlockData> healables = healer.getTimeline().tick();
+				if(healables != null) {
+					for(BlockData data : healables) {
+						data.heal(worldHealer);
+					}
 	
-	public void setChunkDirty(final ChunkCoordIntPair chunk) {
-		world.getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos).setChunkModified();
+					if(healer.getTimeline().isEmpty()) {
+						this.unhook(entry.getKey());
+					}
+				}
+				
+				healer.getChunk().setChunkModified();
+				
+			}
+			
+			worldHealer.update(3);
+		}
 	}
 	
 	/**
 	 * Heals only loaded healers
 	 */
 	private void healLoaded() {
-		for(final Entry<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> entry : healers.entrySet()) {
-			final TickTimeline<ISerializableHealable> timeline = entry.getValue();
-			for(final Node<Collection<ISerializableHealable>> node : timeline.getTimeline()) {
-				for(final ISerializableHealable healable : node.getData()) {
-					healable.heal(world, 7);
+		synchronized (worldHealer) {
+			for(final Entry<ChunkCoordIntPair, Healer> entry : loadedHealers.entrySet()) {
+				for(final Node<Collection<BlockData>> node : entry.getValue().getTimeline().getTimeline()) {
+					for(BlockData data : node.getData()) {
+						data.heal(worldHealer);
+					}
 				}
+				this.worldHealerData.unhandleChunk(entry.getKey());
 			}
-			this.worldHealerData.unhandleChunk(entry.getKey());
+			worldHealer.update(3);
 		}
-		this.healers.clear();
+		this.loadedHealers.clear();
 	}
 	
 	public WorldServer getWorld() {
 		return world;
 	}
 	
-	public Map<ChunkCoordIntPair, TickTimeline<ISerializableHealable>> getHealers() {
-		return healers;
+	public ChunkDataProvider<Healer> getLoadedHealers() {
+		return loadedHealers;
 	}
 
 }

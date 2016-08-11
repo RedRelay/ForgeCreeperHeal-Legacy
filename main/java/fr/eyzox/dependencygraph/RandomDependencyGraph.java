@@ -3,6 +3,9 @@ package fr.eyzox.dependencygraph;
 import java.util.Collection;
 import java.util.Random;
 
+import fr.eyzox.dependencygraph.interfaces.IData;
+import fr.eyzox.dependencygraph.interfaces.IDependencyProvider;
+
 public class RandomDependencyGraph<KEY, DATA extends IData<KEY>> extends DependencyGraph<KEY,DATA> {
 
 	private Random rdn;
@@ -16,9 +19,8 @@ public class RandomDependencyGraph<KEY, DATA extends IData<KEY>> extends Depende
 		this(data, dependencyProvider, new Random());
 	}
 
-	@Override
-	protected int getNextAvailableIndex() {
-		return rdn.nextInt(this.getAvailables().size());
+	public DATA poll() {
+		return poll(rdn.nextInt(this.getAvailables().size()));
 	}
 
 }

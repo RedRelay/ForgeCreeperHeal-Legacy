@@ -1,6 +1,20 @@
 package fr.eyzox.forgecreeperheal.blockdata;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import fr.eyzox.dependencygraph.DataKeyProvider;
+import fr.eyzox.dependencygraph.MultipleDataKeyProvider;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealerSerialException;
+import fr.eyzox.forgecreeperheal.healer.WorldHealer;
+import fr.eyzox.forgecreeperheal.healer.WorldRemover;
+import fr.eyzox.forgecreeperheal.serial.SerialUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -8,95 +22,110 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
-/**
- * Warning : Not recursive ! A MultiBlockData can't handle other MultiBlockData !
- * @author EyZox
- *
- */
-public class MultiBlockData extends TileEntityBlockData {
+public class MultiBlockData extends BlockData {
 
-	private final static String TAG_WRAPPERS = "wrappers";
+	private static final String TAG_OTHERS = "others";
 	
-	private final static String TAG_WRAPPER_FACTORY_KEY = "key";
-	private final static String TAG_WRAPPER_DATA = "data";
+	private Collection<BlockData> others;
 	
+	private Set<BlockPos> allBlockPos;
 	
-	private IBlockData[] others;
-	
-	public MultiBlockData(BlockPos pos, IBlockState state, NBTTagCompound tileEntityTag, final IBlockData[] others) {
-		super(pos, state, tileEntityTag);
-		this.others = others;
+	public MultiBlockData(final BlockPos pos, final IBlockState state, final Collection<? extends BlockData> others) {
+		super(pos, state);
+		
+		this.allBlockPos = new HashSet<BlockPos>(1+others.size());
+		this.allBlockPos.add(this.getPos());
+		for(final BlockData other : others) {
+			
+			if(other.isMultiple()) {
+				throw new ForgeCreeperHealException("MultiBlockData is not recursive");
+			}
+			
+			final boolean added = allBlockPos.add(other.getPos());
+			if(!added) {
+				throw new ForgeCreeperHealException("Duplicate BlockPos in MultiBlockData");
+			}
+		}
+		
+		this.others = new ArrayList<BlockData>(others);
 	}
 	
 	public MultiBlockData(final NBTTagCompound tag) {
 		super(tag);
 	}
+	
+	@Override
+	public DataKeyProvider<BlockPos> getDataKeyProvider() {
+		return new MultipleDataKeyProvider<BlockPos>(allBlockPos);
+	}
+
+	private Map<BlockPos, IBlockState> buildOldStateMap(final World world) {
+		final Map<BlockPos, IBlockState> oldStateMap = new HashMap<BlockPos, IBlockState>(allBlockPos.size());
+		for(final BlockPos pos : allBlockPos) {
+			oldStateMap.put(pos, world.getBlockState(pos));
+		}
+		return oldStateMap;
+	}
+	
+	@Override
+	public void heal(WorldHealer worldHealer) {
+		super.heal(worldHealer);
+		for(BlockData other : others) {
+			other.heal(worldHealer);
+		}
+		
+	}
 
 	@Override
-	public BlockPos[] getAllPos() {
-		final BlockPos[] allPos = new BlockPos[1+others.length];
-		allPos[0] = getPos();
-		for(int i = 0; i<others.length; i++) {
-			allPos[i+1] = others[i].getPos();
+	public void remove(final WorldRemover remover) {
+		super.remove(remover);
+		for(final BlockData other : others) {
+			other.remove(remover);
 		}
-		return allPos;
 	}
 	
 	@Override
-	public void heal(World world, int flags) {
-		
-		IBlockState[] oldStates = new IBlockState[1+others.length];
-		
-		for(int i = 0; i<others.length; i++) {
-			oldStates[i] = world.getBlockState(others[i].getPos());
-			others[i].heal(world, 0);
-		}
-		
-		oldStates[oldStates.length-1] = world.getBlockState(getPos());
-		super.heal(world, 0);
-		
-		for(int i = 0; i<others.length; i++) {
-			world.markAndNotifyBlock(others[i].getPos(), world.getChunkFromBlockCoords(others[i].getPos()), oldStates[i], others[i].getState(), flags);
-		}
-		world.markAndNotifyBlock(getPos(), world.getChunkFromBlockCoords(getPos()), oldStates[oldStates.length-1], getState(), flags);
-		
+	public boolean isMultiple() {
+		return true;
 	}
 	
+	public static boolean isMultiple(final NBTTagCompound tag) {
+		return tag.hasKey(TAG_OTHERS, NBT.TAG_LIST);
+	}
+
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound serializeNBT() {
+		final NBTTagCompound tag = super.serializeNBT();
+		
 		final NBTTagList wrapperListTag = new NBTTagList();
-		for(IBlockData other : others){
-			final NBTTagCompound wrapperTag = new NBTTagCompound();
-			wrapperTag.setString(TAG_WRAPPER_FACTORY_KEY, ForgeCreeperHeal.getProxy().getBlockClassKeyBuilder().convertToString(other.getState().getBlock().getClass()));
-			
-			final NBTTagCompound otherTag = new NBTTagCompound();
-			other.writeToNBT(otherTag);
-			wrapperTag.setTag(TAG_WRAPPER_DATA, otherTag);
-			wrapperListTag.appendTag(wrapperTag);
+		for(BlockData other : others){
+			wrapperListTag.appendTag(SerialUtils.serializeWrappedData(other.getSerialWrapper(), other));
 		}
 		
-		tag.setTag(TAG_WRAPPERS, wrapperListTag);
+		tag.setTag(TAG_OTHERS, wrapperListTag);
+		return tag;
 	}
-	
+
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		super.readFromNBT(tag);
+	public void deserializeNBT(NBTTagCompound tag) {
+		super.deserializeNBT(tag);
 		
-		final NBTTagList wrapperListTag = tag.getTagList(TAG_WRAPPERS, NBT.TAG_COMPOUND);
-		this.others = new IBlockData[wrapperListTag.tagCount()];
+		final NBTTagList wrapperListTag = tag.getTagList(TAG_OTHERS, NBT.TAG_COMPOUND);
+		this.others = new ArrayList<BlockData>(wrapperListTag.tagCount());
+		
 		for(int i = 0; i<wrapperListTag.tagCount(); i++) {
-			final NBTTagCompound wrapperTag = wrapperListTag.getCompoundTagAt(i);
-			final String factoryKey = wrapperTag.getString(TAG_WRAPPER_FACTORY_KEY);
-			final NBTTagCompound healableTag = wrapperTag.getCompoundTag(TAG_WRAPPER_DATA);
 			
-			IBlockData healable = (IBlockData) ForgeCreeperHeal.getProxy().getBlockDataFactory().getDefault().create(healableTag);
-			this.others[i] = healable;
+			BlockData data = null;
+			try {
+				data = SerialUtils.unserializeWrappedData(wrapperListTag.getCompoundTagAt(i));
+			} catch (ForgeCreeperHealerSerialException e) {
+				ForgeCreeperHeal.getLogger().error("Error while unserialize MultiBlockData: "+e.getMessage());
+			}
+			
+			if(data != null) {
+				others.add(data);
+			}
+			
 		}
-		
-	}
-	
-	public static boolean isMultipleBlockData(final NBTTagCompound tag) {
-		return tag.hasKey(TAG_WRAPPERS);
 	}
 }
