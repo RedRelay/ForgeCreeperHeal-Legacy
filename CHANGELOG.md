@@ -5,9 +5,10 @@
 ### news
 
 * Almost all code was rewrite
-* Better heal system
+* Better heal system (should be 100% accurate for unchained explosion)
 * Chunk saved data (better RAM consumption)
 * Profiler removed
+* Better config choice
 
 ### bug fixes
 
