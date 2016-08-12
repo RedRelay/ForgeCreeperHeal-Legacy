@@ -26,6 +26,7 @@ Feel you free to suggest some improvements.
 ## Known bugs :
 
 * Chainned-explosion heal is not accurate
+* Lever is not correctly healed
 
 ## Special thanks :
 
