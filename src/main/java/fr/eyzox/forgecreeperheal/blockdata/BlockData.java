@@ -175,5 +175,12 @@ public class BlockData implements fr.eyzox.dependencygraph.interfaces.IData<Bloc
 		}
 
 	}
+
+	@Override
+	public String toString() {
+		return "BlockData [pos=" + pos + ", state=" + state + ", tileEntity=" + tileEntity + "]";
+	}
+	
+	
 	
 }
