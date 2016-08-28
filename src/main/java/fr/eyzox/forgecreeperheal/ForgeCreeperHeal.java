@@ -25,15 +25,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-/*
- * Planned feature :
- * - GUI to configure options
- * - Better config for Entity Filter : idea : use EntityRegistry to get <ModContainer.getModId()>:<EntityRegistration.entityName>
- * 
- * Known Bugs/Issues :
- * - See https://github.com/RedRelay/ForgeCreeperHeal/issues
- */
-
 @Mod(
 		modid = ForgeCreeperHeal.MODID,
 		name = ForgeCreeperHeal.MODNAME,
@@ -44,7 +35,7 @@ public class ForgeCreeperHeal
 {
 	
     public static final String MODID = "forgecreeperheal";
-    public static final String VERSION = "2.0.0";
+    public static final String VERSION = "2.0.1";
     public static final String MODNAME = "Forge Creeper Heal "+VERSION;
     
     @SidedProxy(clientSide = "fr.eyzox.forgecreeperheal.proxy.ClientProxy", serverSide = "fr.eyzox.forgecreeperheal.proxy.CommonProxy")
