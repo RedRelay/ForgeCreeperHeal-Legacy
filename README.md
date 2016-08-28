@@ -26,7 +26,7 @@ Feel you free to suggest some improvements.
 ## Known bugs :
 
 * Chainned-explosion heal is not accurate
-* Lever is not correctly healed
+* [Others issues or want to report an issues ?](https://github.com/RedRelay/ForgeCreeperHeal/issues)
 
 ## Special thanks :
 

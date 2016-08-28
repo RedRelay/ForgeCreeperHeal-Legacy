@@ -18,7 +18,7 @@ public class LeverDependencyBuilder implements IDependencyBuilder{
 	@Override
 	public DependencyType<BlockPos, BlockData> getDependencies(BlockData data) {
 		final EnumOrientation orientation = (EnumOrientation)data.getState().getValue(BlockLever.FACING);
-		return new SingleDependency<BlockPos, BlockData>(FacingDependencyUtils.getBlockPos(data.getPos(), orientation.getFacing()));
+		return new SingleDependency<BlockPos, BlockData>(FacingDependencyUtils.getBlockPos(data.getPos(), orientation.getFacing().getOpposite()));
 	}
 
 	
