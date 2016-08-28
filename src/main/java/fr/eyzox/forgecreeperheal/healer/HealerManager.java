@@ -1,7 +1,8 @@
 package fr.eyzox.forgecreeperheal.healer;
 
 import java.util.Collection;
-import java.util.Map.Entry;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import fr.eyzox.forgecreeperheal.blockdata.BlockData;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
@@ -79,6 +80,7 @@ public class HealerManager {
 			return;
 		}
 		
+		final LinkedList<Healer> emptyHealers = new LinkedList<Healer>();
 		synchronized(worldHealer) {
 			for(final Entry<ChunkCoordIntPair, Healer> entry : this.loadedHealers.entrySet()) {
 				
@@ -91,15 +93,20 @@ public class HealerManager {
 					}
 	
 					if(healer.getTimeline().isEmpty()) {
-						this.unhook(entry.getKey());
+						emptyHealers.add(healer);
 					}
 				}
 				
 				healer.getChunk().setChunkModified();
 				
 			}
-			
 			worldHealer.update(3);
+		}
+		
+		if(!emptyHealers.isEmpty()) {
+			for(final Healer emptyHealer : emptyHealers) {
+				this.unhook(emptyHealer.getChunk().getChunkCoordIntPair());
+			}
 		}
 	}
 	
