@@ -4,7 +4,7 @@
   "name": "Forge Creeper Heal 2.0.1",
   "description": "Heal terrain after explosion",
   "version": "2.0.1",
-  "mcversion": "1.10.2",
+  "mcversion": "1.9.4",
   "url": "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2482250-forge-creeper-heal",
   "updateUrl": "",
   "authorList": ["RedRelay"],
