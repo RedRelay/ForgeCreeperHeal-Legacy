@@ -2,6 +2,7 @@ package fr.eyzox.forgecreeperheal.healer;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Queue;
 
 import fr.eyzox.forgecreeperheal.blockdata.BlockData;
