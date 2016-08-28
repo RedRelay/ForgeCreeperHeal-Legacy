@@ -63,7 +63,7 @@ public class TickTimelineFactory {
 			final int providedTick = tickProvider.getNextTick();
 			globalTickCounter += providedTick;
 			final int tick = globalTickCounter - dispatchedTimeline.tickCounter;
-			dispatchedTimeline.tickCounter += providedTick;
+			dispatchedTimeline.tickCounter += tick;
 			
 			//Create TickContainer
 			final Node<T> container = new Node<T>(tick, healable);
