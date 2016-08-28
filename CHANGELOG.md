@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+* Fix lever not replacing in right order
+* Fix bad tick scheduling on multi-chunk explosion
+* Fix [Issue #8] (https://github.com/RedRelay/ForgeCreeperHeal/issues/8)
+
 ## 2.0.0
 
 ### news
