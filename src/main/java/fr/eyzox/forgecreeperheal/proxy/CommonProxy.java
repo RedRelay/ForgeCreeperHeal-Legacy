@@ -30,7 +30,9 @@ import fr.eyzox.forgecreeperheal.builder.dependency.property.TorchPropertySelect
 import fr.eyzox.forgecreeperheal.builder.dependency.property.TrapDoorPropertySelector;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.TripWireHookPropertySelector;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.WallSignPropertySelector;
-import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
+import fr.eyzox.forgecreeperheal.commands.ConfigCommand;
+import fr.eyzox.forgecreeperheal.commands.HealCommand;
+import fr.eyzox.forgecreeperheal.commands.VersionCommand;
 import fr.eyzox.forgecreeperheal.config.ConfigProvider;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
@@ -136,8 +138,9 @@ public class CommonProxy {
 
 	protected void registerCommand() {
 		ServerCommandManager m = (ServerCommandManager) FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager();
-		ForgeCreeperHealCommands forgeCreeperHealCmds = new ForgeCreeperHealCommands();
-		m.registerCommand(forgeCreeperHealCmds);
+		m.registerCommand(new VersionCommand());
+		m.registerCommand(new ConfigCommand());
+		m.registerCommand(new HealCommand());
 	}
 
 	public Logger getLogger() {
