@@ -7,7 +7,6 @@ import net.minecraft.command.NumberInvalidException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
@@ -39,8 +38,7 @@ public class HealCommand extends ForgeCreeperHealCommands {
 				ForgeCreeperHeal.getHealerManager(world).heal();
 			}
 			
-			final ITextComponent healAllMsg = buildChatMessage(new TextComponentString("All worlds fully healed."));
-			healAllMsg.getStyle().setColor(TextFormatting.GREEN);
+			final ITextComponent healAllMsg = buildChatMessage(new TextComponentString("All worlds fully healed"), MessageType.SUCCESS);
 			sender.addChatMessage(healAllMsg);
 		}else {
 			WorldServer world = null;
@@ -59,8 +57,7 @@ public class HealCommand extends ForgeCreeperHealCommands {
 				throw new ForgeCreeperHealCommandException("Unable to find World from "+(rawDimId == null ? ("command sender "+sender) : ("dimension id "+rawDimId)), new Object[]{});
 			}else {
 				ForgeCreeperHeal.getHealerManager(world).heal();
-				final ITextComponent healedMsg = buildChatMessage(new TextComponentString("World "+world.getWorldInfo().getWorldName()+":"+world.provider.getDimension()+" fully healed."));
-				healedMsg.getStyle().setColor(TextFormatting.GREEN);
+				final ITextComponent healedMsg = buildChatMessage(new TextComponentString("World "+world.getWorldInfo().getWorldName()+":"+world.provider.getDimension()+" fully healed"), MessageType.SUCCESS);
 				sender.addChatMessage(healedMsg);
 			}
 		}

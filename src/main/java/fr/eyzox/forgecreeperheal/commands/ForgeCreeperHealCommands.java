@@ -41,12 +41,6 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 	private String buildCommandName(String prefix) {
 		return getFCHCommandName() != null ? (prefix+'-'+getFCHCommandName()) : prefix;
 	}
-
-	public static ITextComponent buildChatMessage(ITextComponent msg) {
-		TextComponentString cct = new TextComponentString(String.format("[%s] ", ForgeCreeperHeal.MODNAME));
-		cct.appendSibling(msg);
-		return cct;
-	}
 	
 	@Override
 	public final void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -72,4 +66,32 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 		}
 		
 	}
+	
+	protected static enum MessageType {
+		SUCCESS(TextFormatting.GREEN), ERROR(TextFormatting.RED);
+		
+		private TextFormatting color;
+		
+		private MessageType(TextFormatting color) {
+			this.color = color;
+		}
+		
+		public TextFormatting getColor() {
+			return color;
+		}
+	}
+	
+	public static ITextComponent buildChatMessage(ITextComponent msg) {
+		return buildChatMessage(msg, null);
+	}
+	
+	public static ITextComponent buildChatMessage(ITextComponent msg, MessageType type) {
+		TextComponentString cct = new TextComponentString(String.format("[%s] ", ForgeCreeperHeal.MODNAME));
+		if(type != null) {
+			cct.getStyle().setColor(type.getColor());
+		}
+		cct.appendSibling(msg);
+		return cct;
+	}
+
 }

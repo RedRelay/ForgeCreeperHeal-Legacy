@@ -53,8 +53,7 @@ public class ConfigCommand extends ForgeCreeperHealCommands{
 		
 		if(reload) {
 			ForgeCreeperHeal.getProxy().loadConfig();
-			final ITextComponent reloadMsg = buildChatMessage(new TextComponentString("Config reloaded"));
-			reloadMsg.getStyle().setColor(TextFormatting.GREEN);
+			final ITextComponent reloadMsg = buildChatMessage(new TextComponentString("Config reloaded"), MessageType.SUCCESS);
 			sender.addChatMessage(reloadMsg);
 		}
 		
