@@ -60,16 +60,11 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 			sender.addChatMessage(head);
 			
 			final ITextComponent usage = new TextComponentString("Usage : "+getCommandUsage(sender));
+			usage.getStyle().setColor(TextFormatting.GRAY);
 			sender.addChatMessage(usage);
 			
-			final String rawHelp = getHelp();
-			if(rawHelp != null) {
-				sender.addChatMessage( new TextComponentString("Info :"));
-				final String[] helps = rawHelp.split("\n");
-				for(int i=0; i<helps.length; i++) {
-					sender.addChatMessage( new TextComponentString(helps[i]));
-				}
-			}
+			sender.addChatMessage( new TextComponentString(getHelp()));
+			
 		}else {
 			_execute(server, sender, args);
 		}
