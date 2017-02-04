@@ -1,8 +1,8 @@
 package fr.eyzox.forgecreeperheal.commands;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealCommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -29,9 +29,9 @@ public class ConfigCommand extends ForgeCreeperHealCommands{
 	}
 
 	@Override
-	protected void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws WrongUsageException {
+	protected void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws ForgeCreeperHealCommandException {
 		if(args.length < 1) {
-			throw new WrongUsageException("Missing parameters : "+getCommandUsage(sender), new Object[]{});
+			throw new ForgeCreeperHealCommandException("Missing parameters : "+getCommandUsage(sender), new Object[]{});
 		}
 		
 		int shift = 0;

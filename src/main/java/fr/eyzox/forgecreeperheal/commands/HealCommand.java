@@ -1,14 +1,13 @@
 package fr.eyzox.forgecreeperheal.commands;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import net.minecraft.command.CommandException;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.NumberInvalidException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
@@ -33,7 +32,7 @@ public class HealCommand extends ForgeCreeperHealCommands {
 	}
 
 	@Override
-	protected void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+	protected void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws ForgeCreeperHealCommandException {
 		if(args.length > 0 && "all".equalsIgnoreCase(args[0])) {
 			final WorldServer[] worlds = DimensionManager.getWorlds();
 			for(WorldServer world : worlds) {
@@ -52,12 +51,12 @@ public class HealCommand extends ForgeCreeperHealCommands {
 				try {
 					world = DimensionManager.getWorld(parseInt(rawDimId));
 				}catch(NumberInvalidException e) {
-					throw new NumberInvalidException(I18n.translateToLocalFormatted(e.getMessage(), e.getErrorObjects())+" : <dim> must be the dimension id");
+					throw new ForgeCreeperHealCommandException("<dim> must be the dimension id", new Object[]{}, e);
 				}
 			}
 			
 			if(world == null) {
-				throw new CommandException("Unable to find World from "+(rawDimId == null ? ("command sender "+sender) : ("dimension id "+rawDimId)), new Object[]{});
+				throw new ForgeCreeperHealCommandException("Unable to find World from "+(rawDimId == null ? ("command sender "+sender) : ("dimension id "+rawDimId)), new Object[]{});
 			}else {
 				ForgeCreeperHeal.getHealerManager(world).heal();
 				final ITextComponent healedMsg = buildChatMessage(new TextComponentString("World "+world.getWorldInfo().getWorldName()+":"+world.provider.getDimension()+" fully healed."));

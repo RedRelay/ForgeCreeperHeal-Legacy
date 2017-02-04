@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealCommandException;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -35,7 +36,7 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 	
 	protected abstract String getHelp();
 	
-	protected abstract void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException;
+	protected abstract void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws ForgeCreeperHealCommandException;
 
 	private String buildCommandName(String prefix) {
 		return getFCHCommandName() != null ? (prefix+'-'+getFCHCommandName()) : prefix;
