@@ -19,7 +19,7 @@ public class VersionCommand extends ForgeCreeperHealCommands {
 
 	@Override
 	protected String getHelp() {
-		return "Display the current server version of "+ForgeCreeperHeal.MODID;
+		return "fch.command.version.help";
 	}
 
 	@Override

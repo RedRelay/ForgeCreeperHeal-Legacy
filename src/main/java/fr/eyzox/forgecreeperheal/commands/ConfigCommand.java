@@ -5,7 +5,6 @@ import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 public class ConfigCommand extends ForgeCreeperHealCommands{
@@ -22,16 +21,13 @@ public class ConfigCommand extends ForgeCreeperHealCommands{
 
 	@Override
 	protected String getHelp() {
-		return 		"* -r : reload the config from the config file\n"
-				+ 	"* -s : save to the config file\n"
-				+ 	"* <property> : the name of the property you want change\n"
-				+ 	"* <value> : the new value, if property is a list, you can set it up with [<value1>,<value..n>] or you can use +<value> to add or -<value> to remove";
+		return "fch.command.config.help";
 	}
 
 	@Override
 	protected void _execute(MinecraftServer server, ICommandSender sender, String[] args) throws ForgeCreeperHealCommandException {
 		if(args.length < 1) {
-			throw new ForgeCreeperHealCommandException("Missing parameters : "+getCommandUsage(sender), new Object[]{});
+			throw new ForgeCreeperHealCommandException(sender, "fch.command.exception.missingparams", new Object[]{getCommandUsage(sender)});
 		}
 		
 		int shift = 0;
@@ -53,18 +49,18 @@ public class ConfigCommand extends ForgeCreeperHealCommands{
 		
 		if(reload) {
 			ForgeCreeperHeal.getProxy().loadConfig();
-			final ITextComponent reloadMsg = buildChatMessage(new TextComponentString("Config reloaded"), MessageType.SUCCESS);
+			final ITextComponent reloadMsg = buildChatMessage(sender, buildTranslationMessage(sender, "fch.command.config.action.reload"), MessageType.SUCCESS);
 			sender.addChatMessage(reloadMsg);
 		}
 		
 		if(shift < args.length) {
-			final ITextComponent sorry = buildChatMessage(new TextComponentString("Sorry, edit config from command is not implemented yet"));
+			final ITextComponent sorry = buildChatMessage(sender, buildTranslationMessage(sender, "fch.command.config.action.edit"));
 			sorry.getStyle().setColor(TextFormatting.DARK_RED);
 			sender.addChatMessage(sorry);
 		}
 		
 		if(save) {
-			final ITextComponent saveMsg = buildChatMessage(new TextComponentString("Sorry, saving config from command is not implemented yet"));
+			final ITextComponent saveMsg = buildChatMessage(sender, buildTranslationMessage(sender, "fch.command.config.action.save"));
 			saveMsg.getStyle().setColor(TextFormatting.DARK_RED);
 			sender.addChatMessage(saveMsg);
 		}

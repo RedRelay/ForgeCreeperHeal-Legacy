@@ -3,7 +3,6 @@ package fr.eyzox.forgecreeperheal.commands;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealCommandException;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandHelp;
@@ -36,7 +35,7 @@ public class HelpCommand extends ForgeCreeperHealCommands {
 
 	@Override
 	protected String getHelp() {
-		return "Display all "+ForgeCreeperHeal.MODNAME+" available commands";
+		return "fch.command.help.help";
 	}
 	
 	@Override
@@ -49,7 +48,7 @@ public class HelpCommand extends ForgeCreeperHealCommands {
 		try {
 			wrap.execute(server, sender, args);
 		} catch (CommandException e) {
-			throw new ForgeCreeperHealCommandException(e);
+			throw new ForgeCreeperHealCommandException(sender, e);
 		}
 	}
 

@@ -16,6 +16,7 @@ import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
 import fr.eyzox.forgecreeperheal.reflection.ReflectionManager;
 import fr.eyzox.forgecreeperheal.scheduler.TickTimelineFactory;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -126,6 +127,9 @@ public class ForgeCreeperHeal
 		
 		// For ExplosionEventHandler
 		ReflectionManager.getInstance().registerField(Explosion.class, "exploder", "field_77283_e");
+		
+		// For I86n
+		ReflectionManager.getInstance().registerField(EntityPlayerMP.class, "language", "field_71148_cg");
 
 	}
 }

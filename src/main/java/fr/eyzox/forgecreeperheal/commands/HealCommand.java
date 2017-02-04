@@ -6,7 +6,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.NumberInvalidException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
@@ -24,10 +23,7 @@ public class HealCommand extends ForgeCreeperHealCommands {
 
 	@Override
 	protected String getHelp() {
-		return "Instant heal terrain\n"
-				+ "* <dim> : the dimension id to heal\n"
-				+ "* all : heal all dimension\n"
-				+ "* no parameters : heal the dimension where the command sender is currently located";
+		return "fch.command.heal.help";
 	}
 
 	@Override
@@ -38,7 +34,7 @@ public class HealCommand extends ForgeCreeperHealCommands {
 				ForgeCreeperHeal.getHealerManager(world).heal();
 			}
 			
-			final ITextComponent healAllMsg = buildChatMessage(new TextComponentString("All worlds fully healed"), MessageType.SUCCESS);
+			final ITextComponent healAllMsg = buildChatMessage(sender, buildTranslationMessage(sender, "fch.command.heal.action.allworld"), MessageType.SUCCESS);
 			sender.addChatMessage(healAllMsg);
 		}else {
 			WorldServer world = null;
@@ -49,15 +45,18 @@ public class HealCommand extends ForgeCreeperHealCommands {
 				try {
 					world = DimensionManager.getWorld(parseInt(rawDimId));
 				}catch(NumberInvalidException e) {
-					throw new ForgeCreeperHealCommandException("<dim> must be the dimension id", new Object[]{}, e);
+					throw new ForgeCreeperHealCommandException(sender, "fch.command.heal.exception.invaliddimensionid", null, e);
 				}
 			}
 			
 			if(world == null) {
-				throw new ForgeCreeperHealCommandException("Unable to find World from "+(rawDimId == null ? ("command sender "+sender) : ("dimension id "+rawDimId)), new Object[]{});
+				if(rawDimId == null) {
+					throw new ForgeCreeperHealCommandException(sender, "fch.command.heal.exception.noentityworld", new Object[]{sender});
+				}
+				throw new ForgeCreeperHealCommandException(sender, "fch.command.heal.exception.nodimensionid", new Object[]{rawDimId});
 			}else {
 				ForgeCreeperHeal.getHealerManager(world).heal();
-				final ITextComponent healedMsg = buildChatMessage(new TextComponentString("World "+world.getWorldInfo().getWorldName()+":"+world.provider.getDimension()+" fully healed"), MessageType.SUCCESS);
+				final ITextComponent healedMsg = buildChatMessage(sender, buildTranslationMessage(sender, "fch.command.heal.action.world", new Object[]{world.getWorldInfo().getWorldName(), world.provider.getDimension()}), MessageType.SUCCESS);
 				sender.addChatMessage(healedMsg);
 			}
 		}

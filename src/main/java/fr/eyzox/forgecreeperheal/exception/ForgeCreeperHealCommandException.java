@@ -1,20 +1,21 @@
 package fr.eyzox.forgecreeperheal.exception;
 
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import net.minecraft.command.CommandException;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.util.text.TextComponentString;
 
 public class ForgeCreeperHealCommandException extends CommandException {
 
-	public ForgeCreeperHealCommandException(String message, Object[] objects) {
-		this(message, objects, null);
+	public ForgeCreeperHealCommandException(ICommandSender sender, String message, Object[] objects) {
+		this(sender, message, objects, null);
 	}
 	
-	public ForgeCreeperHealCommandException(CommandException cause) {
-		this(null, null, cause);
+	public ForgeCreeperHealCommandException(ICommandSender sender, CommandException cause) {
+		this(sender, null, null, cause);
 	}
 
-	public ForgeCreeperHealCommandException(String message, Object[] objects, CommandException cause) {
-		super(String.format("[%s] %s", ForgeCreeperHeal.MODNAME, (message == null ? ("") : (I18n.translateToLocalFormatted(message, objects))) + (cause == null ? "" : (" : "+I18n.translateToLocalFormatted(cause.getMessage(), cause.getErrorObjects())))), new Object[]{});
+	public ForgeCreeperHealCommandException(ICommandSender sender, String message, Object[] objects, CommandException cause) {
+		super(ForgeCreeperHealCommands.buildChatMessage(sender, new TextComponentString("")).getText()+ForgeCreeperHealCommands.buildTranslationMessage(sender, message, objects).getText()+(cause == null ? "" : (" : "+net.minecraft.util.text.translation.I18n.translateToLocalFormatted(cause.getMessage(), cause.getErrorObjects()))), new Object[]{});
 	}
 }
