@@ -30,9 +30,7 @@ import fr.eyzox.forgecreeperheal.builder.dependency.property.TorchPropertySelect
 import fr.eyzox.forgecreeperheal.builder.dependency.property.TrapDoorPropertySelector;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.TripWireHookPropertySelector;
 import fr.eyzox.forgecreeperheal.builder.dependency.property.WallSignPropertySelector;
-import fr.eyzox.forgecreeperheal.commands.ConfigCommand;
-import fr.eyzox.forgecreeperheal.commands.HealCommand;
-import fr.eyzox.forgecreeperheal.commands.VersionCommand;
+import fr.eyzox.forgecreeperheal.commands.ForgeCreeperHealCommands;
 import fr.eyzox.forgecreeperheal.config.ConfigProvider;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
@@ -70,9 +68,7 @@ import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.BlockWallSign;
-import net.minecraft.command.ServerCommandManager;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
@@ -133,14 +129,7 @@ public class CommonProxy {
 	}
 
 	public void serverStarting(FMLServerStartingEvent event) {
-		registerCommand();
-	}
-
-	protected void registerCommand() {
-		ServerCommandManager m = (ServerCommandManager) FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager();
-		m.registerCommand(new VersionCommand());
-		m.registerCommand(new ConfigCommand());
-		m.registerCommand(new HealCommand());
+		ForgeCreeperHealCommands.register();
 	}
 
 	public Logger getLogger() {

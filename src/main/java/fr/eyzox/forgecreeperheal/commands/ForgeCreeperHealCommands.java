@@ -8,13 +8,22 @@ import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealCommandException;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public abstract class ForgeCreeperHealCommands extends CommandBase {
 
+	protected static final ForgeCreeperHealCommands[] COMMANDS = new ForgeCreeperHealCommands[] {
+			new VersionCommand(),
+			new ConfigCommand(),
+			new HealCommand(),
+			new HelpCommand()
+	};
+	
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
 		return '/'+buildCommandName("fch")+" [?]";
@@ -92,6 +101,13 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 		}
 		cct.appendSibling(msg);
 		return cct;
+	}
+	
+	public static void register() {
+		ServerCommandManager m = (ServerCommandManager) FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager();
+		for(ForgeCreeperHealCommands c : COMMANDS) {
+			m.registerCommand(c);
+		}
 	}
 
 }
