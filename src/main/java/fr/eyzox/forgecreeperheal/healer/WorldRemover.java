@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.reflection.WorldTransform;
+import fr.eyzox.forgecreeperheal.reflection.transform.WorldTransform;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;

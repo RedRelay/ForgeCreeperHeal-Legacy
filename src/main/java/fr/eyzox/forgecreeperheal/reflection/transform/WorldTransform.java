@@ -1,9 +1,11 @@
-package fr.eyzox.forgecreeperheal.reflection;
+package fr.eyzox.forgecreeperheal.reflection.transform;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.eyzox.forgecreeperheal.reflection.ReflectionHelper;
+import fr.eyzox.forgecreeperheal.reflection.ReflectionManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -15,7 +17,7 @@ import net.minecraft.world.storage.WorldInfo;
 
 public class WorldTransform {
 
-	private static Method isValidMethod = Reflect.getMethodForClass(World.class, "isValid", "func_175701_a");
+	private static Method isValidMethod = ReflectionManager.getInstance().getMethod(World.class, "isValid", new Class<?>[]{BlockPos.class});
 	
 	private final World world;
 	
@@ -40,7 +42,7 @@ public class WorldTransform {
 	}
 	
 	private boolean isValid(BlockPos pos) {
-		return ((Boolean)Reflect.call(world, isValidMethod, pos)).booleanValue();
+		return ((Boolean)ReflectionHelper.call(world, isValidMethod, pos)).booleanValue();
 	}
 	
 	private Chunk getChunkFromBlockCoords(BlockPos pos) {

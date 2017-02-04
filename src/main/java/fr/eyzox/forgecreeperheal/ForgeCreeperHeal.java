@@ -13,9 +13,14 @@ import fr.eyzox.forgecreeperheal.exception.ForgeCreeperHealException;
 import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.proxy.CommonProxy;
+import fr.eyzox.forgecreeperheal.reflection.ReflectionManager;
 import fr.eyzox.forgecreeperheal.scheduler.TickTimelineFactory;
 import net.minecraft.block.Block;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -109,4 +114,18 @@ public class ForgeCreeperHeal
     public static DefaultFactory<Block, IDependencyBuilder> getDependencyFactory() {
     	return proxy.getDependencyFactory();
     }
+
+	public void registerReflection() {
+		// For ChunkTransform
+		ReflectionManager.getInstance().registerField(Chunk.class, "precipitationHeightMap", "field_76638_b");
+		ReflectionManager.getInstance().registerMethod(Chunk.class, "relightBlock", "func_76615_h", new Class<?>[]{int.class, int.class, int.class});
+		ReflectionManager.getInstance().registerMethod(Chunk.class, "propagateSkylightOcclusion", "func_76595_e", new Class<?>[]{int.class, int.class});
+		
+		// For WorldTransform
+		ReflectionManager.getInstance().registerMethod(World.class, "isValid", "func_175701_a", new Class<?>[]{BlockPos.class});
+		
+		// For ExplosionEventHandler
+		ReflectionManager.getInstance().registerField(Explosion.class, "exploder", "field_77283_e");
+
+	}
 }

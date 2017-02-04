@@ -1,10 +1,12 @@
-package fr.eyzox.forgecreeperheal.reflection;
+package fr.eyzox.forgecreeperheal.reflection.transform;
 
 import static net.minecraft.world.chunk.Chunk.NULL_BLOCK_STORAGE;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import fr.eyzox.forgecreeperheal.reflection.ReflectionHelper;
+import fr.eyzox.forgecreeperheal.reflection.ReflectionManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -17,9 +19,9 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 public class ChunkTransform {
 	
-	private final static Field FIELD_PRECIPITATION_HEIGHT_MAP = Reflect.getFieldForClass(Chunk.class, "precipitationHeightMap", "field_76638_b");
-	private final static Method METHOD_RELIGHT_BLOCK = Reflect.getMethodForClass(Chunk.class, "relightBlock", "func_76615_h");
-	private final static Method METHOD_PROPAGATE_SKYLIGHT_OCCLUSION = Reflect.getMethodForClass(Chunk.class, "propagateSkylightOcclusion", "func_76595_e");
+	private final static Field FIELD_PRECIPITATION_HEIGHT_MAP = ReflectionManager.getInstance().getField(Chunk.class, "precipitationHeightMap");
+	private final static Method METHOD_RELIGHT_BLOCK = ReflectionManager.getInstance().getMethod(Chunk.class, "relightBlock", new Class<?>[]{int.class,int.class,int.class});
+	private final static Method METHOD_PROPAGATE_SKYLIGHT_OCCLUSION = ReflectionManager.getInstance().getMethod(Chunk.class, "propagateSkylightOcclusion", new Class<?>[]{int.class,int.class});
 	
 	private final Chunk chunk;
 	
@@ -31,7 +33,7 @@ public class ChunkTransform {
 	
 	public ChunkTransform(final Chunk chunk) {
 		this.chunk = chunk;
-		this.precipitationHeightMap = (int[]) Reflect.getDataFromField(FIELD_PRECIPITATION_HEIGHT_MAP, this.chunk);
+		this.precipitationHeightMap = (int[]) ReflectionHelper.get(FIELD_PRECIPITATION_HEIGHT_MAP, this.chunk);
 		this.heightMap = this.chunk.getHeightMap();
 		this.worldObj = this.chunk.getWorld();
 		this.storageArrays = this.chunk.getBlockStorageArray();
@@ -50,7 +52,7 @@ public class ChunkTransform {
 	}
 	
 	private void relightBlock(int x, int y, int z) {
-		Reflect.call(this.chunk, METHOD_RELIGHT_BLOCK, x, y, z);
+		ReflectionHelper.call(this.chunk, METHOD_RELIGHT_BLOCK, x, y, z);
 	}
 	
 	private int getLightFor(EnumSkyBlock p_177413_1_, BlockPos pos){
@@ -58,7 +60,7 @@ public class ChunkTransform {
 	}
 	
 	private void propagateSkylightOcclusion(int x, int z){
-		Reflect.call(this.chunk, METHOD_PROPAGATE_SKYLIGHT_OCCLUSION, x, z);
+		ReflectionHelper.call(this.chunk, METHOD_PROPAGATE_SKYLIGHT_OCCLUSION, x, z);
 	}
 	
 	private void _isModified(boolean v) {

@@ -96,6 +96,9 @@ public class CommonProxy {
 
 	public void onPreInit(FMLPreInitializationEvent event) {
 		this.logger = event.getModLog();
+		
+		ForgeCreeperHeal.getInstance().registerReflection();
+		
 		this.configProvider = new ConfigProvider(new JSONConfigLoader(event.getSuggestedConfigurationFile()), new File(ForgeCreeperHeal.MODID+"-config-error.log"));
 
 		this.healerFactory = new TickTimelineFactory();
