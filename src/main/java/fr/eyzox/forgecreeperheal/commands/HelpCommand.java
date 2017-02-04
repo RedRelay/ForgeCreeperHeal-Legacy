@@ -53,4 +53,9 @@ public class HelpCommand extends ForgeCreeperHealCommands {
 		}
 	}
 
+	@Override
+	protected String getFCHUsage() {
+		return "";
+	}
+
 }

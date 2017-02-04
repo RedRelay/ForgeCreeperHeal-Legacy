@@ -11,13 +11,13 @@ import net.minecraft.util.text.TextFormatting;
 public class ConfigCommand extends ForgeCreeperHealCommands{
 
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return super.getCommandUsage(sender)+" [-r] [-s] [<property>:<value>]";
-	}
-
-	@Override
 	protected String getFCHCommandName() {
 		return "config";
+	}
+	
+	@Override
+	protected String getFCHUsage() {
+		return "[-r] [-s] [<property>:<value>]";
 	}
 
 	@Override

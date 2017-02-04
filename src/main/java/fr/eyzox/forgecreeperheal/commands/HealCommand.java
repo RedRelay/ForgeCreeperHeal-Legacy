@@ -18,8 +18,8 @@ public class HealCommand extends ForgeCreeperHealCommands {
 	}
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return super.getCommandUsage(sender)+" [<dim>|all]";
+	protected String getFCHUsage() {
+		return "[<dim>|all]";
 	}
 
 	@Override

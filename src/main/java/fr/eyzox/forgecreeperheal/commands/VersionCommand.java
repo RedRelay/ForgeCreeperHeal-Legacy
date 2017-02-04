@@ -22,4 +22,9 @@ public class VersionCommand extends ForgeCreeperHealCommands {
 		return "Display the current server version of "+ForgeCreeperHeal.MODID;
 	}
 
+	@Override
+	protected String getFCHUsage() {
+		return "";
+	}
+
 }

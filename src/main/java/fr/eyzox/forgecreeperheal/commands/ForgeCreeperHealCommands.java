@@ -25,8 +25,8 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 	};
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return '/'+buildCommandName("fch")+" [?]";
+	public final String getCommandUsage(ICommandSender sender) {
+		return '/'+buildCommandName("fch")+" [?] "+getFCHUsage();
 	}
 	
 	@Override
@@ -42,6 +42,8 @@ public abstract class ForgeCreeperHealCommands extends CommandBase {
 	}
 	
 	protected abstract String getFCHCommandName();
+	
+	protected abstract String getFCHUsage();
 	
 	protected abstract String getHelp();
 	
