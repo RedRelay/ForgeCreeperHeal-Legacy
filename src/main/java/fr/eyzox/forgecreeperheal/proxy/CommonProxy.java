@@ -37,6 +37,7 @@ import fr.eyzox.forgecreeperheal.factory.DefaultFactory;
 import fr.eyzox.forgecreeperheal.factory.keybuilder.BlockKeyBuilder;
 import fr.eyzox.forgecreeperheal.handler.ChunkEventHandler;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
+import fr.eyzox.forgecreeperheal.handler.PlayerConnectionHandler;
 import fr.eyzox.forgecreeperheal.handler.WorldEventHandler;
 import fr.eyzox.forgecreeperheal.healer.HealerManager;
 import fr.eyzox.forgecreeperheal.scheduler.TickTimelineFactory;
@@ -91,6 +92,7 @@ public class CommonProxy {
 	private ChunkEventHandler chunkEventHandler;
 	private ExplosionEventHandler explosionEventHandler;
 	private WorldEventHandler worldTickEventHandler;
+	private PlayerConnectionHandler playerConnectionHandler;
 
 
 
@@ -121,6 +123,9 @@ public class CommonProxy {
 
 		this.worldTickEventHandler = new WorldEventHandler();
 		this.worldTickEventHandler.register();
+		
+		this.playerConnectionHandler = new PlayerConnectionHandler();
+		this.playerConnectionHandler.register();
 
 		//channel = NetworkRegistry.INSTANCE.newSimpleChannel(ForgeCreeperHeal.MODID+":"+"ch0");
 		//channel.registerMessage(ModDataMessage.Handler.class, ModDataMessage.class, 0, Side.SERVER);
