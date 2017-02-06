@@ -3,7 +3,7 @@ fch.command.prefix=[%s]
 fch.command.generic.help.head=--- %s  Help ---
 fch.command.generic.help.usage=Usage : %s
 
-fch.command.config.help=* -r : reload the config from the config file\n* -s : save to the config file\n* <property> : the name of the property you want change\n* <value> : the new value, if property is a list, you can set it up with [<value1>,<value..n>] or you can use +<value> to add or -<value> to remove
+fch.command.config.help=* -r : reload the config from the config file\n* -s : save to the config file\n* <property> : the name of the property you want change\n* <value> : the new value, if property is a list, you can set it up with [<value1>,<value..n>] or you can use +<value> to add or -<value> to remove an item
 fch.command.config.action.reload=Config reloaded
 fch.command.config.action.save=Sorry, saving config from command is not implemented yet
 fch.command.config.action.edit=Sorry, edit config from command is not implemented yet
@@ -12,10 +12,10 @@ fch.command.heal.help=Instant heal terrain\n* <dim> : the dimension id to heal\n
 fch.command.heal.action.allworld=All worlds fully healed
 fch.command.heal.action.world=World %s:%s fully healed
 fch.command.heal.exception.invaliddimensionid=<dim> must be the dimension id
-fch.command.heal.exception.noentityworld=Unable to find world from command sender %s
+fch.command.heal.exception.noentityworld=Unable to find world from command sender : %s
 fch.command.heal.exception.nodimensionid=Unable to find world from dimension id %s
 
-fch.command.help.help=Display all ForgeCreeperHeal available commands
+fch.command.help.help=Display all Forge Creeper Heal available commands
 
 fch.command.version.help=Display the current server version of Forge Creeper Heal
 
