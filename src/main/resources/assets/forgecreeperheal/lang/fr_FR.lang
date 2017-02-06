@@ -1,0 +1,22 @@
+fch.command.prefix=[%s] 
+
+fch.command.generic.help.head=--- %s  Aide ---
+fch.command.generic.help.usage=Usage : %s
+
+fch.command.config.help=* -r : recharge la configuration à partir du fichier de configuration\n* -s : sauvegarde la configuration vers le fichier de configuration\n* <property> : le nom de la propriété à modifier\n* <value> : la nouvelle valeur, si la propriété est une liste, vous pouvez la définir avec [<value1>,<value..n>] ou vous pouvez utiliser +<value> pour ajouter ou -<value> pour supprimer un élément
+fch.command.config.action.reload=Configuration rechargée
+fch.command.config.action.save=Désolé, la sauvegarde de la configuration à partir de commande n'est pas encore implémentée
+fch.command.config.action.edit=Désolé, la modification de la configuration à partir de commande n'est pas encore implémentée
+
+fch.command.heal.help=Régénère instantannément le terrain\n* <dim> : la dimension à régénérer\n* all : régénère toutes les dimensions\n* sans parametres : régénère la dimension dans laquelle se trouve celui qui envoie la commande
+fch.command.heal.action.allworld=Toutes les dimensions ont été totalement régénérées
+fch.command.heal.action.world=La dimension %s:%s a été totalement régénérée
+fch.command.heal.exception.invaliddimensionid=<dim> doit être l'identifiant de la dimension
+fch.command.heal.exception.noentityworld=Impossible de trouver la dimension de l'émetteur de la commande : %s
+fch.command.heal.exception.nodimensionid=Impossible de trouver la dimension %s
+
+fch.command.help.help=Affiche toutes les commandes de Forge Creeper Heal
+
+fch.command.version.help=Affiche la version serveur actuelle de Forge Creeper Heal
+
+fch.command.exception.missingparams=Des paramètres sont manquant :
