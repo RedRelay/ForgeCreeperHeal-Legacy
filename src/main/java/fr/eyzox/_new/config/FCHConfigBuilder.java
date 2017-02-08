@@ -1,6 +1,10 @@
 package fr.eyzox._new.config;
 
 import fr.eyzox._new.config.MinMaxValidator.MinMaxGetter;
+import net.minecraft.init.Blocks;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FCHConfigBuilder {
 
@@ -20,51 +24,57 @@ public class FCHConfigBuilder {
 	
 	public void build() throws PropertyValidationException {
 		final RestrictedConfigOption<Integer> minTickBeforeHeal = new RestrictedConfigOption<Integer>(OPTION_MIN_TICK_BEFORE_HEAL, 6000);
-		final RestrictedConfigOption<Integer> maxTickBeforeStartHeal = new RestrictedConfigOption<Integer>(OPTION_MAX_TICK_BEFORE_HEAL, 12000);
-		
-		MinMaxGetter tickBeforeStartHealMinMaxGetter = new ConfigOptionMinMaxGetter(minTickBeforeHeal, maxTickBeforeStartHeal);
-		
-		minTickBeforeHeal.setValidator(new MinMaxValidator(tickBeforeStartHealMinMaxGetter) {
-			@Override
-			public boolean isValid(Integer obj) throws InvalidValueException {
-				if(obj < 0) {
-					throw new InvalidValueException(obj, minTickBeforeHeal.getName()+" must not be < 0");
-				}
-				return super.isValid(obj);
+		final RestrictedConfigOption<Integer> maxTickBeforeHeal = new RestrictedConfigOption<Integer>(OPTION_MAX_TICK_BEFORE_HEAL, 12000);
+
+		minTickBeforeHeal.setValidator(new MinMaxValidator(new MinMaxGetter() {
+			public int getMin() {
+				return 0;
 			}
-		});
-		
-		maxTickBeforeStartHeal.setValidator(new MinMaxValidator(tickBeforeStartHealMinMaxGetter) {
-			@Override
-			public boolean isValid(Integer obj) throws InvalidValueException {
-				if(obj < 0) {
-					throw new InvalidValueException(obj, maxTickBeforeStartHeal.getName()+" must not be < 0");
-				}
-				return super.isValid(obj);
+
+			public int getMax() {
+				return maxTickBeforeHeal.getValue();
 			}
-		});
+		}));
+
+		maxTickBeforeHeal.setValidator(new MinMaxValidator(new MinMaxGetter() {
+			public int getMin() {
+				return minTickBeforeHeal.getValue();
+			}
+		}));
+
+		final RestrictedConfigOption<Integer> minTickBetweenEachHeal = new RestrictedConfigOption<Integer>(OPTION_MIN_TICK, 0);
+		final RestrictedConfigOption<Integer> maxTickBetweenEachHeal = new RestrictedConfigOption<Integer>(OPTION_MAX_TICK, 200);
+
+		minTickBetweenEachHeal.setValidator(new MinMaxValidator(new MinMaxGetter() {
+			public int getMin() {
+				return 0;
+			}
+
+			public int getMax() {
+				return maxTickBetweenEachHeal.getValue();
+			}
+		}));
+
+		maxTickBetweenEachHeal.setValidator(new MinMaxValidator(new MinMaxGetter() {
+			public int getMin() {
+				return minTickBetweenEachHeal.getValue();
+			}
+		}));
+
+		final ConfigOption<Boolean> overrideBlock = new ConfigOption<Boolean>(OPTION_OVERRIDE_BLOCK, false);
+		final ConfigOption<Boolean> overrideFluid = new ConfigOption<Boolean>(OPTION_OVERRIDE_FUILD, true);
+
+		final ConfigOption<Boolean> dropIfCollision = new ConfigOption<Boolean>(OPTION_DROP_IF_COLLISION, true);
+
+		final ConfigOption<Boolean> dropItems = new ConfigOption<Boolean>(OPTION_DROP_ITEMS, false);
+
+		final ConfigOption<List<String>> removeException = new ConfigOption<List<String>>(OPTION_REMOVE_EXCEPTION, new ArrayList<String>());
+		final ConfigOption<List<String>> healException = new ConfigOption<List<String>>(OPTION_HEAL_EXCEPTION, new ArrayList<String>());
+		final ConfigOption<List<String>> sourceException = new ConfigOption<List<String>>(OPTION_SOURCE_EXCEPTION, new ArrayList<String>());
+
+		removeException.getValue().add(Blocks.TNT.getRegistryName().toString());
+		healException.getValue().add(Blocks.TNT.getRegistryName().toString());
+
 	}
-	
-	
-	private class ConfigOptionMinMaxGetter extends MinMaxGetter {
 
-		private final ConfigOption<Integer> min, max;
-		
-		public ConfigOptionMinMaxGetter(ConfigOption<Integer> min, ConfigOption<Integer> max) {
-			super();
-			this.min = min;
-			this.max = max;
-		}
-
-		@Override
-		public int getMin() {
-			return min.getValue();
-		}
-
-		@Override
-		public int getMax() {
-			return max.getValue();
-		}
-		
-	}
 }

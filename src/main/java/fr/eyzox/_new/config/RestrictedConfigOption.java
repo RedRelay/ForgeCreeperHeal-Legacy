@@ -47,4 +47,8 @@ public class RestrictedConfigOption<T> extends ConfigOption<T> {
 		}
 	}
 
+	public IValidator<T> getValidator() {
+		return this.validator;
+	}
+
 }

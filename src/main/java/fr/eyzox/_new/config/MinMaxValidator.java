@@ -3,9 +3,13 @@ package fr.eyzox._new.config;
 
 public class MinMaxValidator implements IValidator<Integer> {
 	
-	public static abstract class MinMaxGetter {
-		public abstract int getMin();
-		public abstract int getMax();
+	public static class MinMaxGetter {
+		public int getMin() {
+			return Integer.MIN_VALUE;
+		}
+		public int getMax() {
+			return Integer.MAX_VALUE;
+		}
 		
 		private void validate() throws IllegalArgumentException {
 			if(getMin() >= getMax()) {
