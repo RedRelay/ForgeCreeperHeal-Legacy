@@ -32,5 +32,5 @@ public class ConfigOption<T> {
 	public String getName() {
 		return name;
 	}
-	
+
 }

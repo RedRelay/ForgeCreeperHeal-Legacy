@@ -3,9 +3,18 @@ package fr.eyzox._new.config;
 import fr.eyzox._new.config.MinMaxValidator.MinMaxGetter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+/**
+ * Build a default config tree
+ */
 public class FCHConfigBuilder {
+
+	public static final String GROUP_HEALING_TIME = "healing time";
+	public static final String GROUP_OVERRIDE = "override";
+	public static final String GROUP_CONTAINERS = "containers";
+	public static final String GROUP_FILTERS = "filters";
 
 	public static final String OPTION_MIN_TICK_BEFORE_HEAL = "minTickStart";
 	public static final String OPTION_MAX_TICK_BEFORE_HEAL = "maxTickStart";
@@ -21,7 +30,19 @@ public class FCHConfigBuilder {
 	
 	ConfigProvider<JSONSerializer> configProvider;
 	
-	public void build() throws PropertyValidationException {
+	public Collection<ConfigOptionGroup> build() throws PropertyValidationException {
+
+		final List<ConfigOptionGroup> r = new ArrayList<ConfigOptionGroup>();
+		r.add(this.getHealingTimeGroup());
+		r.add(this.getOverrideGroup());
+		r.add(this.getContainersGroup());
+		r.add(this.getFiltersGroup());
+
+		return r;
+	}
+
+	private ConfigOptionGroup getHealingTimeGroup() throws PropertyValidationException {
+		final ConfigOptionGroup g = new ConfigOptionGroup(GROUP_HEALING_TIME);
 		final RestrictedConfigOption<Integer> minTickBeforeHeal = new RestrictedConfigOption<Integer>(OPTION_MIN_TICK_BEFORE_HEAL, 6000);
 		final RestrictedConfigOption<Integer> maxTickBeforeHeal = new RestrictedConfigOption<Integer>(OPTION_MAX_TICK_BEFORE_HEAL, 12000);
 
@@ -60,17 +81,50 @@ public class FCHConfigBuilder {
 			}
 		}));
 
+		g.getConfigOptions().add(minTickBeforeHeal);
+		g.getConfigOptions().add(maxTickBeforeHeal);
+		g.getConfigOptions().add(minTickBetweenEachHeal);
+		g.getConfigOptions().add(maxTickBetweenEachHeal);
+
+		return g;
+
+	}
+
+	private ConfigOptionGroup getOverrideGroup() throws PropertyValidationException {
+		final ConfigOptionGroup g = new ConfigOptionGroup(GROUP_OVERRIDE);
+
 		final ConfigOption<Boolean> overrideBlock = new ConfigOption<Boolean>(OPTION_OVERRIDE_BLOCK, false);
 		final ConfigOption<Boolean> overrideFluid = new ConfigOption<Boolean>(OPTION_OVERRIDE_FUILD, true);
-
 		final ConfigOption<Boolean> dropIfCollision = new ConfigOption<Boolean>(OPTION_DROP_IF_COLLISION, true);
 
+		g.getConfigOptions().add(overrideBlock);
+		g.getConfigOptions().add(overrideFluid);
+		g.getConfigOptions().add(dropIfCollision);
+
+		return g;
+	}
+
+	private ConfigOptionGroup getContainersGroup() throws PropertyValidationException {
+		final ConfigOptionGroup g = new ConfigOptionGroup(GROUP_CONTAINERS);
+
 		final ConfigOption<Boolean> dropItems = new ConfigOption<Boolean>(OPTION_DROP_ITEMS, false);
+
+		g.getConfigOptions().add(dropItems);
+
+		return g;
+	}
+
+	private ConfigOptionGroup getFiltersGroup() throws PropertyValidationException {
+		final ConfigOptionGroup g = new ConfigOptionGroup(GROUP_FILTERS);
 
 		final ConfigOption<List<String>> removeException = new ConfigOption<List<String>>(OPTION_REMOVE_EXCEPTION, new ArrayList<String>());
 		final ConfigOption<List<String>> healException = new ConfigOption<List<String>>(OPTION_HEAL_EXCEPTION, new ArrayList<String>());
 		final ConfigOption<List<String>> sourceException = new ConfigOption<List<String>>(OPTION_SOURCE_EXCEPTION, new ArrayList<String>());
 
-	}
+		g.getConfigOptions().add(removeException);
+		g.getConfigOptions().add(healException);
+		g.getConfigOptions().add(sourceException);
 
+		return g;
+	}
 }
