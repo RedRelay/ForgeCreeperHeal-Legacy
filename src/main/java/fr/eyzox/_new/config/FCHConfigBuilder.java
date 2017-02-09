@@ -1,7 +1,6 @@
 package fr.eyzox._new.config;
 
 import fr.eyzox._new.config.MinMaxValidator.MinMaxGetter;
-import net.minecraft.init.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +70,6 @@ public class FCHConfigBuilder {
 		final ConfigOption<List<String>> removeException = new ConfigOption<List<String>>(OPTION_REMOVE_EXCEPTION, new ArrayList<String>());
 		final ConfigOption<List<String>> healException = new ConfigOption<List<String>>(OPTION_HEAL_EXCEPTION, new ArrayList<String>());
 		final ConfigOption<List<String>> sourceException = new ConfigOption<List<String>>(OPTION_SOURCE_EXCEPTION, new ArrayList<String>());
-
-		removeException.getValue().add(Blocks.TNT.getRegistryName().toString());
-		healException.getValue().add(Blocks.TNT.getRegistryName().toString());
 
 	}
 

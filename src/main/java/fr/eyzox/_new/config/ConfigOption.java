@@ -8,6 +8,9 @@ public class ConfigOption<T> {
 	public ConfigOption(String name, T defaultValue) {
 		this.name = name;
 		this.value = defaultValue;
+		if(name != null) {
+			this.description = "fch.config."+name.toLowerCase()+".desc";
+		}
 	}
 
 	public String getDescription() {
