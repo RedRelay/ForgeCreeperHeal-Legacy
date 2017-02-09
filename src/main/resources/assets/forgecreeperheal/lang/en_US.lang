@@ -19,5 +19,16 @@ fch.command.help.help=Display all Forge Creeper Heal available commands
 
 fch.command.version.help=Display the current server version of Forge Creeper Heal
 
-fch.command.exception.missingparams=Missing parameters : 
+fch.command.exception.missingparams=Missing parameters :
 
+fch.config.mintickbeforeheal.desc=Minimum ticks before starting heal (Only affect new explosions)
+fch.config.maxTickBeforeHeal.desc=Maximum ticks before starting heal (Only affect new explosions)
+fch.config.minTickBetweenEachHeal.desc=Minimum ticks between each heal (Only affect new explosions)
+fch.config.maxTickBetweenEachHeal.desc=Maximum ticks between each heal (Only affect new explosions)
+fch.config.overrideBlock.desc=When a block is healed, if a replacement block has been placed meanwhile, this block is overrided by the healed block
+fch.config.overrideFluid.desc=When a block is healed, if a fluid filled the block position meanwhile, this fluid is overrided at this position by the healed block
+fch.config.dropIfCollision.desc=If overrideBlock is true then the replacement block is dropped, else the block about to be heal is dropped
+fch.config.dropItems.desc=Drops all items from a container when it blows up, else items are restored with the container when healed (Only affect new explosions)
+fch.config.removeException.desc=These blocks will be not removed after a handled explosion and will be affected by the explosion
+fch.config.healException.desc=These blocks will be not healed
+fch.config.sourceException.desc=Forge Creeper Heal does not handle explosion triggered from these entities
