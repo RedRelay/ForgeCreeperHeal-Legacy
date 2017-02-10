@@ -34,20 +34,6 @@ public class FCHConfigBuilder {
 	public static final String OPTION_HEAL_EXCEPTION = "healException";
 	public static final String OPTION_SOURCE_EXCEPTION = "sourceException";
 	
-	public static abstract class FastConfigUpdater<T> implements IFastConfigUpdater{
-		private final ConfigOption<T> configOption;
-
-		public FastConfigUpdater(ConfigOption<T> configOption) {
-			this.configOption = configOption;
-		}
-		
-		public ConfigOption<T> getConfigOption() {
-			return configOption;
-		}
-		
-		
-	}
-	
 	public ConfigOptionGroup build() throws PropertyValidationException {
 
 		final ConfigOptionGroup r = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
