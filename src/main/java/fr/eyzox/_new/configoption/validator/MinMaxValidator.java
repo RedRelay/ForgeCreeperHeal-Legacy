@@ -1,5 +1,6 @@
-package fr.eyzox._new.config;
+package fr.eyzox._new.configoption.validator;
 
+import fr.eyzox._new.configoption.exceptions.InvalidValueException;
 
 public class MinMaxValidator implements IValidator<Integer> {
 	

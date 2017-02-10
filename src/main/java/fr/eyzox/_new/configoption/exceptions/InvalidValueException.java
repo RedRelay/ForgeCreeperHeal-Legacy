@@ -1,6 +1,6 @@
-package fr.eyzox._new.config;
+package fr.eyzox._new.configoption.exceptions;
 
-public class InvalidValueException extends Exception {
+public class InvalidValueException extends ConfigOptionException {
 
 	public InvalidValueException(Object value) {
 		this(value, null);

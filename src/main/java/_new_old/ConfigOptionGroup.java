@@ -1,8 +1,10 @@
-package fr.eyzox._new.config;
+package _new_old;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import fr.eyzox._new.configoption.ConfigOption;
 
 /**
  * Altima Agency

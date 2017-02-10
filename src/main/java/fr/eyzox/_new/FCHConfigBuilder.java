@@ -1,10 +1,16 @@
-package fr.eyzox._new.config;
-
-import fr.eyzox._new.config.MinMaxValidator.MinMaxGetter;
+package fr.eyzox._new;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+
+import fr.eyzox._new.configoption.ConfigOption;
+import fr.eyzox._new.configoption.ConfigOptionGroup;
+import fr.eyzox._new.configoption.RestrictedConfigOption;
+import fr.eyzox._new.configoption.exceptions.PropertyValidationException;
+import fr.eyzox._new.configoption.validator.MinMaxValidator;
+import fr.eyzox._new.configoption.validator.MinMaxValidator.MinMaxGetter;
+import fr.eyzox._new.fch.IFastConfigUpdater;
+import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 
 /**
  * Build a default config tree
@@ -28,11 +34,23 @@ public class FCHConfigBuilder {
 	public static final String OPTION_HEAL_EXCEPTION = "healException";
 	public static final String OPTION_SOURCE_EXCEPTION = "sourceException";
 	
-	ConfigProvider<JSONSerializer> configProvider;
-	
-	public Collection<ConfigOptionGroup> build() throws PropertyValidationException {
+	public static abstract class FastConfigUpdater<T> implements IFastConfigUpdater{
+		private final ConfigOption<T> configOption;
 
-		final List<ConfigOptionGroup> r = new ArrayList<ConfigOptionGroup>();
+		public FastConfigUpdater(ConfigOption<T> configOption) {
+			this.configOption = configOption;
+		}
+		
+		public ConfigOption<T> getConfigOption() {
+			return configOption;
+		}
+		
+		
+	}
+	
+	public ConfigOptionGroup build() throws PropertyValidationException {
+
+		final ConfigOptionGroup r = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
 		r.add(this.getHealingTimeGroup());
 		r.add(this.getOverrideGroup());
 		r.add(this.getContainersGroup());
@@ -81,10 +99,10 @@ public class FCHConfigBuilder {
 			}
 		}));
 
-		g.getConfigOptions().add(minTickBeforeHeal);
-		g.getConfigOptions().add(maxTickBeforeHeal);
-		g.getConfigOptions().add(minTickBetweenEachHeal);
-		g.getConfigOptions().add(maxTickBetweenEachHeal);
+		g.add(minTickBeforeHeal);
+		g.add(maxTickBeforeHeal);
+		g.add(minTickBetweenEachHeal);
+		g.add(maxTickBetweenEachHeal);
 
 		return g;
 
@@ -97,9 +115,9 @@ public class FCHConfigBuilder {
 		final ConfigOption<Boolean> overrideFluid = new ConfigOption<Boolean>(OPTION_OVERRIDE_FUILD, true);
 		final ConfigOption<Boolean> dropIfCollision = new ConfigOption<Boolean>(OPTION_DROP_IF_COLLISION, true);
 
-		g.getConfigOptions().add(overrideBlock);
-		g.getConfigOptions().add(overrideFluid);
-		g.getConfigOptions().add(dropIfCollision);
+		g.add(overrideBlock);
+		g.add(overrideFluid);
+		g.add(dropIfCollision);
 
 		return g;
 	}
@@ -109,7 +127,7 @@ public class FCHConfigBuilder {
 
 		final ConfigOption<Boolean> dropItems = new ConfigOption<Boolean>(OPTION_DROP_ITEMS, false);
 
-		g.getConfigOptions().add(dropItems);
+		g.add(dropItems);
 
 		return g;
 	}
@@ -121,9 +139,9 @@ public class FCHConfigBuilder {
 		final ConfigOption<List<String>> healException = new ConfigOption<List<String>>(OPTION_HEAL_EXCEPTION, new ArrayList<String>());
 		final ConfigOption<List<String>> sourceException = new ConfigOption<List<String>>(OPTION_SOURCE_EXCEPTION, new ArrayList<String>());
 
-		g.getConfigOptions().add(removeException);
-		g.getConfigOptions().add(healException);
-		g.getConfigOptions().add(sourceException);
+		g.add(removeException);
+		g.add(healException);
+		g.add(sourceException);
 
 		return g;
 	}

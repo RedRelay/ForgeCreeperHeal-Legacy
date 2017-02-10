@@ -1,7 +1,11 @@
-package fr.eyzox._new.config;
+package fr.eyzox._new.configoption;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import fr.eyzox._new.configoption.exceptions.InvalidValueException;
+import fr.eyzox._new.configoption.exceptions.PropertyValidationException;
+import fr.eyzox._new.configoption.validator.IValidator;
 
 public class RestrictedConfigOption<T> extends ConfigOption<T> {
 

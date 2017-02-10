@@ -1,4 +1,6 @@
-package fr.eyzox._new.config;
+package _new_old;
+
+import fr.eyzox._new.configoption.ConfigOption;
 
 /**
  * Altima Agency

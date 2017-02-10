@@ -1,16 +1,19 @@
-package fr.eyzox._new.config;
+package _new_old;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import fr.eyzox._new.configoption.ConfigOption;
+import fr.eyzox._new.configoption.IFastConfigEditor;
 
 public class ConfigProvider<R, W> {
 	
 	private class Wrapper {
 		ConfigOption<?> configOption;
 		ISerializer<R, W, ?> serializer;
-		IFastConfigEditor fastConfigEditor;
+		IFastConfigUpdater fastConfigEditor;
 		
-		Wrapper(ConfigOption<?> configOption, ISerializer<R, W, ?> serializer, IFastConfigEditor fastConfigEditor) {
+		Wrapper(ConfigOption<?> configOption, ISerializer<R, W, ?> serializer, IFastConfigUpdater fastConfigEditor) {
 			this.configOption = configOption;
 			this.serializer = serializer;
 			this.fastConfigEditor = fastConfigEditor;
@@ -25,7 +28,7 @@ public class ConfigProvider<R, W> {
 		this.register(configOption, serializer, null);
 	}
 	
-	public <T> void register(ConfigOption<T> configOption, ISerializer<R, W, ?> serializer, IFastConfigEditor fastConfigEditor) {
+	public <T> void register(ConfigOption<T> configOption, ISerializer<R, W, ?> serializer, IFastConfigUpdater fastConfigEditor) {
 		this.registeredConfigOptions.put(configOption.getName(), new Wrapper(configOption, serializer, fastConfigEditor));
 	}
 	

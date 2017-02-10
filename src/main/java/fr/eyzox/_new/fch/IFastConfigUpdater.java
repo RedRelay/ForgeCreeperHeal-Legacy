@@ -1,7 +1,7 @@
-package fr.eyzox._new.config;
+package fr.eyzox._new.fch;
 
 import fr.eyzox.forgecreeperheal.config.FastConfig;
 
-public interface IFastConfigEditor {
+public interface IFastConfigUpdater {
 	void applyChanges(FastConfig c);
 }

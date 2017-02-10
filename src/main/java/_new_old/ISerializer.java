@@ -1,4 +1,4 @@
-package fr.eyzox._new.config;
+package _new_old;
 
 public interface ISerializer<R, W, T> {
 	void read(R reader, T to);

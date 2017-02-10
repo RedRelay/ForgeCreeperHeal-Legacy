@@ -1,8 +1,11 @@
-package fr.eyzox._new.config;
+package _new_old;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import fr.eyzox._new.configoption.ConfigOption;
+import fr.eyzox._new.configoption.IFastConfigEditor;
 
 /**
  *
@@ -22,7 +25,7 @@ public class ConfigSerializerBuilder<R, W> {
                     throw new NoSerializerException(co);
                 }
 
-                cp.register(co,serial, (co instanceof IFastConfigEditor ? (IFastConfigEditor) co : null));
+                cp.register(co,serial, (co instanceof IFastConfigUpdater ? (IFastConfigUpdater) co : null));
             }
         }
 
