@@ -1,7 +1,6 @@
 package fr.eyzox._new.fch;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import fr.eyzox._new.configoption.ConfigOption;
 import fr.eyzox._new.configoption.ConfigOptionCollection;
