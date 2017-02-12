@@ -7,32 +7,25 @@ import fr.eyzox._new.configoption.exceptions.InvalidValueException;
 import fr.eyzox._new.configoption.exceptions.PropertyValidationException;
 import fr.eyzox._new.configoption.validator.IValidator;
 
-public class RestrictedConfigOption<T> extends ConfigOption<T> {
+public class RestrictedConfigOption<T> extends ConfigOption<T> implements IRestricted<T>{
 
-	private static final Logger logger = LogManager.getLogger();
+	private final Logger logger = LogManager.getLogger(RestrictedConfigOption.class);
 	
 	private IValidator<T> validator;
 	
-	public RestrictedConfigOption(String name, T defaultValue) throws PropertyValidationException {
-		this(name, defaultValue, null);
+	public RestrictedConfigOption(String name, T defaultValue) {
+		super(name, defaultValue);
 	}
 	
 	public RestrictedConfigOption(String name, T defaultValue, IValidator<T> validator) throws PropertyValidationException {
-		super(name, defaultValue);
-		this.validator = validator;
-		if(validator != null) {
-			try {
-				validator.isValid(defaultValue);
-			} catch (InvalidValueException e) {
-				throw new PropertyValidationException(this, e); 
-			}
-		}
+		this(name, defaultValue);
+		this.setValidator(validator);
 	}
 	
 	@Override
 	public void setValue(T value) {
 		try {
-			if(validator != null && validator.isValid(value)) {
+			if(validator != null && validator.isValid(this, value)) {
 				super.setValue(value);
 			}
 		} catch (InvalidValueException e) {
@@ -40,17 +33,21 @@ public class RestrictedConfigOption<T> extends ConfigOption<T> {
 		}
 	}
 	
+	@Override
 	public void setValidator(IValidator<T> validator) throws PropertyValidationException {
 		this.validator = validator;
 		if(validator != null) {
 			try {
-				validator.isValid(getValue());
+				if(!validator.isValid(this, getValue())) {
+					throw new InvalidValueException(getValue());
+				}
 			} catch (InvalidValueException e) {
 				throw new PropertyValidationException(this, e);
 			}
 		}
 	}
 
+	@Override
 	public IValidator<T> getValidator() {
 		return this.validator;
 	}

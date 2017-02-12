@@ -1,5 +1,6 @@
 package fr.eyzox._new.configoption.validator;
 
+import fr.eyzox._new.configoption.ConfigOption;
 import fr.eyzox._new.configoption.exceptions.InvalidValueException;
 
 public class MinMaxValidator implements IValidator<Integer> {
@@ -26,7 +27,7 @@ public class MinMaxValidator implements IValidator<Integer> {
 	}
 
 	@Override
-	public boolean isValid(Integer obj) throws InvalidValueException {
+	public boolean isValid(ConfigOption<?> config, Integer obj) throws InvalidValueException {
 		minMaxGetter.validate();
 		if(obj < minMaxGetter.getMin()) {
 			throw new InvalidValueException(obj, "value must be > "+minMaxGetter.getMin());

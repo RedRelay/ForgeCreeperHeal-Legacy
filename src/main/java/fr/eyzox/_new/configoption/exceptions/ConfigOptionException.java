@@ -1,6 +1,6 @@
 package fr.eyzox._new.configoption.exceptions;
 
-public class ConfigOptionException extends Exception {
+public class ConfigOptionException extends RuntimeException {
 
 	public ConfigOptionException() {
 	}
