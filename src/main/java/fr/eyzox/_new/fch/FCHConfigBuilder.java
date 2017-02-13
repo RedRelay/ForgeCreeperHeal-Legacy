@@ -1,7 +1,5 @@
 package fr.eyzox._new.fch;
 
-import java.util.ArrayList;
-
 import fr.eyzox._new.configoption.ConfigOption;
 import fr.eyzox._new.configoption.ConfigOptionCollection;
 import fr.eyzox._new.configoption.ConfigOptionGroup;
@@ -10,6 +8,11 @@ import fr.eyzox._new.configoption.exceptions.PropertyValidationException;
 import fr.eyzox._new.configoption.validator.MinMaxValidator;
 import fr.eyzox._new.configoption.validator.MinMaxValidator.MinMaxGetter;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
+import fr.eyzox.forgecreeperheal.config.FastConfig;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Build a default config tree
@@ -32,16 +35,16 @@ public class FCHConfigBuilder {
 	public static final String OPTION_REMOVE_EXCEPTION = "removeException";
 	public static final String OPTION_HEAL_EXCEPTION = "healException";
 	public static final String OPTION_SOURCE_EXCEPTION = "sourceException";
-	
-	public ConfigOptionGroup build() throws PropertyValidationException {
 
-		final ConfigOptionGroup r = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
-		r.put(this.getHealingTimeGroup());
-		r.put(this.getOverrideGroup());
-		r.put(this.getContainersGroup());
-		r.put(this.getFiltersGroup());
+	private final ConfigOptionGroup configRoot;
+	private final Map<ConfigOption<?>, IFastConfigUpdater> fastConfigUpdaters = new HashMap<ConfigOption<?>, IFastConfigUpdater>();
 
-		return r;
+	public FCHConfigBuilder throws PropertyValidationException {
+		this.configRoot = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
+		configRoot.put(this.getHealingTimeGroup());
+		configRoot.put(this.getOverrideGroup());
+		configRoot.put(this.getContainersGroup());
+		configRoot.put(this.getFiltersGroup());
 	}
 
 	private ConfigOptionGroup getHealingTimeGroup() throws PropertyValidationException {
@@ -89,6 +92,31 @@ public class FCHConfigBuilder {
 		g.put(minTickBetweenEachHeal);
 		g.put(maxTickBetweenEachHeal);
 
+		fastConfigUpdaters.put(minTickBeforeHeal, new IFastConfigUpdater<Integer>() {
+			@Override
+			public void applyChanges(FastConfig c, Integer value) {
+
+			}
+		});
+		fastConfigUpdaters.put(maxTickBeforeHeal, new IFastConfigUpdater<Integer>() {
+			@Override
+			public void applyChanges(FastConfig c, Integer value) {
+
+			}
+		});
+		fastConfigUpdaters.put(minTickBetweenEachHeal, new IFastConfigUpdater<Integer>() {
+			@Override
+			public void applyChanges(FastConfig c, Integer value) {
+
+			}
+		});
+		fastConfigUpdaters.put(maxTickBetweenEachHeal, new IFastConfigUpdater<Integer>() {
+			@Override
+			public void applyChanges(FastConfig c, Integer value) {
+
+			}
+		});
+
 		return g;
 
 	}
@@ -120,9 +148,9 @@ public class FCHConfigBuilder {
 	private ConfigOptionGroup getFiltersGroup() throws PropertyValidationException {
 		final ConfigOptionGroup g = new ConfigOptionGroup(GROUP_FILTERS);
 
-		final ConfigOptionCollection<String> removeException = new ConfigOptionCollection<String>(OPTION_REMOVE_EXCEPTION, new ArrayList<String>());
-		final ConfigOptionCollection<String> healException = new ConfigOptionCollection<String>(OPTION_HEAL_EXCEPTION, new ArrayList<String>());
-		final ConfigOptionCollection<String> sourceException = new ConfigOptionCollection<String>(OPTION_SOURCE_EXCEPTION, new ArrayList<String>());
+		final ConfigOptionCollection<String> removeException = new ConfigOptionCollection<String>(OPTION_REMOVE_EXCEPTION, new HashSet<String>());
+		final ConfigOptionCollection<String> healException = new ConfigOptionCollection<String>(OPTION_HEAL_EXCEPTION, new HashSet<String>());
+		final ConfigOptionCollection<String> sourceException = new ConfigOptionCollection<String>(OPTION_SOURCE_EXCEPTION, new HashSet<String>());
 
 		g.put(removeException);
 		g.put(healException);
