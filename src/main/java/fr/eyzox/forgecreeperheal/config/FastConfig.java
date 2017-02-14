@@ -1,15 +1,17 @@
 package fr.eyzox.forgecreeperheal.config;
 
+import fr.eyzox._new.configoption.ConfigOption;
+import fr.eyzox._new.fch.IFastConfigUpdater;
+import fr.eyzox.bsc.config.IConfigListener;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import fr.eyzox.bsc.config.Config;
-import fr.eyzox.bsc.config.ConfigOptionGroup;
-import fr.eyzox.bsc.config.IConfigListener;
-import fr.eyzox.bsc.config.option.ConfigOption;
-import fr.eyzox.bsc.config.option.ConfigOptionList;
-
 public class FastConfig implements IConfigListener {
+
+	private final Map<ConfigOption<?>, IFastConfigUpdater<?>> updaters;
 
 	private int minTickStart, maxTickStart;
 	private int minTick, maxTick;
@@ -22,72 +24,77 @@ public class FastConfig implements IConfigListener {
 	private final Set<String> removeException = new HashSet<String>();
 	private final Set<String> healException = new HashSet<String>();
 	private final Set<String> sourceException = new HashSet<String>();
+
+	public FastConfig() {
+		this(new HashMap<ConfigOption<?>, IFastConfigUpdater<?>>());
+	}
 	
-	public FastConfig() {}
-
-	@Override
-	public void onChange(Config config) {
-		
-		removeException.clear();
-		healException.clear();
-		sourceException.clear();
-		
-		ConfigOptionGroup group = config.getOptionGroup(ConfigProvider.GROUP_HEALING_TIME);
-		
-		this.minTickStart = Integer.parseInt(((ConfigOption)group.getOption(ConfigProvider.OPTION_MIN_TICK_BEFORE_HEAL)).getValue());
-		this.maxTickStart = Integer.parseInt(((ConfigOption)group.getOption(ConfigProvider.OPTION_MAX_TICK_BEFORE_HEAL)).getValue());
-		
-		this.minTick = Integer.parseInt(((ConfigOption)group.getOption(ConfigProvider.OPTION_MIN_TICK)).getValue());
-		this.maxTick = Integer.parseInt(((ConfigOption)group.getOption(ConfigProvider.OPTION_MAX_TICK)).getValue());
-		
-		group = config.getOptionGroup(ConfigProvider.GROUP_OVERRIDE);
-		
-		this.overrideBlock = Boolean.parseBoolean(((ConfigOption)group.getOption(ConfigProvider.OPTION_OVERRIDE_BLOCK)).getValue());
-		this.overrideFluid = Boolean.parseBoolean(((ConfigOption)group.getOption(ConfigProvider.OPTION_OVERRIDE_FUILD)).getValue());
-		this.dropIfCollision = Boolean.parseBoolean(((ConfigOption)group.getOption(ConfigProvider.OPTION_DROP_IF_COLLISION)).getValue());
-		
-		group = config.getOptionGroup(ConfigProvider.GROUP_CONTAINERS);
-		
-		this.dropItems = Boolean.parseBoolean(((ConfigOption)group.getOption(ConfigProvider.OPTION_DROP_ITEMS)).getValue());
-		
-		group = config.getOptionGroup(ConfigProvider.GROUP_FILTERS);
-		
-		this.removeException.addAll(((ConfigOptionList)group.getOption(ConfigProvider.OPTION_REMOVE_EXCEPTION)).getValues());
-		this.healException.addAll(((ConfigOptionList)group.getOption(ConfigProvider.OPTION_HEAL_EXCEPTION)).getValues());
-		this.sourceException.addAll(((ConfigOptionList)group.getOption(ConfigProvider.OPTION_SOURCE_EXCEPTION)).getValues());
-
+	public FastConfig(Map<ConfigOption<?>, IFastConfigUpdater<?>> updaters) {
+		this.updaters = updaters;
 	}
 
 	public int getMinTickStart() {
 		return minTickStart;
 	}
 
+	public void setMinTickStart(int minTickStart) {
+		this.minTickStart = minTickStart;
+	}
+
 	public int getMaxTickStart() {
 		return maxTickStart;
+	}
+
+	public void setMaxTickStart(int maxTickStart) {
+		this.maxTickStart = maxTickStart;
 	}
 
 	public int getMinTick() {
 		return minTick;
 	}
 
+	public void setMinTick(int minTick) {
+		this.minTick = minTick;
+	}
+
 	public int getMaxTick() {
 		return maxTick;
+	}
+
+	public void setMaxTick(int maxTick) {
+		this.maxTick = maxTick;
 	}
 
 	public boolean isOverrideBlock() {
 		return overrideBlock;
 	}
 
+	public void setOverrideBlock(boolean overrideBlock) {
+		this.overrideBlock = overrideBlock;
+	}
+
 	public boolean isOverrideFluid() {
 		return overrideFluid;
+	}
+
+	public void setOverrideFluid(boolean overrideFluid) {
+		this.overrideFluid = overrideFluid;
 	}
 
 	public boolean isDropIfCollision() {
 		return dropIfCollision;
 	}
 
+	public void setDropIfCollision(boolean dropIfCollision) {
+		this.dropIfCollision = dropIfCollision;
+	}
+
 	public boolean isDropItems() {
 		return dropItems;
+	}
+
+	public void setDropItems(boolean dropItems) {
+		this.dropItems = dropItems;
 	}
 
 	public Set<String> getRemoveException() {
@@ -101,7 +108,16 @@ public class FastConfig implements IConfigListener {
 	public Set<String> getSourceException() {
 		return sourceException;
 	}
-	
-	
 
+	public Map<ConfigOption<?>, IFastConfigUpdater<?>> getUpdaters() {
+		return updaters;
+	}
+
+	@Override
+	public <T> void onChange(ConfigOption<T> config) {
+		IFastConfigUpdater<T> updater = (IFastConfigUpdater<T>) updaters.get(config);
+		if(updater != null) {
+			updater.applyChanges(this, config.getValue());
+		}
+	}
 }

@@ -39,7 +39,7 @@ public class FCHConfigBuilder {
 	private final ConfigOptionGroup configRoot;
 	private final Map<ConfigOption<?>, IFastConfigUpdater> fastConfigUpdaters = new HashMap<ConfigOption<?>, IFastConfigUpdater>();
 
-	public FCHConfigBuilder throws PropertyValidationException {
+	public FCHConfigBuilder() throws PropertyValidationException {
 		this.configRoot = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
 		configRoot.put(this.getHealingTimeGroup());
 		configRoot.put(this.getOverrideGroup());
@@ -95,25 +95,25 @@ public class FCHConfigBuilder {
 		fastConfigUpdaters.put(minTickBeforeHeal, new IFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
-
+				c.setMinTickStart(value);
 			}
 		});
 		fastConfigUpdaters.put(maxTickBeforeHeal, new IFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
-
+				c.setMaxTickStart(value);
 			}
 		});
 		fastConfigUpdaters.put(minTickBetweenEachHeal, new IFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
-
+				c.setMinTick(value);
 			}
 		});
 		fastConfigUpdaters.put(maxTickBetweenEachHeal, new IFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
-
+				c.setMaxTick(value);
 			}
 		});
 
@@ -132,6 +132,25 @@ public class FCHConfigBuilder {
 		g.put(overrideFluid);
 		g.put(dropIfCollision);
 
+		fastConfigUpdaters.put(overrideBlock, new IFastConfigUpdater<Boolean>() {
+			@Override
+			public void applyChanges(FastConfig c, Boolean value) {
+				c.setOverrideBlock(value);
+			}
+		});
+		fastConfigUpdaters.put(overrideFluid, new IFastConfigUpdater<Boolean>() {
+			@Override
+			public void applyChanges(FastConfig c, Boolean value) {
+				c.setOverrideFluid(value);
+			}
+		});
+		fastConfigUpdaters.put(dropIfCollision, new IFastConfigUpdater<Boolean>() {
+			@Override
+			public void applyChanges(FastConfig c, Boolean value) {
+				c.setDropIfCollision(value);
+			}
+		});
+
 		return g;
 	}
 
@@ -141,6 +160,13 @@ public class FCHConfigBuilder {
 		final ConfigOption<Boolean> dropItems = new ConfigOption<Boolean>(OPTION_DROP_ITEMS, false);
 
 		g.put(dropItems);
+
+		fastConfigUpdaters.put(dropItems, new IFastConfigUpdater<Boolean>() {
+			@Override
+			public void applyChanges(FastConfig c, Boolean value) {
+				c.setDropItems(value);
+			}
+		});
 
 		return g;
 	}
@@ -156,6 +182,23 @@ public class FCHConfigBuilder {
 		g.put(healException);
 		g.put(sourceException);
 
+		/*
+		fastConfigUpdaters.put(removeException, new IFastConfigUpdater<Boolean>() {
+			@Override
+			public void applyChanges(FastConfig c, Boolean value) {
+				c.setDropItems(value);
+			}
+		});
+		*/
+
 		return g;
+	}
+
+	public ConfigOptionGroup getConfigRoot() {
+	    return this.configRoot;
+    }
+
+	public Map<ConfigOption<?>, IFastConfigUpdater> getFastConfigUpdaters() {
+		return fastConfigUpdaters;
 	}
 }
