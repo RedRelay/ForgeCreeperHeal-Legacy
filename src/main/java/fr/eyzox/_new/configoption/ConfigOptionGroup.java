@@ -1,5 +1,7 @@
 package fr.eyzox._new.configoption;
 
+import fr.eyzox._new.configoption.events.*;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,12 +19,14 @@ public class ConfigOptionGroup extends ConfigOption<Map<String, ConfigOption<?>>
 	}
 	
 	public ConfigOption<?> put(ConfigOption<?> e) {
-		return super.getValue().put(e.getName(), e);
+		final ConfigOption<?> res =  super.getValue().put(e.getName(), e);
+		this.fireEvent(new GroupChangedEvent(super.getValue(), new ChangedEvent<ConfigOption<?>>(res, e), CollectionChangedEvent.State.ADDED));
+		return res;
 	}
 
 	public void putAll(Collection<? extends ConfigOption<?>> c) {
 		for(ConfigOption<?> e : c) {
-			put(e);
+			this.put(e);
 		}
 	}
 
@@ -30,32 +34,32 @@ public class ConfigOptionGroup extends ConfigOption<Map<String, ConfigOption<?>>
 		if(o instanceof ConfigOption<?>) {
 			o = ((ConfigOption<?>)o).getName();
 		}
-		return super.getValue().remove(o);
+		ConfigOption<?> res = super.getValue().remove(o);
+		this.fireEvent(new GroupChangedEvent(super.getValue(), new ChangedEvent<ConfigOption<?>>(res, null), CollectionChangedEvent.State.REMOVED));
+		return res;
 	}
 
 	public boolean removeAll(Collection<?> c) {
 		boolean hasChanged = false;
-		for(Object o : c) {
-			if(remove(o) != null) {
+		for (Object o : c) {
+			if (this.remove(o) != null) {
 				hasChanged = true;
 			}
 		}
 		return hasChanged;
 	}
 
-	public void putAll(Map<? extends String, ? extends ConfigOption<?>> m) {
-		super.getValue().putAll(m);
-	}
-
 	@Override
 	public void setValue(Map<String, ConfigOption<?>> value) {
-		clear();
-		putAll(value);
+		final Map<String, ConfigOption<?>> newValue = new HashMap<String, ConfigOption<?>>(value);
+		super.setValue(newValue);
 	}
 
 	
 	public void clear() {
+		final Map<String, ConfigOption<?>> oldValues = new HashMap<String, ConfigOption<?>>(super.getValue());
 		super.getValue().clear();
+		this.fireEvent(new ClearedEvent<Map<String, ConfigOption<?>>>(oldValues, this.getValue()));
 	}
 
 }
