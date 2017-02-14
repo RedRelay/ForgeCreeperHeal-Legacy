@@ -1,13 +1,9 @@
 package fr.eyzox._new.configoption.events;
 
-import fr.eyzox._new.configoption.ConfigOption;
-
 import java.util.Map;
 
-/**
- * Altima Agency
- * Created by aduponchel on 14/02/17.
- */
+import fr.eyzox._new.configoption.ConfigOption;
+
 public class GroupChangedEvent extends AbstractCollectionChangedEvent<ConfigOption<?>>{
     private final Map<String, ConfigOption<?>> map;
     private final ChangedEvent<ConfigOption<?>> changedEvent;

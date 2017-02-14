@@ -1,17 +1,9 @@
 package fr.eyzox.forgecreeperheal.config;
 
-import fr.eyzox._new.configoption.ConfigOption;
-import fr.eyzox._new.fch.IFastConfigUpdater;
-import fr.eyzox.bsc.config.IConfigListener;
-
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-public class FastConfig implements IConfigListener {
-
-	private final Map<ConfigOption<?>, IFastConfigUpdater<?>> updaters;
+public class FastConfig {
 
 	private int minTickStart, maxTickStart;
 	private int minTick, maxTick;
@@ -24,14 +16,6 @@ public class FastConfig implements IConfigListener {
 	private final Set<String> removeException = new HashSet<String>();
 	private final Set<String> healException = new HashSet<String>();
 	private final Set<String> sourceException = new HashSet<String>();
-
-	public FastConfig() {
-		this(new HashMap<ConfigOption<?>, IFastConfigUpdater<?>>());
-	}
-	
-	public FastConfig(Map<ConfigOption<?>, IFastConfigUpdater<?>> updaters) {
-		this.updaters = updaters;
-	}
 
 	public int getMinTickStart() {
 		return minTickStart;
@@ -107,17 +91,5 @@ public class FastConfig implements IConfigListener {
 
 	public Set<String> getSourceException() {
 		return sourceException;
-	}
-
-	public Map<ConfigOption<?>, IFastConfigUpdater<?>> getUpdaters() {
-		return updaters;
-	}
-
-	@Override
-	public <T> void onChange(ConfigOption<T> config) {
-		IFastConfigUpdater<T> updater = (IFastConfigUpdater<T>) updaters.get(config);
-		if(updater != null) {
-			updater.applyChanges(this, config.getValue());
-		}
 	}
 }

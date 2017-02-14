@@ -1,5 +1,11 @@
 package fr.eyzox._new.fch;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import fr.eyzox._new.configoption.CollectionFactory;
 import fr.eyzox._new.configoption.ConfigOption;
 import fr.eyzox._new.configoption.ConfigOptionCollection;
 import fr.eyzox._new.configoption.ConfigOptionGroup;
@@ -7,18 +13,15 @@ import fr.eyzox._new.configoption.RestrictedConfigOption;
 import fr.eyzox._new.configoption.exceptions.PropertyValidationException;
 import fr.eyzox._new.configoption.validator.MinMaxValidator;
 import fr.eyzox._new.configoption.validator.MinMaxValidator.MinMaxGetter;
+import fr.eyzox._new.fch.config.updaters.SingleValueFastConfigUpdater;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 /**
  * Build a default config tree
  */
 public class FCHConfigBuilder {
-
+	
 	public static final String GROUP_HEALING_TIME = "healing time";
 	public static final String GROUP_OVERRIDE = "override";
 	public static final String GROUP_CONTAINERS = "containers";
@@ -92,25 +95,25 @@ public class FCHConfigBuilder {
 		g.put(minTickBetweenEachHeal);
 		g.put(maxTickBetweenEachHeal);
 
-		fastConfigUpdaters.put(minTickBeforeHeal, new IFastConfigUpdater<Integer>() {
+		fastConfigUpdaters.put(minTickBeforeHeal, new SingleValueFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
 				c.setMinTickStart(value);
 			}
 		});
-		fastConfigUpdaters.put(maxTickBeforeHeal, new IFastConfigUpdater<Integer>() {
+		fastConfigUpdaters.put(maxTickBeforeHeal, new SingleValueFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
 				c.setMaxTickStart(value);
 			}
 		});
-		fastConfigUpdaters.put(minTickBetweenEachHeal, new IFastConfigUpdater<Integer>() {
+		fastConfigUpdaters.put(minTickBetweenEachHeal, new SingleValueFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
 				c.setMinTick(value);
 			}
 		});
-		fastConfigUpdaters.put(maxTickBetweenEachHeal, new IFastConfigUpdater<Integer>() {
+		fastConfigUpdaters.put(maxTickBetweenEachHeal, new SingleValueFastConfigUpdater<Integer>() {
 			@Override
 			public void applyChanges(FastConfig c, Integer value) {
 				c.setMaxTick(value);
@@ -132,19 +135,19 @@ public class FCHConfigBuilder {
 		g.put(overrideFluid);
 		g.put(dropIfCollision);
 
-		fastConfigUpdaters.put(overrideBlock, new IFastConfigUpdater<Boolean>() {
+		fastConfigUpdaters.put(overrideBlock, new SingleValueFastConfigUpdater<Boolean>() {
 			@Override
 			public void applyChanges(FastConfig c, Boolean value) {
 				c.setOverrideBlock(value);
 			}
 		});
-		fastConfigUpdaters.put(overrideFluid, new IFastConfigUpdater<Boolean>() {
+		fastConfigUpdaters.put(overrideFluid, new SingleValueFastConfigUpdater<Boolean>() {
 			@Override
 			public void applyChanges(FastConfig c, Boolean value) {
 				c.setOverrideFluid(value);
 			}
 		});
-		fastConfigUpdaters.put(dropIfCollision, new IFastConfigUpdater<Boolean>() {
+		fastConfigUpdaters.put(dropIfCollision, new SingleValueFastConfigUpdater<Boolean>() {
 			@Override
 			public void applyChanges(FastConfig c, Boolean value) {
 				c.setDropIfCollision(value);
@@ -161,7 +164,7 @@ public class FCHConfigBuilder {
 
 		g.put(dropItems);
 
-		fastConfigUpdaters.put(dropItems, new IFastConfigUpdater<Boolean>() {
+		fastConfigUpdaters.put(dropItems, new SingleValueFastConfigUpdater<Boolean>() {
 			@Override
 			public void applyChanges(FastConfig c, Boolean value) {
 				c.setDropItems(value);
@@ -173,10 +176,17 @@ public class FCHConfigBuilder {
 
 	private ConfigOptionGroup getFiltersGroup() throws PropertyValidationException {
 		final ConfigOptionGroup g = new ConfigOptionGroup(GROUP_FILTERS);
+		
+		final CollectionFactory<Collection<String>, String> factory = new CollectionFactory<Collection<String>, String>() {
+			@Override
+			public Collection<String> create() {
+				return new HashSet<String>();
+			}
+		}; 
 
-		final ConfigOptionCollection<String> removeException = new ConfigOptionCollection<String>(OPTION_REMOVE_EXCEPTION, new HashSet<String>());
-		final ConfigOptionCollection<String> healException = new ConfigOptionCollection<String>(OPTION_HEAL_EXCEPTION, new HashSet<String>());
-		final ConfigOptionCollection<String> sourceException = new ConfigOptionCollection<String>(OPTION_SOURCE_EXCEPTION, new HashSet<String>());
+		final ConfigOptionCollection<String> removeException = new ConfigOptionCollection<String>(OPTION_REMOVE_EXCEPTION, factory);
+		final ConfigOptionCollection<String> healException = new ConfigOptionCollection<String>(OPTION_HEAL_EXCEPTION, factory);
+		final ConfigOptionCollection<String> sourceException = new ConfigOptionCollection<String>(OPTION_SOURCE_EXCEPTION, factory);
 
 		g.put(removeException);
 		g.put(healException);

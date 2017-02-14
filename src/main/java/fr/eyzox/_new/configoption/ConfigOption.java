@@ -1,9 +1,9 @@
 package fr.eyzox._new.configoption;
 
+import java.util.Observable;
+
 import fr.eyzox._new.configoption.events.ChangedEvent;
 import fr.eyzox._new.configoption.events.IEvent;
-
-import java.util.Observable;
 
 public class ConfigOption<T> extends Observable{
 	private final String name;

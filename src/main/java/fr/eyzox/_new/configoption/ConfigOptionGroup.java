@@ -1,11 +1,14 @@
 package fr.eyzox._new.configoption;
 
-import fr.eyzox._new.configoption.events.*;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import fr.eyzox._new.configoption.events.ChangedEvent;
+import fr.eyzox._new.configoption.events.ClearedEvent;
+import fr.eyzox._new.configoption.events.CollectionChangedEvent;
+import fr.eyzox._new.configoption.events.GroupChangedEvent;
 
 public class ConfigOptionGroup extends ConfigOption<Map<String, ConfigOption<?>>> {
 	

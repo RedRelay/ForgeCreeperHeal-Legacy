@@ -15,12 +15,21 @@ public class RestrictedConfigOptionCollection<T> extends ConfigOptionCollection<
 	
 	private IValidator<T> validator;
 	
-	public RestrictedConfigOptionCollection(String name, Collection<T> defaultValue) {
-		super(name, defaultValue);
+	public <C extends Collection<T>> RestrictedConfigOptionCollection(String name, CollectionFactory<C, T> factory) {
+		super(name, factory);
 	}
 	
-	public RestrictedConfigOptionCollection(String name, Collection<T> defaultValue, IValidator<T> validator) throws PropertyValidationException {
-		this(name, defaultValue);
+	public <C extends Collection<T>> RestrictedConfigOptionCollection(String name, CollectionFactory<C, T> factory, C defaultValue) {
+		super(name, factory, defaultValue);
+	}
+
+	public <C extends Collection<T>> RestrictedConfigOptionCollection(String name, CollectionFactory<C, T> factory, C defaultValue, IValidator<T> validator) throws PropertyValidationException {
+		this(name, factory, defaultValue);
+		setValidator(validator);
+	}
+	
+	public <C extends Collection<T>> RestrictedConfigOptionCollection(String name, CollectionFactory<C, T> factory, IValidator<T> validator) throws PropertyValidationException {
+		this(name, factory);
 		setValidator(validator);
 	}
 
