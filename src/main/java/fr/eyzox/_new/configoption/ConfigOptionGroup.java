@@ -23,7 +23,7 @@ public class ConfigOptionGroup extends ConfigOption<Map<String, ConfigOption<?>>
 	
 	public ConfigOption<?> put(ConfigOption<?> e) {
 		final ConfigOption<?> res =  super.getValue().put(e.getName(), e);
-		this.fireEvent(new GroupChangedEvent(super.getValue(), new ChangedEvent<ConfigOption<?>>(res, e), CollectionChangedEvent.State.ADDED));
+		this.fireEvent(new GroupChangedEvent(this, super.getValue(), new ChangedEvent<ConfigOption<?>>(null, res, e), CollectionChangedEvent.State.ADDED));
 		return res;
 	}
 
@@ -38,7 +38,7 @@ public class ConfigOptionGroup extends ConfigOption<Map<String, ConfigOption<?>>
 			o = ((ConfigOption<?>)o).getName();
 		}
 		ConfigOption<?> res = super.getValue().remove(o);
-		this.fireEvent(new GroupChangedEvent(super.getValue(), new ChangedEvent<ConfigOption<?>>(res, null), CollectionChangedEvent.State.REMOVED));
+		this.fireEvent(new GroupChangedEvent(this, super.getValue(), new ChangedEvent<ConfigOption<?>>(null, res, null), CollectionChangedEvent.State.REMOVED));
 		return res;
 	}
 
@@ -62,7 +62,7 @@ public class ConfigOptionGroup extends ConfigOption<Map<String, ConfigOption<?>>
 	public void clear() {
 		final Map<String, ConfigOption<?>> oldValues = new HashMap<String, ConfigOption<?>>(super.getValue());
 		super.getValue().clear();
-		this.fireEvent(new ClearedEvent<Map<String, ConfigOption<?>>>(oldValues, this.getValue()));
+		this.fireEvent(new ClearedEvent<Map<String, ConfigOption<?>>>(this, oldValues, this.getValue()));
 	}
 
 }

@@ -1,15 +1,21 @@
 package fr.eyzox._new.fch.config.updaters;
 
-import fr.eyzox._new.configoption.events.ClearedEvent;
-import fr.eyzox._new.configoption.events.CollectionChangedEvent;
-import fr.eyzox._new.configoption.events.IEvent;
-import fr.eyzox.forgecreeperheal.config.FastConfig;
-
 import java.util.Collection;
 
+import fr.eyzox._new.configoption.ConfigOption;
+import fr.eyzox._new.configoption.events.ClearedEvent;
+import fr.eyzox._new.configoption.events.CollectionChangedEvent;
+import fr.eyzox._new.configoption.events.Event;
+import fr.eyzox.forgecreeperheal.config.FastConfig;
+
 public abstract class CollectionFastConfigUpdater<T> extends FastConfigUpdater{
-    @Override
-    public void applyChanges(FastConfig c, IEvent value) {
+    
+	public CollectionFastConfigUpdater(ConfigOption<?> c) {
+		super(c);
+	}
+
+	@Override
+    public void applyChanges(FastConfig c, Event value) {
         if(value instanceof CollectionChangedEvent<?>) {
             applyChanges(c, (CollectionChangedEvent<T>)value);
         }else if(value instanceof ClearedEvent<?>) {

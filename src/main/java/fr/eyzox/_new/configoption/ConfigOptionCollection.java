@@ -38,7 +38,7 @@ public class ConfigOptionCollection<T> extends ConfigOption<Collection<T>> {
 		final Collection<T> oldValues = factory.create();
 		oldValues.addAll(super.getValue());
 		super.getValue().clear();
-		this.fireEvent(new ClearedEvent<Collection<T>>(oldValues, super.getValue()));
+		this.fireEvent(new ClearedEvent<Collection<T>>(this, oldValues, super.getValue()));
 	}
 	
 	public <C extends Collection<T>> void changeCollectionImpl(CollectionFactory<C, T> factory) {
@@ -51,7 +51,7 @@ public class ConfigOptionCollection<T> extends ConfigOption<Collection<T>> {
 	public boolean add(T e) {
 		final boolean added = super.getValue().add(e);
 		if(added) {
-			this.fireEvent(new CollectionChangedEvent<T>(super.getValue(), e, State.ADDED));
+			this.fireEvent(new CollectionChangedEvent<T>(this, super.getValue(), e, State.ADDED));
 		}
 		return added;
 	}
@@ -69,7 +69,7 @@ public class ConfigOptionCollection<T> extends ConfigOption<Collection<T>> {
 	public boolean remove(T o) {
 		final boolean removed = super.getValue().remove(o);
 		if(removed) {
-			this.fireEvent(new CollectionChangedEvent<T>(super.getValue(), o, State.REMOVED));
+			this.fireEvent(new CollectionChangedEvent<T>(this, super.getValue(), o, State.REMOVED));
 		}
 		return removed;
 	}

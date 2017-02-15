@@ -1,10 +1,13 @@
 package fr.eyzox._new.configoption.events;
 
-public class ChangedEvent<T> implements IEvent {
+import fr.eyzox._new.configoption.ConfigOption;
+
+public class ChangedEvent<T> extends Event {
     private final T oldValue, newValue;
 
-    public ChangedEvent(T oldValue, T newValue) {
-        this.oldValue = oldValue;
+    public ChangedEvent(ConfigOption<T> config, T oldValue, T newValue) {
+        super(config);
+    	this.oldValue = oldValue;
         this.newValue = newValue;
     }
 
