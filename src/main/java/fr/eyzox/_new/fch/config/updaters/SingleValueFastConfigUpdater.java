@@ -11,7 +11,7 @@ public abstract class SingleValueFastConfigUpdater<T> extends FastConfigUpdater 
 		if(value instanceof ChangedEvent<?>) {
 			applyChanges(c, ((ChangedEvent<T>) value).getNewValue());
 		}else {
-			this.onUnexpectedEvent(value);
+			super.applyChanges(c, value);
 		}
 	}
 	

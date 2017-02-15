@@ -10,9 +10,17 @@ import fr.eyzox._new.configoption.ConfigOption;
 import fr.eyzox._new.configoption.ConfigOptionCollection;
 import fr.eyzox._new.configoption.ConfigOptionGroup;
 import fr.eyzox._new.configoption.RestrictedConfigOption;
+import fr.eyzox._new.configoption.events.AbstractCollectionChangedEvent;
+import fr.eyzox._new.configoption.events.ClearedEvent;
+import fr.eyzox._new.configoption.events.CollectionChangedEvent;
 import fr.eyzox._new.configoption.exceptions.PropertyValidationException;
+import fr.eyzox._new.configoption.validator.IValidator;
 import fr.eyzox._new.configoption.validator.MinMaxValidator;
 import fr.eyzox._new.configoption.validator.MinMaxValidator.MinMaxGetter;
+import fr.eyzox._new.configoption.validator.NotEmptyStringValidator;
+import fr.eyzox._new.configoption.validator.NotNullValidator;
+import fr.eyzox._new.fch.config.updaters.CollectionFastConfigUpdater;
+import fr.eyzox._new.fch.config.updaters.FastConfigUpdater;
 import fr.eyzox._new.fch.config.updaters.SingleValueFastConfigUpdater;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.forgecreeperheal.config.FastConfig;
@@ -40,7 +48,11 @@ public class FCHConfigBuilder {
 	public static final String OPTION_SOURCE_EXCEPTION = "sourceException";
 
 	private final ConfigOptionGroup configRoot;
-	private final Map<ConfigOption<?>, IFastConfigUpdater> fastConfigUpdaters = new HashMap<ConfigOption<?>, IFastConfigUpdater>();
+	private final Map<ConfigOption<?>, FastConfigUpdater> fastConfigUpdaters = new HashMap<ConfigOption<?>, FastConfigUpdater>();
+
+	private final IValidator<Integer> intNotNullValidator = new NotNullValidator<Integer>();
+	private final IValidator<Boolean> booleanNotNullValidator = new NotNullValidator<Boolean>();
+	private final IValidator<String> stringNotNullValidator = new NotEmptyStringValidator();
 
 	public FCHConfigBuilder() throws PropertyValidationException {
 		this.configRoot = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
@@ -192,14 +204,28 @@ public class FCHConfigBuilder {
 		g.put(healException);
 		g.put(sourceException);
 
-		/*
-		fastConfigUpdaters.put(removeException, new IFastConfigUpdater<Boolean>() {
+
+		fastConfigUpdaters.put(removeException, new CollectionFastConfigUpdater<String>() {
 			@Override
-			public void applyChanges(FastConfig c, Boolean value) {
-				c.setDropItems(value);
+			protected Collection<String> getCollection(FastConfig c) {
+				return c.getRemoveException();
 			}
 		});
-		*/
+
+		fastConfigUpdaters.put(healException, new CollectionFastConfigUpdater<String>() {
+			@Override
+			protected Collection<String> getCollection(FastConfig c) {
+				return c.getHealException();
+			}
+		});
+
+		fastConfigUpdaters.put(sourceException, new CollectionFastConfigUpdater<String>() {
+			@Override
+			protected Collection<String> getCollection(FastConfig c) {
+				return c.getSourceException();
+			}
+		});
+
 
 		return g;
 	}
@@ -208,7 +234,7 @@ public class FCHConfigBuilder {
 	    return this.configRoot;
     }
 
-	public Map<ConfigOption<?>, IFastConfigUpdater> getFastConfigUpdaters() {
+	public Map<ConfigOption<?>, FastConfigUpdater> getFastConfigUpdaters() {
 		return fastConfigUpdaters;
 	}
 }
