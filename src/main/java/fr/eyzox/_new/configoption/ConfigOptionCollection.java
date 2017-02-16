@@ -10,7 +10,7 @@ import fr.eyzox._new.configoption.events.CollectionChangedEvent;
 
 public class ConfigOptionCollection<T> extends ConfigOption<Collection<T>> {
 	
-	private CollectionFactory<?, T> factory;
+	private transient CollectionFactory<?, T> factory;
 	
 	public <C extends Collection<T>> ConfigOptionCollection(String name, CollectionFactory<C, T> factory) {
 		this(name, factory, factory.create());

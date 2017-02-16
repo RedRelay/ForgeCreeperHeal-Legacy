@@ -7,9 +7,9 @@ import fr.eyzox._new.configoption.events.Event;
 
 public class ConfigOption<T> extends Observable{
 	
-	private boolean fireEvent = true;
+	private transient boolean fireEvent = true;
 	
-	private final String name;
+	private transient final String name;
 	private T value;
 	
 	

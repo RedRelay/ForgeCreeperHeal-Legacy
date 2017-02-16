@@ -13,7 +13,7 @@ public class RestrictedConfigOptionCollection<T> extends ConfigOptionCollection<
 
 	private static final Logger logger = LogManager.getLogger(RestrictedConfigOptionCollection.class);
 	
-	private IValidator<T> validator;
+	private transient IValidator<T> validator;
 	
 	public <C extends Collection<T>> RestrictedConfigOptionCollection(String name, CollectionFactory<C, T> factory) {
 		super(name, factory);

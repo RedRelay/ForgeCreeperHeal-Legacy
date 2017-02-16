@@ -11,7 +11,7 @@ public class RestrictedConfigOption<T> extends ConfigOption<T> implements IRestr
 
 	private final Logger logger = LogManager.getLogger(RestrictedConfigOption.class);
 	
-	private IValidator<T> validator;
+	private transient IValidator<T> validator;
 	
 	public RestrictedConfigOption(String name, T defaultValue) {
 		super(name, defaultValue);

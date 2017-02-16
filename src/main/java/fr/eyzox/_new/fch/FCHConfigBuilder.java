@@ -1,5 +1,6 @@
 package fr.eyzox._new.fch;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -237,5 +238,13 @@ public class FCHConfigBuilder {
 
 
 		return g;
+	}
+
+	public void save(File file) {
+
+	}
+
+	public void load(File file) {
+
 	}
 }
