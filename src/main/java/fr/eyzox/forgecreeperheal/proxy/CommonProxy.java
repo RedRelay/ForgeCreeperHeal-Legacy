@@ -44,11 +44,11 @@ public class CommonProxy {
     }
 
     public static void addChatMessage(ICommandSender sender, TextComponentTranslation msg) {
-		sender.addChatMessage(msg);
+		sender.sendMessage(msg);
 	}
 
 	public static void addChatMessage(ICommandSender sender, String string) {
-		sender.addChatMessage(new TextComponentTranslation(I18n.format(string)));
+		sender.sendMessage(new TextComponentTranslation(I18n.format(string)));
 	}
    
 	public Logger getLogger() {

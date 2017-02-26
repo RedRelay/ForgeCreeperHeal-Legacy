@@ -12,13 +12,13 @@ import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 public class ProfilerCommand extends CommandBase{
 
 	@Override
-	public String getCommandName() {
+	public String getName() {
 		return "creeperhealprofiler";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return "/"+getCommandName() + "[enable|disable] <dimension|all>";
+	public String getUsage(ICommandSender sender) {
+		return "/"+getName() + "[enable|disable] <dimension|all>";
 	}
 //
 //	@Override
@@ -29,7 +29,7 @@ public class ProfilerCommand extends CommandBase{
 	@Override
 	public void execute(MinecraftServer server,ICommandSender sender, String[] args) {
 		if(args == null || args.length == 0 || args[0] == null) {
-			CommonProxy.addChatMessage(sender, this.getCommandUsage(sender));
+			CommonProxy.addChatMessage(sender, this.getUsage(sender));
 			return;
 		}
 		
@@ -41,7 +41,7 @@ public class ProfilerCommand extends CommandBase{
 		if(args[0].equalsIgnoreCase("enable")) {switchProfiler = true;}
 		else if(args[0].equalsIgnoreCase("disable")){ switchProfiler = false;}
 		else{
-			CommonProxy.addChatMessage(sender, this.getCommandUsage(sender));
+			CommonProxy.addChatMessage(sender, this.getUsage(sender));
 		}
 		//Gets all
 		for(int i = startIndex; i<args.length ; i++) {

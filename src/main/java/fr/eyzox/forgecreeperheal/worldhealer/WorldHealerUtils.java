@@ -14,18 +14,18 @@ public class WorldHealerUtils {
 		{
 			ItemStack itemstack = inventory.getStackInSlot(inventoryIndex);
 
-			if (itemstack != null){
+			if (!itemstack.isEmpty()){
 				float f = world.rand.nextFloat() * 0.8F + 0.1F;
 				float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-				for (float f2 = world.rand.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; ){
+				for (float f2 = world.rand.nextFloat() * 0.8F + 0.1F; itemstack.getCount() > 0; ){
 					int j1 = world.rand.nextInt(21) + 10;
 
-					if (j1 > itemstack.stackSize){
-						j1 = itemstack.stackSize;
+					if (j1 > itemstack.getCount()){
+						j1 = itemstack.getCount();
 					}
 
-					itemstack.stackSize -= j1;
+					itemstack.shrink(j1);
 
 					float f3 = 0.05F;
 					EntityItem entityitem = getEntityItem(world, cp, new ItemStack(itemstack.getItem(), j1, itemstack.getItemDamage()), f, f1, f2, f3);
@@ -35,18 +35,18 @@ public class WorldHealerUtils {
 							entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
 						}
 						
-						world.spawnEntityInWorld(entityitem);
+						world.spawnEntity(entityitem);
 					}
 				}
 
 				/*ADDED TO REMOVE ITEMSTACK FROM INVENTORY*/
-				inventory.setInventorySlotContents(inventoryIndex, null);
+				inventory.setInventorySlotContents(inventoryIndex, ItemStack.EMPTY);
 			}
 		}
 	}
 	
 	protected static EntityItem getEntityItem(World world, BlockPos cp, ItemStack itemStack, float deltaX, float deltaY, float deltaZ, float motion) {
-		if(itemStack == null || itemStack.getItem() == null){
+		if(itemStack.isEmpty() || itemStack.getItem() == null){
 			return null;
 		}
 		EntityItem entityitem = new EntityItem(world, (double)((float)cp.getX() + deltaX), (double)((float)cp.getY() + deltaY), (double)((float)cp.getZ() + deltaZ), itemStack);

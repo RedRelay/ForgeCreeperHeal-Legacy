@@ -136,7 +136,7 @@ public class WorldHealer extends WorldSavedData{
 					EntityItem ei = WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(world.getBlockState(blockData.getBlockPos()).getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F);
 					
 					if(ei != null){
-						world.spawnEntityInWorld(ei);
+						world.spawnEntity(ei);
 						TileEntity te = world.getTileEntity(blockData.getBlockPos());
 						if(te instanceof IInventory) {
 							WorldHealerUtils.dropInventory(world, blockData.getBlockPos(), (IInventory) te);
@@ -159,7 +159,7 @@ public class WorldHealer extends WorldSavedData{
  
 			EntityItem ei = WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(blockData.getBlockState().getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F);
 			if(ei != null){
-				world.spawnEntityInWorld(ei);
+				world.spawnEntity(ei);
 				if(blockData.getTileEntityTag() != null) {
 					TileEntity te = blockData.getBlockState().getBlock().createTileEntity(world, blockData.getBlockState());
 					if(te instanceof IInventory) {
