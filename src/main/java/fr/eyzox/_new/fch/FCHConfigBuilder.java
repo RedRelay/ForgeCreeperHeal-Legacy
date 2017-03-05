@@ -1,10 +1,13 @@
 package fr.eyzox._new.fch;
 
-import java.io.File;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import fr.eyzox._new.configoption.CollectionFactory;
+import fr.eyzox._new.configoption.ConfigOption;
 import fr.eyzox._new.configoption.ConfigOptionGroup;
 import fr.eyzox._new.configoption.RestrictedConfigOption;
 import fr.eyzox._new.configoption.RestrictedConfigOptionCollection;
@@ -42,6 +45,7 @@ public class FCHConfigBuilder {
 	public static final String OPTION_SOURCE_EXCEPTION = "sourceException";
 
 	private ConfigOptionGroup configRoot;
+	private Map<ConfigOption<?>, Type> serialTypes;
 
 	private final IValidator<Integer> intNotNullValidator = new NotNullValidator<Integer>();
 	private final IValidator<Boolean> booleanNotNullValidator = new NotNullValidator<Boolean>();
@@ -50,6 +54,12 @@ public class FCHConfigBuilder {
 	public synchronized ConfigOptionGroup build() throws PropertyValidationException{
 		if(configRoot == null) {
 			this.configRoot = new ConfigOptionGroup(ForgeCreeperHeal.MODID);
+			
+			final boolean initTypes = serialTypes == null;
+			if(initTypes) {
+				serialTypes = new HashMap<ConfigOption<?>, Type>();
+			}
+			
 			configRoot.put(this.getHealingTimeGroup());
 			configRoot.put(this.getOverrideGroup());
 			configRoot.put(this.getContainersGroup());
@@ -238,13 +248,5 @@ public class FCHConfigBuilder {
 
 
 		return g;
-	}
-
-	public void save(File file) {
-
-	}
-
-	public void load(File file) {
-
 	}
 }

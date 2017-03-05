@@ -17,12 +17,5 @@ public class ConfigProvider {
         return config.build();
     }
 
-    public void load() {
-        config.load(configFile);
-    }
-
-    public void save() {
-        config.save(configFile);
-    }
 
 }
