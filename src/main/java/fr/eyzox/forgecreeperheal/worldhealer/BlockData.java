@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.registries.GameData;
 
 public class BlockData {
 	private IBlockState blockState;
@@ -51,7 +51,8 @@ public class BlockData {
 	public void writeToNBT(NBTTagCompound tag) {
 
     //deprecated in 1.10, possibly earlier
-		tag.setString("block", GameData.getBlockRegistry().getNameForObject(this.blockState.getBlock()).toString());
+	
+		tag.setString("block",  this.blockState.getBlock().getRegistryName().toString());
 		int metadata = blockState.getBlock().getMetaFromState(blockState);
 		if(metadata != 0) {
 			tag.setInteger("metadata", metadata);

@@ -32,7 +32,7 @@ public class WorldHealerUtils {
 					 
 					if(entityitem != null){
 						if (itemstack.hasTagCompound()){
-							entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+							entityitem.getItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
 						}
 						
 						world.spawnEntity(entityitem);
