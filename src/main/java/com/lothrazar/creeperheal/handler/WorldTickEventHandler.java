@@ -1,10 +1,10 @@
-package fr.eyzox.forgecreeperheal.handler;
+package com.lothrazar.creeperheal.handler;
 
+import com.lothrazar.creeperheal.ForgeCreeperHeal;
+import com.lothrazar.creeperheal.worldhealer.WorldHealer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class WorldTickEventHandler {
 

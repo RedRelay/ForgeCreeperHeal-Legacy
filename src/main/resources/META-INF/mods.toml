@@ -13,12 +13,12 @@ issueTrackerURL="https://github.com/Lothrazar/ForgeCreeperHeal/issues" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
-modId="forgecreeperheal" #mandatory
+modId="creeperheal" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
  
-displayName="forgecreeperheal" #mandatory
+displayName="creeperheal" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 updateJSONURL="https://raw.githubusercontent.com/Lothrazar/ForgeCreeperHeal/trunk/1.16/update.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI # replace with your website
@@ -37,7 +37,7 @@ Heal terrain after explosions.
 All credit EyZox who created the original forge version.  Lothrazar forked this when it stopped getting updated, did some refactoring, and changed the config file a bit.  Inspired by  Nitnelave who created the classic bukkit plugin.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.forgecreeperheal]] #optional
+[[dependencies.creeperheal]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -49,7 +49,7 @@ All credit EyZox who created the original forge version.  Lothrazar forked this 
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.forgecreeperheal]]
+[[dependencies.creeperheal]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16.2,)"

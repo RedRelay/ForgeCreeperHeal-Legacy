@@ -1,11 +1,11 @@
-package fr.eyzox.forgecreeperheal.handler;
+package com.lothrazar.creeperheal.handler;
 
+import com.lothrazar.creeperheal.worldhealer.WorldHealer;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class WorldEventHandler {
 

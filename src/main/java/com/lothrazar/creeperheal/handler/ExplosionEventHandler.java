@@ -1,13 +1,13 @@
-package fr.eyzox.forgecreeperheal.handler;
+package com.lothrazar.creeperheal.handler;
 
+import com.lothrazar.creeperheal.ConfigRegistry;
+import com.lothrazar.creeperheal.ForgeCreeperHeal;
+import com.lothrazar.creeperheal.worldhealer.WorldHealer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import fr.eyzox.forgecreeperheal.ConfigRegistry;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.forgecreeperheal.worldhealer.WorldHealer;
 
 public class ExplosionEventHandler {
 

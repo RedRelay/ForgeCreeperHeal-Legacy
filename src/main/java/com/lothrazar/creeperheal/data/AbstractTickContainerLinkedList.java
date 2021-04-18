@@ -1,4 +1,4 @@
-package fr.eyzox.ticklinkedlist;
+package com.lothrazar.creeperheal.data;
 
 import java.util.LinkedList;
 import java.util.ListIterator;

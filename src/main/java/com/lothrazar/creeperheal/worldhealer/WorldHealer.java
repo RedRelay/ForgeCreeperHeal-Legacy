@@ -1,5 +1,8 @@
-package fr.eyzox.forgecreeperheal.worldhealer;
+package com.lothrazar.creeperheal.worldhealer;
 
+import com.lothrazar.creeperheal.ConfigRegistry;
+import com.lothrazar.creeperheal.ForgeCreeperHeal;
+import com.lothrazar.creeperheal.data.TickContainer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -20,9 +23,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.event.world.ExplosionEvent;
-import fr.eyzox.forgecreeperheal.ConfigRegistry;
-import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
-import fr.eyzox.ticklinkedlist.TickContainer;
 
 public class WorldHealer extends WorldSavedData implements Supplier<Object> {
 

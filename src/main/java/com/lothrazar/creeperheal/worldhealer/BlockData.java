@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.worldhealer;
+package com.lothrazar.creeperheal.worldhealer;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;

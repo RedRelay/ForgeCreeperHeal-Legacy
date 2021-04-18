@@ -1,4 +1,4 @@
-package fr.eyzox.forgecreeperheal.worldhealer;
+package com.lothrazar.creeperheal.worldhealer;
 
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;

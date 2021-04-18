@@ -1,18 +1,18 @@
-package fr.eyzox.ticklinkedlist;
+package com.lothrazar.creeperheal.data;
 
 
-public class Tick implements Comparable<Tick> {
+public class TickComparable implements Comparable<TickComparable> {
 
 	private int tick;
 	
-	public Tick() {}
+	public TickComparable() {}
 	
-	public Tick(int tick) {
+	public TickComparable(int tick) {
 		this.tick = tick;
 	}
 	
 	@Override
-	public int compareTo(Tick o) {
+	public int compareTo(TickComparable o) {
 		return tick - o.tick;
 	}
 	
@@ -29,9 +29,9 @@ public class Tick implements Comparable<Tick> {
 		return tick <= 0;
 	}
 
-	public void decrease(Tick o) {
-		if(o instanceof Tick) {
-			this.tick = this.tick - ((Tick)o).tick;
+	public void decrease(TickComparable o) {
+		if(o instanceof TickComparable) {
+			this.tick = this.tick - ((TickComparable)o).tick;
 		}
 	}
 	

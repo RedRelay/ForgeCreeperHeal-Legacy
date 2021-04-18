@@ -1,11 +1,10 @@
-package fr.eyzox.forgecreeperheal.worldhealer;
+package com.lothrazar.creeperheal.worldhealer;
 
+import com.lothrazar.creeperheal.data.AbstractTickContainerLinkedList;
+import com.lothrazar.creeperheal.data.TickContainer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-
-import fr.eyzox.ticklinkedlist.AbstractTickContainerLinkedList;
-import fr.eyzox.ticklinkedlist.TickContainer;
 
 public class HealTask extends AbstractTickContainerLinkedList<Collection<BlockData>> {
 
