@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import fr.eyzox.forgecreeperheal.handler.ExplosionEventHandler;
@@ -25,6 +25,7 @@ public class ForgeCreeperHeal {
   public ForgeCreeperHeal() {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
+    ConfigRegistry.setup(FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
   }
 
   private void setupClient(final FMLClientSetupEvent event) {}
@@ -36,19 +37,7 @@ public class ForgeCreeperHeal {
     MinecraftForge.EVENT_BUS.register(new ExplosionEventHandler());
   }
 
-  public static Config getConfig() {
-    return proxy.config;
-  }
-  //  @EventHandler
-  //  public void serverStarting(FMLServerStartingEvent event) {
-  //    event.registerServerCommand(new ProfilerCommand());
-  //  }
-
   public static WorldHealer getWorldHealer(ServerWorld w) {
     return proxy.getWorldEventHandler().getWorldHealers().get(w);
-  }
-
-  public static SimpleChannel getChannel() {
-    return proxy.getChannel();
   }
 }

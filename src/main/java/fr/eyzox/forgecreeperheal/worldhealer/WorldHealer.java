@@ -1,11 +1,9 @@
 package fr.eyzox.forgecreeperheal.worldhealer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.function.Supplier;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.ItemEntity;
@@ -14,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,7 +20,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.event.world.ExplosionEvent;
-import org.apache.logging.log4j.Level;
+import fr.eyzox.forgecreeperheal.ConfigRegistry;
 import fr.eyzox.forgecreeperheal.ForgeCreeperHeal;
 import fr.eyzox.ticklinkedlist.TickContainer;
 
@@ -29,22 +28,10 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
 
   private World world;
   private HealTask healTask;
-  private boolean logspam = true;
-  private ArrayList<Block> blacklist = new ArrayList<Block>();
 
   public WorldHealer(String key) {
     super(key);
     healTask = new HealTask();
-    //for simplicity , just ignore any 2 size blocks (beds)
-    blacklist.add(null);
-    blacklist.add(Blocks.AIR);
-    //    blacklist.add(Blocks.BED);
-    //TODO: tags for bed and door
-    //    blacklist.add(Blocks.ACACIA_DOOR);
-    //    blacklist.add(Blocks.JUNGLE_DOOR);
-    //    blacklist.add(Blocks.BIRCH_DOOR);
-    //    blacklist.add(Blocks.OAK_DOOR);
-    //    blacklist.add(Blocks.DARK_OAK_DOOR);
   }
 
   public World getWorld() {
@@ -54,7 +41,6 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
   public void onTick() {
     Collection<BlockData> blocksToHeal = healTask.tick();
     if (blocksToHeal != null) {
-      ForgeCreeperHeal.logger.info("worldHealer ontick " + blocksToHeal.size());
       for (BlockData blockData : blocksToHeal) {
         heal(blockData);
       }
@@ -62,22 +48,18 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
   }
 
   public void onDetonate(ExplosionEvent.Detonate event) {
-    ForgeCreeperHeal.logger.info("on Detonate " + event.getAffectedBlocks());
     World world = event.getWorld();
     int maxTicksBeforeHeal = 0;
     //Process primary blocks
     for (BlockPos blockPosExplosion : event.getAffectedBlocks()) {
       BlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
-      if (blacklist.contains(blockStateExplosion.getBlock())) {
+      if (!isValid(blockStateExplosion)) {
         continue;
       }
       if (!blockStateExplosion.getBlock().isAir(blockStateExplosion, world, blockPosExplosion)) {
-        int ticksBeforeHeal = ForgeCreeperHeal.getConfig().getMinimumTicksBeforeHeal() + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar());
+        int ticksBeforeHeal = ConfigRegistry.getMinimumTicksBeforeHeal() + world.rand.nextInt(ConfigRegistry.getRandomTickVar());
         if (ticksBeforeHeal > maxTicksBeforeHeal) {
           maxTicksBeforeHeal = ticksBeforeHeal;
-        }
-        if (logspam) {
-          ForgeCreeperHeal.logger.log(Level.INFO, "cube:" + blockStateExplosion.getBlock());
         }
         onBlockHealed(blockPosExplosion, blockStateExplosion, ticksBeforeHeal);
       }
@@ -86,16 +68,20 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
     //Process secondary blocks. ex: Leaves must come AFTER dirt
     for (BlockPos blockPosExplosion : event.getAffectedBlocks()) {
       BlockState blockStateExplosion = world.getBlockState(blockPosExplosion);
-      if (blacklist.contains(blockStateExplosion.getBlock())) {
+      if (!isValid(blockStateExplosion)) {
         continue;
       }
       if (!blockStateExplosion.getBlock().isAir(blockStateExplosion, world, blockPosExplosion)) {
-        if (logspam) {
-          ForgeCreeperHeal.logger.log(Level.INFO, "noncube:" + blockStateExplosion.getBlock());
-        }
-        onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ForgeCreeperHeal.getConfig().getRandomTickVar()));
+        onBlockHealed(blockPosExplosion, blockStateExplosion, maxTicksBeforeHeal + world.rand.nextInt(ConfigRegistry.getRandomTickVar()));
       }
     }
+  }
+
+  private boolean isValid(BlockState state) {
+    if (state.isIn(BlockTags.DOORS) || state.isIn(BlockTags.BEDS) || state.isIn(BlockTags.TALL_FLOWERS)) {
+      return false;
+    }
+    return true;
   }
 
   private void onBlockHealed(BlockPos blockPosExplosion, BlockState blockStateExplosion, int ticks) {
@@ -105,10 +91,9 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
   }
 
   private void heal(BlockData blockData) {
-    ForgeCreeperHeal.logger.info("worldHealer HEAL " + blockData.getBlockPos());
     boolean isAir = this.world.isAirBlock(blockData.getBlockPos());
-    if (ForgeCreeperHeal.getConfig().isOverride() || isAir) {
-      if (ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && !isAir) {
+    if (ConfigRegistry.isOverride() || isAir) {
+      if (ConfigRegistry.isDropIfAlreadyBlock() && !isAir) {
         if (world.getBlockState(blockData.getBlockPos()).getBlock() != null) {
           ItemEntity ei = WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(world.getBlockState(blockData.getBlockPos()).getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F);
           if (ei != null) {
@@ -129,7 +114,7 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
         }
       }
     }
-    else if (ForgeCreeperHeal.getConfig().isDropIfAlreadyBlock() && blockData.getBlockState().getBlock() != null) {
+    else if (ConfigRegistry.isDropIfAlreadyBlock() && blockData.getBlockState().getBlock() != null) {
       ItemEntity ei = WorldHealerUtils.getEntityItem(world, blockData.getBlockPos(), new ItemStack(blockData.getBlockState().getBlock()), world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, world.rand.nextFloat() * 0.8F + 0.1F, 0.05F);
       if (ei != null) {
         world.addEntity(ei);
