@@ -12,10 +12,12 @@ A while ago I forked this mod when it was in Minecraft 1.10.2, n order to keep i
 ## Overview
 
 New 1.16 video
+
 [![1.16 video](https://github.com/Lothrazar/ForgeCreeperHeal/blob/trunk/1.16/heal.gif)](https://github.com/Lothrazar/ForgeCreeperHeal/blob/trunk/1.16/heal.gif)
 
 
 Classic videos
+
 [![Overview video](http://img.youtube.com/vi/KBzI7iXmbx0/0.jpg)](http://www.youtube.com/watch?v=KBzI7iXmbx0)
 [![1.1.0 video](http://img.youtube.com/vi/3M5EytpMjP4/0.jpg)](http://www.youtube.com/watch?v=3M5EytpMjP4)
 
