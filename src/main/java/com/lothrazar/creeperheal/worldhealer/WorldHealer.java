@@ -30,14 +30,11 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
 
   private World world;
   private TickingHealTask healTask;
+  static final String DATAKEY = ForgeCreeperHeal.MODID + ":" + WorldHealer.class.getSimpleName();
 
-  public WorldHealer(String key) {
-    super(key);
+  public WorldHealer() {
+    super(DATAKEY);
     healTask = new TickingHealTask();
-  }
-
-  public World getWorld() {
-    return world;
   }
 
   public void onTick() {
@@ -189,24 +186,17 @@ public class WorldHealer extends WorldSavedData implements Supplier<Object> {
   }
 
   public static WorldHealer loadWorldHealer(ServerWorld w) {
+    //first get data saved from last time we used this world
     DimensionSavedDataManager storage = w.getSavedData();
-    //    MapData storage = w.getMapData("map");
-    //    storage.get
-    //    MapStorage storage = w.getPerWorldStorage();
-    final String dataKey = getDataStorageKey();
-    WorldHealer result = null; // (WorldHealer) storage.getOrLoadData(WorldHealer.class, KEY);
+    WorldHealer result = storage.getOrCreate(WorldHealer::new, DATAKEY);
+    //
     if (result == null) {
-      result = new WorldHealer(dataKey);
-      //      storage.setData(KEY, result);
-      //      storage.set
-      ForgeCreeperHeal.LOGGER.info("Unable to find data for world " + w.getWorldInfo() + "[" + w.getProviderName() + "], new data created");
+      result = new WorldHealer();
+      //new dimension, or maybe an error 
+      ForgeCreeperHeal.LOGGER.info("Unable to find data for world " + w.getWorldInfo() + "[" + w.getProviderName() + "], new healing data created");
     }
     result.world = w;
     return result;
-  }
-
-  public static String getDataStorageKey() {
-    return ForgeCreeperHeal.MODID + ":" + WorldHealer.class.getSimpleName();
   }
 
   @Override
