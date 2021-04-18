@@ -11,12 +11,12 @@ public class ConfigRegistry {
 
   private static final ForgeConfigSpec.Builder CFG = new ForgeConfigSpec.Builder();
   private static ForgeConfigSpec COMMON_CONFIG;
-  private static IntValue MinTicksBeforeHeal;
-  private static IntValue RandomTickVar;
-  private static BooleanValue OverrideBlocks;
-  private static BooleanValue OverrideFluids;
-  private static BooleanValue dropIfAlreadyBlock;
-  private static BooleanValue onlyCreepers;
+  private static IntValue MINTICKSBEFOREHEAL;
+  private static IntValue RANDOMTICKVAR;
+  private static BooleanValue OVERRIDEBLOCKS;
+  //  private static BooleanValue OverrideFluids;
+  private static BooleanValue DROPIFALREADYBLOCK;
+  private static BooleanValue ONLYCREEPERS;
   static {
     initConfig();
   }
@@ -24,17 +24,18 @@ public class ConfigRegistry {
   private static void initConfig() {
     CFG.push(ForgeCreeperHeal.MODID);
     //
-    MinTicksBeforeHeal = CFG.comment("A lower number means it will start healing faster").defineInRange("TickStartDelay", 600, 1, 600000);
+    MINTICKSBEFOREHEAL = CFG.comment("A lower number means it will start healing faster").defineInRange("TickStartDelay", 600, 1, 600000);
     //
-    RandomTickVar = CFG.comment("Determines the random nature of the heal.  Time between in ticks is the minimum + rand(1,this)").defineInRange("TickRandomInterval", 1200, 1, 600000);
+    RANDOMTICKVAR = CFG.comment("Determines the random nature of the heal.  Time between in ticks is the minimum + rand(1,this)").defineInRange("TickRandomInterval", 1200, 1, 600000);
     //    
-    OverrideBlocks = CFG.comment("If the healing will replace blocks that were put in after (such as fallen gravel or placed blocks)").define("OverrideBlocks", true);
+    OVERRIDEBLOCKS = CFG.comment("If the healing will replace blocks that were put in after (such as fallen gravel or placed blocks)").define("OverrideBlocks", true);
     //    
-    OverrideFluids = CFG.comment("If the healing will replace liquid that flowed into the exploded area").define("OverrideFluids", true);
+    //    OverrideFluids = CFG.comment("If the healing will replace liquid that flowed into the exploded area").define("OverrideFluids", true);
     //     
-    dropIfAlreadyBlock = CFG.comment("If this is true (and we are not overriding blocks), and a block tries to get healed but something is in the way, then that block will drop as an itemstack on the ground")
+    DROPIFALREADYBLOCK = CFG.comment("If this is true (and we are not overriding blocks), and a block tries to get healed but something is in the way,"
+        + " then that block will drop as an itemstack on the ground")
         .define("DropBlockConflict", true);
-    onlyCreepers = CFG.comment("If this is true, only creeper explosions are healed.  Otherwise, all explosions will be healed (TNT, stuff from other mods, etc)")
+    ONLYCREEPERS = CFG.comment("If this is true, only creeper explosions are healed.  Otherwise, all explosions will be healed (TNT, stuff from other mods, etc)")
         .define("OnlyCreepers", true);
     CFG.pop();
     COMMON_CONFIG = CFG.build();
@@ -51,25 +52,25 @@ public class ConfigRegistry {
   }
 
   public static int getMinimumTicksBeforeHeal() {
-    return MinTicksBeforeHeal.get();
+    return MINTICKSBEFOREHEAL.get();
   }
 
   public static int getRandomTickVar() {
-    return RandomTickVar.get();
+    return RANDOMTICKVAR.get();
   }
 
   public static boolean isOverride() {
-    return OverrideBlocks.get();
+    return OVERRIDEBLOCKS.get();
   }
   //  public boolean isOverrideFluid() {
   //    return OverrideFluids.get();
   //  }
 
   public static boolean isDropIfAlreadyBlock() {
-    return dropIfAlreadyBlock.get();
+    return DROPIFALREADYBLOCK.get();
   }
 
   public static boolean isOnlyCreepers() {
-    return onlyCreepers.get();
+    return ONLYCREEPERS.get();
   }
 }

@@ -3,16 +3,18 @@ package com.lothrazar.creeperheal.data;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-public abstract class AbstractTickContainerLinkedList<T> {
+public abstract class TickingLinkedList<T> {
 
   protected LinkedList<TickContainer<T>> list;
 
-  public AbstractTickContainerLinkedList() {
+  public TickingLinkedList() {
     this.list = new LinkedList<TickContainer<T>>();
   }
 
   public T tick() {
-    if (list.isEmpty()) return null;
+    if (list.isEmpty()) {
+      return null;
+    }
     TickContainer<T> tc = list.getFirst();
     tc.tick();
     if (tc.isExpired()) {

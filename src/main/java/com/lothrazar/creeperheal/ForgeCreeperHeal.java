@@ -18,11 +18,11 @@ import org.apache.logging.log4j.Logger;
 public class ForgeCreeperHeal {
 
   public static final String MODID = "creeperheal";
-  public static Logger logger = LogManager.getLogger();
-  private static WorldEventHandler worldEventHandler;
+  public static final Logger LOGGER = LogManager.getLogger();
+  private static WorldEventHandler WEV;
 
   public ForgeCreeperHeal() {
-    ForgeCreeperHeal.worldEventHandler = new WorldEventHandler();
+    ForgeCreeperHeal.WEV = new WorldEventHandler();
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
     ConfigRegistry.setup(FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
@@ -32,11 +32,11 @@ public class ForgeCreeperHeal {
 
   private void setup(final FMLCommonSetupEvent event) {
     MinecraftForge.EVENT_BUS.register(new WorldTickEventHandler());
-    MinecraftForge.EVENT_BUS.register(worldEventHandler);
     MinecraftForge.EVENT_BUS.register(new ExplosionEventHandler());
+    MinecraftForge.EVENT_BUS.register(WEV);
   }
 
   public static WorldHealer getWorldHealer(ServerWorld w) {
-    return worldEventHandler.getWorldHealers().get(w);
+    return WEV.getWorldHealers().get(w);
   }
 }

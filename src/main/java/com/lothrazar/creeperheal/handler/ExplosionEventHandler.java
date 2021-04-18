@@ -18,7 +18,6 @@ public class ExplosionEventHandler {
     }
     Entity exploder = event.getExplosion().getExplosivePlacedBy();
     boolean isCreeper = exploder instanceof CreeperEntity;
-    //TODO: config for other explosion sources
     if (ConfigRegistry.isOnlyCreepers() == false ||
         (ConfigRegistry.isOnlyCreepers() && isCreeper)) {
       //if only creeper is false, dont need to check

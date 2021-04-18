@@ -1,4 +1,4 @@
-package com.lothrazar.creeperheal.worldhealer;
+package com.lothrazar.creeperheal.data;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -7,13 +7,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockData {
+public class BlockStatePosWrapper {
 
   private BlockPos blockPos;
   private BlockState blockState;
   private CompoundNBT tileEntityTag;
 
-  public BlockData(World world, BlockPos chunkPosition, BlockState blockState) {
+  public BlockStatePosWrapper(World world, BlockPos chunkPosition, BlockState blockState) {
     this.blockState = blockState;
     this.blockPos = chunkPosition;
     TileEntity te = world.getTileEntity(chunkPosition);
@@ -23,7 +23,7 @@ public class BlockData {
     }
   }
 
-  public BlockData() {}
+  public BlockStatePosWrapper() {}
 
   public BlockState getBlockState() {
     return blockState;
