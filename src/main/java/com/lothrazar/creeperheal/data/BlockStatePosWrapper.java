@@ -1,25 +1,25 @@
 package com.lothrazar.creeperheal.data;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class BlockStatePosWrapper {
 
   private BlockPos blockPos;
   private BlockState blockState;
-  private CompoundNBT tileEntityTag;
+  private CompoundTag tileEntityTag;
 
-  public BlockStatePosWrapper(World world, BlockPos chunkPosition, BlockState blockState) {
+  public BlockStatePosWrapper(Level world, BlockPos chunkPosition, BlockState blockState) {
     this.blockState = blockState;
     this.blockPos = chunkPosition;
-    TileEntity te = world.getTileEntity(chunkPosition);
+    BlockEntity te = world.getBlockEntity(chunkPosition);
     if (te != null) {
-      this.tileEntityTag = new CompoundNBT();
-      te.write(tileEntityTag);
+      this.tileEntityTag = new CompoundTag();
+      te.save(tileEntityTag);
     }
   }
 
@@ -33,22 +33,22 @@ public class BlockStatePosWrapper {
     return blockPos;
   }
 
-  public CompoundNBT getTileEntityTag() {
+  public CompoundTag getTileEntityTag() {
     return tileEntityTag;
   }
 
-  public void readFromNBT(CompoundNBT tag) {
-    this.blockState = NBTUtil.readBlockState(tag.getCompound("block"));
-    this.blockPos = NBTUtil.readBlockPos(tag.getCompound("pos"));
+  public void readFromNBT(CompoundTag tag) {
+    this.blockState = NbtUtils.readBlockState(tag.getCompound("block"));
+    this.blockPos = NbtUtils.readBlockPos(tag.getCompound("pos"));
     if (tag.contains("tileentity")) {
       this.tileEntityTag = tag.getCompound("tileentity");
     }
   }
 
-  public void writeToNBT(CompoundNBT tag) {
-    CompoundNBT encoded = NBTUtil.writeBlockState(this.blockState);
+  public void writeToNBT(CompoundTag tag) {
+    CompoundTag encoded = NbtUtils.writeBlockState(this.blockState);
     tag.put("block", encoded);
-    CompoundNBT epos = NBTUtil.writeBlockPos(this.blockPos);
+    CompoundTag epos = NbtUtils.writeBlockPos(this.blockPos);
     tag.put("pos", epos);
     if (this.tileEntityTag != null) {
       tag.put("tileentity", this.tileEntityTag);
@@ -59,7 +59,7 @@ public class BlockStatePosWrapper {
     this.blockState = blockState;
   }
 
-  public void setTileEntityTag(CompoundNBT tileEntityTag) {
+  public void setTileEntityTag(CompoundTag tileEntityTag) {
     this.tileEntityTag = tileEntityTag;
   }
 

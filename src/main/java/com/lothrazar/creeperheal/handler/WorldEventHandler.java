@@ -3,29 +3,29 @@ package com.lothrazar.creeperheal.handler;
 import com.lothrazar.creeperheal.worldhealer.WorldHealer;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class WorldEventHandler {
 
-  private Map<ServerWorld, WorldHealer> worldHealers = new HashMap<ServerWorld, WorldHealer>();
+  private Map<ServerLevel, WorldHealer> worldHealers = new HashMap<ServerLevel, WorldHealer>();
 
-  public Map<ServerWorld, WorldHealer> getWorldHealers() {
+  public Map<ServerLevel, WorldHealer> getWorldHealers() {
     return worldHealers;
   }
 
   @SubscribeEvent
   public void onLoad(WorldEvent.Load event) {
-    if (!event.getWorld().isRemote()
-        && event.getWorld() instanceof ServerWorld) {
-      worldHealers.put((ServerWorld) event.getWorld(), WorldHealer.loadWorldHealer((ServerWorld) event.getWorld()));
+    if (!event.getWorld().isClientSide()
+        && event.getWorld() instanceof ServerLevel) {
+      worldHealers.put((ServerLevel) event.getWorld(), WorldHealer.loadWorldHealer((ServerLevel) event.getWorld()));
     }
   }
 
   @SubscribeEvent
   public void onUnload(WorldEvent.Unload event) {
-    if (!event.getWorld().isRemote()) {
+    if (!event.getWorld().isClientSide()) {
       worldHealers.remove(event.getWorld());
     }
   }

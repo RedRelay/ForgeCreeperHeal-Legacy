@@ -1,10 +1,10 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/forge-creeper-heal-unofficial",
   "promos": {
-    "1.16.5-latest": "2.0.0",
-    "1.16.5-recommended": "2.0.0"
+    "1.17.1-latest": "2.0.0",
+    "1.17.1-recommended": "2.0.0"
   },
-  "1.16.5": {
-    "2.0.0": "All new remake on 1.16"
+  "1.17.1": {
+    "2.0.0": "Ported from 1.16"
   }
 }
