@@ -24,7 +24,7 @@ version = "${mc_version}-${mod_version}"
 group = "fr.eyzox.creeperheal" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CreeperHeal"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 checkstyle {
     toolVersion '8.23'
@@ -35,7 +35,7 @@ checkstyleMain {
 }
 
 minecraft {
-mappings channel: 'official', version: '1.17.1'
+mappings channel: 'official', version: '1.18'
  
   //  accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -83,9 +83,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
  
-  //  compile fg.deobf("mezz.jei:${jei_version}")
+  //  implementation fg.deobf("mezz.jei:${jei_version}")
   
- //   compile fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+ //   implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
  //   compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
  //   runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
@@ -173,11 +173,16 @@ task signJar(type: SignJar, dependsOn: jar) {
     outputFile = jar.archivePath
 }
 
+
+build.dependsOn signJar
+
 task copyJar(type: Copy) {
     from jar
     into "${dist_folder}"
 }
 
-cleanJar {
+build.finalizedBy copyJar
+
+task cleanJar {
   delete 'build/libs'
 }

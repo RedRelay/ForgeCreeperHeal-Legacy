@@ -20,7 +20,7 @@ version="${file.jarVersion}" #mandatory
  
 displayName="creeperheal" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://raw.githubusercontent.com/Lothrazar/ForgeCreeperHeal/trunk/1.16/update.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/Lothrazar/ForgeCreeperHeal/trunk/1.18/update.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI # replace with your website
 displayURL="https://www.curseforge.com/minecraft/mc-mods/forge-creeper-heal-unofficial"
 
