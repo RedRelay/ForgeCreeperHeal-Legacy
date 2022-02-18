@@ -18,8 +18,7 @@ public class BlockStatePosWrapper {
     this.blockPos = chunkPosition;
     BlockEntity te = world.getBlockEntity(chunkPosition);
     if (te != null) {
-      this.tileEntityTag = new CompoundTag();
-      te.save(tileEntityTag);
+      this.tileEntityTag = te.saveWithoutMetadata();
     }
   }
 
