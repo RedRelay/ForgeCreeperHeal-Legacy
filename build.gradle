@@ -1,8 +1,6 @@
 buildscript {
     repositories {
-	maven { url = 'https://maven.minecraftforge.net' } 
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+		maven { url = 'https://maven.minecraftforge.net' } 
         mavenCentral()
     }
     dependencies {
@@ -13,12 +11,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'checkstyle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-import net.minecraftforge.gradle.common.tasks.SignJar
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
 
 version = "${mc_version}-${mod_version}"
 group = "fr.eyzox.creeperheal" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -26,16 +19,8 @@ archivesBaseName = "CreeperHeal"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-checkstyle {
-    toolVersion '8.23'
-    config project.resources.text.fromUri("https://raw.githubusercontent.com/Lothrazar/Cyclic/trunk/1.18/checkstyle.xml")
-}
-checkstyleMain {
-    source ='src/main/java'
-}
-
 minecraft {
-mappings channel: 'official', version: '1.18.1'
+	mappings channel: 'official', version: '1.18.2'
  
   //  accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -103,6 +88,9 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
 }
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
 
 repositories {
   maven {
@@ -163,25 +151,11 @@ publishing {
     }
 }
 
-task signJar(type: SignJar, dependsOn: jar) {
-
-    keyStore = project.findProperty('keyStore')
-    alias = project.findProperty('keyStoreAlias')
-    storePass = project.findProperty('keyStorePass')
-    keyPass = project.findProperty('keyStoreKeyPass')
-    inputFile = jar.archivePath
-    outputFile = jar.archivePath
-}
-
-
-build.dependsOn signJar
-
 task copyJar(type: Copy) {
     from jar
     into "${dist_folder}"
 }
 
-build.finalizedBy copyJar
 
 task cleanJar {
   delete 'build/libs'
