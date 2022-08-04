@@ -1,32 +1,32 @@
 package com.lothrazar.creeperheal.worldhealer;
 
-import com.lothrazar.creeperheal.ConfigRegistry;
-import com.lothrazar.creeperheal.ForgeCreeperHeal;
-import com.lothrazar.creeperheal.data.BlockStatePosWrapper;
-import com.lothrazar.creeperheal.data.TickContainer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.function.Supplier;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.item.ItemEntity;
+import com.lothrazar.creeperheal.ConfigRegistry;
+import com.lothrazar.creeperheal.ForgeCreeperHeal;
+import com.lothrazar.creeperheal.data.BlockStatePosWrapper;
+import com.lothrazar.creeperheal.data.TickContainer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraftforge.event.level.ExplosionEvent;
 
 public class WorldHealer extends SavedData implements Supplier<Object> {
 
@@ -48,7 +48,7 @@ public class WorldHealer extends SavedData implements Supplier<Object> {
   }
 
   public void onDetonate(ExplosionEvent.Detonate event) {
-    Level world = event.getWorld();
+    Level world = event.getLevel();
     int maxTicksBeforeHeal = 0;
     //Process primary blocks
     for (BlockPos blockPosExplosion : event.getAffectedBlocks()) {
@@ -122,7 +122,6 @@ public class WorldHealer extends SavedData implements Supplier<Object> {
           }
         }
       }
-
     }
   }
 
@@ -138,17 +137,16 @@ public class WorldHealer extends SavedData implements Supplier<Object> {
       }
     }
   }
-
-//  @Override
-//  public void load(CompoundTag nbt) {
-//    deserializeNBT(nbt);
-//  }
-//
-//  @Override
-//  public CompoundTag serializeNBT() {
-//    CompoundTag tag = new CompoundTag();
-//    return save(tag);
-//  }
+  //  @Override
+  //  public void load(CompoundTag nbt) {
+  //    deserializeNBT(nbt);
+  //  }
+  //
+  //  @Override
+  //  public CompoundTag serializeNBT() {
+  //    CompoundTag tag = new CompoundTag();
+  //    return save(tag);
+  //  }
 
   @Override
   public CompoundTag save(CompoundTag tag) {
@@ -168,7 +166,6 @@ public class WorldHealer extends SavedData implements Supplier<Object> {
     tag.put("healtasklist", tagList);
     return tag;
   }
-
 
   public void deserializeNBT(CompoundTag tag) {
     ListTag tagList = tag.getList("healtasklist", 2);
@@ -194,10 +191,9 @@ public class WorldHealer extends SavedData implements Supplier<Object> {
       WorldHealer wNew = new WorldHealer();
       wNew.deserializeNBT(p);
       return wNew;
-      }, () -> {
-        return new WorldHealer();
-      }, DATAKEY);
-
+    }, () -> {
+      return new WorldHealer();
+    }, DATAKEY);
     result.world = w;
     return result;
   }

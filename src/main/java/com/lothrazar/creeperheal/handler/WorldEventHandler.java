@@ -1,10 +1,10 @@
 package com.lothrazar.creeperheal.handler;
 
-import com.lothrazar.creeperheal.worldhealer.WorldHealer;
 import java.util.HashMap;
 import java.util.Map;
+import com.lothrazar.creeperheal.worldhealer.WorldHealer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class WorldEventHandler {
@@ -16,17 +16,17 @@ public class WorldEventHandler {
   }
 
   @SubscribeEvent
-  public void onLoad(WorldEvent.Load event) {
-    if (!event.getWorld().isClientSide()
-        && event.getWorld() instanceof ServerLevel) {
-      worldHealers.put((ServerLevel) event.getWorld(), WorldHealer.loadWorldHealer((ServerLevel) event.getWorld()));
+  public void onLoad(LevelEvent.Load event) {
+    if (!event.getLevel().isClientSide()
+        && event.getLevel() instanceof ServerLevel) {
+      worldHealers.put((ServerLevel) event.getLevel(), WorldHealer.loadWorldHealer((ServerLevel) event.getLevel()));
     }
   }
 
   @SubscribeEvent
-  public void onUnload(WorldEvent.Unload event) {
-    if (!event.getWorld().isClientSide()) {
-      worldHealers.remove(event.getWorld());
+  public void onUnload(LevelEvent.Unload event) {
+    if (!event.getLevel().isClientSide()) {
+      worldHealers.remove(event.getLevel());
     }
   }
 }
