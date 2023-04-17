@@ -1,11 +1,12 @@
 package com.lothrazar.creeperheal.data;
 
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockStatePosWrapper {
 
@@ -36,8 +37,8 @@ public class BlockStatePosWrapper {
     return tileEntityTag;
   }
 
-  public void readFromNBT(CompoundTag tag) {
-    this.blockState = NbtUtils.readBlockState(tag.getCompound("block"));
+  public void readFromNBT(CompoundTag tag, Level level) {
+    this.blockState = NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK), tag.getCompound("block"));
     this.blockPos = NbtUtils.readBlockPos(tag.getCompound("pos"));
     if (tag.contains("tileentity")) {
       this.tileEntityTag = tag.getCompound("tileentity");
