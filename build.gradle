@@ -82,9 +82,6 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
 }
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
 
 repositories {
   flatDir {
@@ -142,6 +139,9 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 task signJar(type: SignJar, dependsOn: jar) {
 
