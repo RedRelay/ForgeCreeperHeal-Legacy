@@ -5,9 +5,8 @@ import org.apache.logging.log4j.Logger;
 import com.lothrazar.creeperheal.handler.ExplosionEventHandler;
 import com.lothrazar.creeperheal.handler.WorldEventHandler;
 import com.lothrazar.creeperheal.handler.WorldTickEventHandler;
-import com.lothrazar.creeperheal.worldhealer.WorldHealer;
+import com.lothrazar.creeperheal.worldhealer.WorldHealerSaveDataSupplier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -26,12 +25,12 @@ public class ForgeCreeperHeal {
   }
 
   private void setup(final FMLCommonSetupEvent event) {
-    MinecraftForge.EVENT_BUS.register(new WorldTickEventHandler());
-    MinecraftForge.EVENT_BUS.register(new ExplosionEventHandler());
-    MinecraftForge.EVENT_BUS.register(WEV);
+    new WorldTickEventHandler();
+    new ExplosionEventHandler();
+    //    MinecraftForge.EVENT_BUS.register(WEV);
   }
 
-  public static WorldHealer getWorldHealer(ServerLevel level) {
+  public static WorldHealerSaveDataSupplier getWorldHealer(ServerLevel level) {
     return WEV.getWorldHealers().get(level);
   }
 }
