@@ -2,7 +2,7 @@ This mod is unmaintained
 
 Have a look here for newer versions : https://github.com/Lothrazar/CreeperHeal
 
-# Forge Creeper Heal
+# Forge Creeper Heal - Unmaintained
 
 An open source mod for Minecraft Forge to auto-heal world after an explosion inspired by the famous bukkit pluggin [CreeperHeal](http://dev.bukkit.org/server-mods/creeperheal-nitnelave/) from [Nitnelave](https://github.com/nitnelave).
 
