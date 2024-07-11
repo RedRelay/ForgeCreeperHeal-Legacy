@@ -1,12 +1,8 @@
-This mod is unmaintened, I currently look to create a new for Sponge.
+This mod is unmaintained
 
-Have a look here : https://github.com/RedRelay/SpongeCreeperHeal !
+Have a look here for newer versions : https://github.com/Lothrazar/CreeperHeal
 
-Sponge is more adapted to this projet, and maintenance cost is lower.
-I earn some experiences in developement in the last year, even if I am more a Node.js and Salesforce e-commerce developper right now. I will take all my new skill, to made a largely better structured and cleaner code for Sponge.
-Stay tuned ;)
-
-# Forge Creeper Heal (100K Downloads)
+# Forge Creeper Heal
 
 An open source mod for Minecraft Forge to auto-heal world after an explosion inspired by the famous bukkit pluggin [CreeperHeal](http://dev.bukkit.org/server-mods/creeperheal-nitnelave/) from [Nitnelave](https://github.com/nitnelave).
 
@@ -25,12 +21,6 @@ See : [Settings Wiki](https://github.com/RedRelay/ForgeCreeperHeal/wiki/Settings
 See : [Command Wiki](https://github.com/RedRelay/ForgeCreeperHeal/wiki/Commands)
 
 
-## Roadmap
-
-* Configuration GUI for client (could be used to configure remote server)
-
-Feel you free to suggest some improvements.
-
 ## Known bugs :
 
 * Chainned-explosion heal is not accurate
@@ -39,4 +29,5 @@ Feel you free to suggest some improvements.
 ## Special thanks :
 
 * [@PrinceOfAmber](https://github.com/PrinceOfAmber) for his contributions & unofficials releases ;)
+* [@Lothrazar](https://github.com/Lothrazar) for keeping the mod alive accross new Minecraft versions ;)
 
